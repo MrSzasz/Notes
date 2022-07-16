@@ -75,7 +75,7 @@ Como es posible observar, el código es básicamente idéntico, se diferencia en
 
 ## Tipos
 
-TypeScript no solo funciona en base a los tipos que existen en [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures), sino que agrega nuevos tipos de datos, uno de ellos es el tipo ***`enum`***.
+TypeScript no solo funciona en base a los tipos que existen en [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures), sino que agrega nuevos tipos de datos, uno de ellos es el tipo [***`enum`***](https://www.typescriptlang.org/docs/handbook/enums.html).  
 ***`Enum`*** es un tipo de dato que se comporta como un array, el cual guarda los posibles valores relacionados que se pueden utilizar en un rango, como pueden ser los días en una semana, o las posibles acciones de un click del mouse.
 
     enum weekDays{
@@ -118,3 +118,128 @@ Por ultimo, también hay que aclarar que es posible asignar un valor de tipo `st
     console.log(Users.admin)
 
 > En este caso, la consola mostrará `ADMIN`, en vez de imprimir el valor que tendría según la posición numérica.
+
+Otro tipo de valor asignable es el tipo [***`any`***](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any), el cual declara que el valor asignable puede ser literalmente de cualquier tipo, ya sea `Number`, `string`, `boolean`, etc.  
+
+    let randomValue: any = 10;
+    randomValue = 'Luke';   // OK
+    randomValue = true;      // OK
+
+La reasignación de datos a las variables no deriva en un error, gracias al tipo `any`, que es lo que sucede al hacer código de JavaScript normalmente.
+  
+El tipo `any` puede dar algunos errores, para ello se creo el tipo [***`unknown`***](https://www.typescriptlang.org/docs/handbook/2/functions.html#unknown), el cual es similar al tipo anteriormente nombrado, pero evitando que se pueda acceder al mismo, unicamente reasignarle un valor.
+
+    let randomValue: unknown = 10;
+    randomValue = true;
+    randomValue = "Luke";
+    randomValue = {name: "Exodia", parts: 5}
+
+
+    console.log(randomValue.name); // ERROR 
+
+Esto se "soluciona" de dos formas, asignándole un valor con el método `as`.
+
+    let randomValue: unknown = 10;
+    randomValue = true;
+    randomValue = "Luke";
+    randomValue = "Skywalker";
+
+    (console.log(randomValue as string)) // Skywalker
+
+> También es posible declararlo con una tag (console.log(`<string>`randomValue)
+
+La 2da forma de comprobar es hacer una comprobación directa de `js`, usando un `typeOf`.
+
+    let randomValue: unknown = 10;
+    randomValue = true;
+    randomValue = "Luke";
+    randomValue = "Skywalker";
+
+    if (typeof randomValue === "string") {
+        console.log(randomValue.toUpperCase()); // SKYWALKER
+    }
+
+> Esta comprobación se realiza luego de la compilación a JavaScript.
+
+Dado que hay ciertos momentos en los que el control de datos que se ingresan al código pueden ser medianamente controlados, se puede usar la `union` (`|`) para declarar dos o mas tipos de datos aceptados.
+
+    let randomValue: number | boolean = 10; // OK
+    randomValue = true; // OK
+    randomValue = "Luke"; // ERROR
+
+Otra forma de unir tipos es la `intersección` (`&`), la cual en vez de elegir entre uno o el otro, junta ambos tipos. Para el ejemplo del mismo se van a utilizar `Interfaces`, pero, ¿Que son las interfaces?.
+
+---
+
+## Interfaces
+
+Las `interfaces` son un tipo de estructura que definen las características que va a tener un objeto, siendo similar a las clases, pero con datos obligatorios.  
+Las interfaces se declaran con la palabra reservada `interface` y el nombre (que comúnmente comienza con una `I`).
+
+    interface IPerson {
+        name: string; // OBLIGATORIO
+        surname: string; // OBLIGATORIO
+        age: number; // OBLIGATORIO
+        country?: string; // OPCIONAL
+    }
+
+    let person1 : IPerson ={
+        name: "Jotaro", 
+        surname: Kujo",
+        status: "active", // ERROR, no se reconoce porque no esta en la interface
+        age: 40,
+    }
+
+> Como se ve en el ejemplo, el dato `country` no es necesario (`?:`), pero el resto si.
+
+---
+
+Las interfaces pueden hacer el uso de la intersección, sumando dos tipos de interfaces para crear una nueva variable.
+
+    interface Employee {
+        employeeID: number;
+        age: number;
+    }
+    
+    interface Manager {
+        stockPlan: boolean;
+    }
+    
+    let newManager: Employee & Manager = {
+        employeeID: 12345,
+        age: 34,
+        stockPlan: true
+    };
+
+También es posible crear un `type` especifico uniendo ambos, para crear la validación de los datos necesarios.
+
+    interface Employee {
+        employeeID: number;
+        age: number;
+    }
+
+    interface Manager {
+        stockPlan: boolean;
+    }
+
+    type ManagementEmployee = Employee & Manager;
+    
+    let newManager: ManagementEmployee = {
+        employeeID: 12345,
+        age: 34,
+        stockPlan: true
+    };
+
+> El resultado sigue siendo el mismo, pero el nuevo `type` puede ser utilizado en mas lugares sin la necesidad de repetir la intersección
+
+Habrá momentos en los que sea necesario asignar un valor especifico de una lista de valores, esto es posible gracias a la definición de tipos literales.  
+Los tipos literales brindan la posibilidad de que se declare un error si se pasa un valor que no este anteriormente declarado aunque el mismo sea sintácticamente valido.
+
+    type testResult = "pass" | "fail" | "incomplete";
+
+    let myResult: testResult;
+    myResult = "incomplete"; // OK   
+    myResult = "pass"; // OK 
+    myResult = "failure"; // ERROR
+
+> También es posible pasar valores `boolean` y `number` como tipos literales
