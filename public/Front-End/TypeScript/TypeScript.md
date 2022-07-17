@@ -7,15 +7,27 @@
 Typescript necesita ser instalado para su utilización, a su vez se necesita `npm` para gestionar el paquete.
 Para saber si tiene npm instalado se tiene que abrir [una consola](https://linube.com/ayuda/articulo/174/abrir-una-consola-de-comandos#:~:text=Windows%20y%20Mac.-,En%20Windows,En%20ella%20debes%20escribir%20cmd.) y en el mismo pegar el siguiente comando.
 
+```cmd
+
     npm --v
+
+```
 
 Esto dará como resultado la version actual del mismo, de no ser asi, se instalar con el siguiente comando.
 
+```cmd
+
     npm i -g
+
+```
 
 Luego de instalarlo, el siguiente paso es instalar TypeScript, en la misma consola pegar el siguiente comando.
 
+```cmd
+
     npm -g typescript
+
+```
 
 > Para instalarlo globalmente o sin `-g` para instalarlo solamente para el proyecto en el que se va a utilizar.
 
@@ -25,12 +37,20 @@ En teoría debería haberse instalado TS, pero siempre es mejor asegurarse escri
 
 Para iniciar con el lenguaje se debe crear un archivo con la extension `.ts`, luego en la consola se deberá iniciar TypeScript con el siguiente comando.
 
+```cmd
+
     tsc --init
+
+```
 
 Esto creará un archivo de configuración (***tsconfig.json***), el cual contiene todas las [configuraciones y opciones](https://www.typescriptlang.org/docs/handbook/compiler-options.html) necesarias para el funcionamiento del compilador en el archivo actual.
 Luego del mismo se deberá compilar el archivo `ts` en un archivo `js`, esto se realiza pegando el siguiente comando en la consola.
 
+```cmd
+
     tsc
+
+```
 
 > Es posible compilar un solo archivo `ts` en el proyecto, nombrándolo luego del `tsc` => `tsc archivo.ts`
 
@@ -40,10 +60,14 @@ Se creará un archivo `js`, el cual sera la compilación del código escrito en 
 
 Luego de esta introducción e instalación de TS es momento del código, se puede empezar por escribir un simple código de JavaScript en el archivo `ts`.
 
+```ts
+
     function addNumbers(x, y) {
         return x + y;
     }
     console.log(addNumbers(3, 6));
+
+```
 
 El código es una función normal que suma los parámetros, pero hay un error notable en el mismo, dado a que TS esta hecho para un tipado marcado, es necesario declarar los tipos de variables que se usan, quedando el mismo de la siguiente forma.
 
@@ -78,6 +102,8 @@ Como es posible observar, el código es básicamente idéntico, se diferencia en
 TypeScript no solo funciona en base a los tipos que existen en [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures), sino que agrega nuevos tipos de datos, uno de ellos es el tipo [***`enum`***](https://www.typescriptlang.org/docs/handbook/enums.html).  
 ***`Enum`*** es un tipo de dato que se comporta como un array, el cual guarda los posibles valores relacionados que se pueden utilizar en un rango, como pueden ser los días en una semana, o las posibles acciones de un click del mouse.
 
+```ts
+
     enum weekDays{
         Monday, //0
         Tuesday, //1
@@ -90,9 +116,13 @@ TypeScript no solo funciona en base a los tipos que existen en [JavaScript](http
 
     console.log(weekDays.Wednesday)
 
+```
+
 > La consola mostrará el resultado como un valor numérico (en este caso *2*).
 
 También es posible empezar la lista con un valor a elección, y los siguientes números serán asignados automáticamente en base al mismo.
+
+```ts
 
     enum StatusCodes {
     OK = 200,
@@ -105,9 +135,13 @@ También es posible empezar la lista con un valor a elección, y los siguientes 
 
     console.log(statusCode.NotFound);
 
+```
+
 > La consola mostrará en este caso el numero *404*, ya que es el valor que se le asigna automáticamente.
 
 Por ultimo, también hay que aclarar que es posible asignar un valor de tipo `string`, pero no sera posible que se asignen los siguientes automáticamente, pero al imprimir los valores con `console.log` se verán mas fácilmente, sin tener que ir a ver el valor asignado al numero en cuestión.
+
+```ts
 
     enum Users{
         user = "USER",
@@ -117,17 +151,25 @@ Por ultimo, también hay que aclarar que es posible asignar un valor de tipo `st
 
     console.log(Users.admin)
 
+```
+
 > En este caso, la consola mostrará `ADMIN`, en vez de imprimir el valor que tendría según la posición numérica.
 
 Otro tipo de valor asignable es el tipo [***`any`***](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any), el cual declara que el valor asignable puede ser literalmente de cualquier tipo, ya sea `Number`, `string`, `boolean`, etc.  
+
+```ts
 
     let randomValue: any = 10;
     randomValue = 'Luke';   // OK
     randomValue = true;      // OK
 
+```
+
 La reasignación de datos a las variables no deriva en un error, gracias al tipo `any`, que es lo que sucede al hacer código de JavaScript normalmente.
   
 El tipo `any` puede dar algunos errores, para ello se creo el tipo [***`unknown`***](https://www.typescriptlang.org/docs/handbook/2/functions.html#unknown), el cual es similar al tipo anteriormente nombrado, pero evitando que se pueda acceder al mismo, unicamente reasignarle un valor.
+
+```ts
 
     let randomValue: unknown = 10;
     randomValue = true;
@@ -137,7 +179,11 @@ El tipo `any` puede dar algunos errores, para ello se creo el tipo [***`unknown`
 
     console.log(randomValue.name); // ERROR 
 
+```
+
 Esto se "soluciona" de dos formas, asignándole un valor con el método `as`.
+
+```ts
 
     let randomValue: unknown = 10;
     randomValue = true;
@@ -146,9 +192,13 @@ Esto se "soluciona" de dos formas, asignándole un valor con el método `as`.
 
     (console.log(randomValue as string)) // Skywalker
 
+```
+
 > También es posible declararlo con una tag (console.log(`<string>`randomValue)
 
 La 2da forma de comprobar es hacer una comprobación directa de `js`, usando un `typeOf`.
+
+```ts
 
     let randomValue: unknown = 10;
     randomValue = true;
@@ -159,13 +209,19 @@ La 2da forma de comprobar es hacer una comprobación directa de `js`, usando un 
         console.log(randomValue.toUpperCase()); // SKYWALKER
     }
 
+```
+
 > Esta comprobación se realiza luego de la compilación a JavaScript.
 
 Dado que hay ciertos momentos en los que el control de datos que se ingresan al código pueden ser medianamente controlados, se puede usar la `union` (`|`) para declarar dos o mas tipos de datos aceptados.
 
+```ts
+
     let randomValue: number | boolean = 10; // OK
     randomValue = true; // OK
     randomValue = "Luke"; // ERROR
+
+```
 
 Otra forma de unir tipos es la `intersección` (`&`), la cual en vez de elegir entre uno o el otro, junta ambos tipos. Para el ejemplo del mismo se van a utilizar `Interfaces`, pero, ¿Que son las interfaces?.
 
@@ -176,25 +232,60 @@ Otra forma de unir tipos es la `intersección` (`&`), la cual en vez de elegir e
 Las `interfaces` son un tipo de estructura que definen las características que va a tener un objeto, siendo similar a las clases, pero con datos obligatorios.  
 Las interfaces se declaran con la palabra reservada `interface` y el nombre (que comúnmente comienza con una `I`).
 
-    interface IPerson {
+```ts
+
+    interface ICharacter {
         name: string; // OBLIGATORIO
         surname: string; // OBLIGATORIO
         age: number; // OBLIGATORIO
         country?: string; // OPCIONAL
     }
 
-    let person1 : IPerson ={
+    let person1 : ICharacter ={
         name: "Jotaro", 
-        surname: Kujo",
+        surname: "Kujo",
         status: "active", // ERROR, no se reconoce porque no esta en la interface
         age: 40,
     }
 
+```
+
 > Como se ve en el ejemplo, el dato `country` no es necesario (`?:`), pero el resto si.
+
+Las interfaces pueden juntarse para no repetir las mismas propiedades si una ya las tiene, dando asi un mejor flow a la hora de escribir el código. Esto es posible hacerlo con la palabra reservada `extends`, extendiendo todas las propiedades anteriormente nombradas.
+
+```ts
+
+    interface ICharacter {
+    name: string; // OBLIGATORIO
+    surname: string; // OBLIGATORIO
+    age: number; // OBLIGATORIO
+    country?: string; // OPCIONAL
+    }
+
+    interface IFirstAppearance extends ICharacter {
+    chapter: string;
+    publisher: string;
+    year: number;
+    }
+
+    let person1: IFirstAppearance = {
+    name: "Jotaro",
+    surname: "Kujo",
+    age: 40,
+    country: "Japan",
+    chapter: "114 'Jotaro Kujo (1)'",
+    publisher: "Weekly Shōnen Jump",
+    year: 1989,
+    };
+
+```
 
 ---
 
 Las interfaces pueden hacer el uso de la intersección, sumando dos tipos de interfaces para crear una nueva variable.
+
+```ts
 
     interface Employee {
         employeeID: number;
@@ -211,7 +302,11 @@ Las interfaces pueden hacer el uso de la intersección, sumando dos tipos de int
         stockPlan: true
     };
 
+```
+
 También es posible crear un `type` especifico uniendo ambos, para crear la validación de los datos necesarios.
+
+```ts
 
     interface Employee {
         employeeID: number;
@@ -230,10 +325,14 @@ También es posible crear un `type` especifico uniendo ambos, para crear la vali
         stockPlan: true
     };
 
+```
+
 > El resultado sigue siendo el mismo, pero el nuevo `type` puede ser utilizado en mas lugares sin la necesidad de repetir la intersección
 
 Habrá momentos en los que sea necesario asignar un valor especifico de una lista de valores, esto es posible gracias a la definición de tipos literales.  
 Los tipos literales brindan la posibilidad de que se declare un error si se pasa un valor que no este anteriormente declarado aunque el mismo sea sintácticamente valido.
+
+```ts
 
     type testResult = "pass" | "fail" | "incomplete";
 
@@ -242,4 +341,67 @@ Los tipos literales brindan la posibilidad de que se declare un error si se pasa
     myResult = "pass"; // OK 
     myResult = "failure"; // ERROR
 
+```
+
 > También es posible pasar valores `boolean` y `number` como tipos literales
+
+Como todos los otros datos, lso arrays también tienen que declarar los tipos que contendrán, pudiendo contener un solo tipo general (ejemplo 1) o mas de un tipo, aclarando cada uno de los mismos en orden.
+
+```ts
+
+    const numbers : number[] = [1, 2, 3, 4, 5] // OK
+
+    const life : [number, string] = [1, "UP"]  // OK
+
+    const wrong : [number, string, number] = [4, "GET", "ME"] // ERROR, no es de tipo number
+
+    const missingNo : [string, number] = ["404"] // ERROR, falta un dato
+
+```
+
+Las funciones en `ts` también pueden tener los tipos de entrada y salida marcados, su sintaxis base es la misma que en `js`, solo que se le agrega que tipo de dato vamos a pasar como parámetro (dentro de los paréntesis) y que tipo de dato retornara (luego de los paréntesis), esto también aplica para las funciones anónimas y las arrow functions.
+
+```ts
+
+    function suma(a: number, b: number): number {
+        console.log(a + b);
+        return a + b;
+    }
+
+    let anonSuma = function(c: number, d: number): number {
+        console.log(c + d);
+        return c + d;
+    }
+
+    let arrowSuma = (e: number, f: number): number => e + f;
+
+    console.log(arrowSuma(5,7))
+
+```
+
+Algo muy característico de la OOP son las clases, estas mismas pueden ser utilizadas en `ts`, pero su implementación cambia ligeramente, ya que ademas de que se tienen que declarar los tipos de las propiedades, también se tiene que declarar el tipo de dato que se utilizará en los métodos.
+
+```ts
+
+    class CardsDeck {
+    conName: string;
+    conCardsQty: number;
+    conBrand: string;
+
+    constructor(name: string, cardsQty: number, brand: string) {
+        this.conName = name;
+        this.conCardsQty = cardsQty;
+        this.conBrand = brand;
+    }
+
+    giveMeOne(max = this.conCardsQty): number {
+            let yourCard: number = Math.floor(Math.random() * (max - 1 + 1) + 1); // método para retornar un numero al azar
+            return yourCard;
+        }
+    }
+
+    const black = new CardsDeck("Samurai", 56, "Bicycle");
+    
+    console.log(black.giveMeOne());
+
+```
