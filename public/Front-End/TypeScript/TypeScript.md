@@ -345,17 +345,85 @@ Los tipos literales brindan la posibilidad de que se declare un error si se pasa
 
 > También es posible pasar valores `boolean` y `number` como tipos literales
 
-Como todos los otros datos, lso arrays también tienen que declarar los tipos que contendrán, pudiendo contener un solo tipo general (ejemplo 1) o mas de un tipo, aclarando cada uno de los mismos en orden.
+Como todos los otros datos, los arrays también tienen que declarar los tipos que contendrán, evitando que se agreguen tipos indeseados.
 
 ```ts
 
     const numbers : number[] = [1, 2, 3, 4, 5] // OK
+
+    const vowels : string[] = ["a", "e", "i", "o", "u"] // OK
+
+    const surelyVowels : string[] = ["a", 3, 1, 0, "u"] // ERROR, no se puede pasar un number como valor
+
+```
+
+Sumado a esto, hay un tipo especial de array que se caracteriza por tener una longitud definida de valores, con su tipo marcado en cada uno de ellos, los cuales se conocen como `tuples`.
+
+```ts
 
     const life : [number, string] = [1, "UP"]  // OK
 
     const wrong : [number, string, number] = [4, "GET", "ME"] // ERROR, no es de tipo number
 
     const missingNo : [string, number] = ["404"] // ERROR, falta un dato
+
+```
+
+> Los `tuples` tienen que contener sus datos como fueron asignados, en orden y cantidad, sino da ERROR como resultado
+
+También existe la posibilidad de nombrar `tuples` para tener un mejor contexto de los mismos, y generar un `destructuring` de sus datos.
+
+```ts
+
+    const persona : [nombre: string, apellido: string, edad: number] = ["Lara", "Croft", 26]
+
+    const [primerNombre, primerApellido, edadActual] = persona;
+
+    console.log(primerApellido) // "CROFT", el valor dado por el destructuring
+
+```
+
+Es posible declarar arrays que sean solo para lectura, es decir, que no se puedan modificar. Esto se logra gracias a la palabra reservada `readonly`.
+
+```ts
+
+    const numbers : number[] = [1, 2, 3, 4, 5]
+
+    const codes : readonly number[] = [200, 400, 404, 500]
+
+    numbers.push(4)
+
+    codes.push(403) // ERROR, no se puede modificar un array con readonly
+
+```
+
+> `readonly` también es aplicable a los `tuples`, dotando a los mismos de una capa mas de comprobación
+
+Los objetos en `ts` también tienen su sintaxis definida, la cual cambia un poco a como es en `js`.
+
+```ts
+
+    const house: { address: string, city: string, price: number, pets: boolean, website: string, weekly?: boolean} = {
+        address: '39 Niagara Street',
+        city: 'Toronto',
+        pets: true,
+        price: 4000,
+        website: "https://rentals.ca/toronto/niagara-west"
+    };
+
+```
+
+> Cuando se declara una variable con el símbolo `?` significa que el mismo puede ser omitido, ya que no es obligatorio
+
+Si no se sabe la cantidad exacta de valores que contendrá un objeto es posible definir todos sus valores, independientemente de la cantidad.
+
+```ts
+
+   const namesAndAge: { [index : string]: number} = {}
+
+    namesAndAge.Alucard = 598;
+    namesAndAge.SerasVictoria = 19;
+    namesAndAge.IntegraFairbrookWingatesHellsing = 22 
 
 ```
 
