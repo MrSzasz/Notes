@@ -100,7 +100,7 @@ Como es posible observar, el código es básicamente idéntico, se diferencia en
 ## Tipos
 
 TypeScript no solo funciona en base a los tipos que existen en [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures), sino que agrega nuevos tipos de datos, uno de ellos es el tipo [***`enum`***](https://www.typescriptlang.org/docs/handbook/enums.html).  
-***`Enum`*** es un tipo de dato que se comporta como un array, el cual guarda los posibles valores relacionados que se pueden utilizar en un rango, como pueden ser los días en una semana, o las posibles acciones de un click del mouse.
+***`Enum`*** es un tipo de dato que se comporta como un array/clase, el cual guarda los posibles valores relacionados que se pueden utilizar en un rango, como pueden ser los días en una semana, o las posibles acciones de un click del mouse.
 
 ```ts
 
@@ -120,7 +120,7 @@ TypeScript no solo funciona en base a los tipos que existen en [JavaScript](http
 
 > La consola mostrará el resultado como un valor numérico (en este caso *2*).
 
-También es posible empezar la lista con un valor a elección, y los siguientes números serán asignados automáticamente en base al mismo.
+Como los arrays normales, los `enum` comienzan en 0, pero es posible empezar la lista con un valor a elección, y los siguientes números serán asignados automáticamente en base al mismo.
 
 ```ts
 
@@ -181,7 +181,8 @@ El tipo `any` puede dar algunos errores, para ello se creo el tipo [***`unknown`
 
 ```
 
-Esto se "soluciona" de dos formas, asignándole un valor con el método `as`.
+Esto se "soluciona" de dos formas, asignándole un valor con el método `as`.  
+El metodo `as` sirve para forzar el tipo de valor, siempre y cuando sea correcto.
 
 ```ts
 
@@ -190,7 +191,23 @@ Esto se "soluciona" de dos formas, asignándole un valor con el método `as`.
     randomValue = "Luke";
     randomValue = "Skywalker";
 
-    (console.log(randomValue as string)) // Skywalker
+    console.log(randomValue as string) // Skywalker
+
+```
+
+Cuando no se declara el valor inicial como `unknown`, es posible reasignarlo como tal posteriormente.
+
+```ts
+
+    let randomValue: unknown = 10;
+    randomValue = true;
+    randomValue = "Luke";
+    randomValue = "Skywalker";
+    let randomValueForError = 19;
+
+    console.log(randomValue as string) // Skywalker
+    console.log(randomValueForError as string) // ERROR, 19 no es un string
+    console.log(((randomValueForError) as unknown) as string) // OK, ya que primero se declara como UNKNOWN
 
 ```
 
@@ -229,7 +246,7 @@ Otra forma de unir tipos es la `intersección` (`&`), la cual en vez de elegir e
 
 ## Interfaces
 
-Las `interfaces` son un tipo de estructura que definen las características que va a tener un objeto, siendo similar a las clases, pero con datos obligatorios.  
+Las `interfaces` son un tipo de estructura que definen las características que va a tener un objeto, siendo similar a las clases, pero con datos obligatorios.
 Las interfaces se declaran con la palabra reservada `interface` y el nombre (que comúnmente comienza con una `I`).
 
 ```ts
@@ -327,7 +344,7 @@ También es posible crear un `type` especifico uniendo ambos, para crear la vali
 
 ```
 
-> El resultado sigue siendo el mismo, pero el nuevo `type` puede ser utilizado en mas lugares sin la necesidad de repetir la intersección
+> El resultado sigue siendo el mismo, pero el nuevo `type` puede ser utilizado en mas lugares sin la necesidad de repetir la intersección, lo cual se explicará a continuación
 
 Habrá momentos en los que sea necesario asignar un valor especifico de una lista de valores, esto es posible gracias a la definición de tipos literales.  
 Los tipos literales brindan la posibilidad de que se declare un error si se pasa un valor que no este anteriormente declarado aunque el mismo sea sintácticamente valido.
@@ -447,6 +464,24 @@ Las funciones en `ts` también pueden tener los tipos de entrada y salida marcad
 
 ```
 
+Sumado a esto, es posible crear funciones que no retornen ningun valor explicito, a esto se le llama `void`.
+
+```ts
+
+    function sayMyName(name : string) : void {
+        if (name.toLowerCase() === "heisenberg"){
+            console.log("You're goddamn right")
+        }
+        else{
+            console.log(":gun:")
+        }
+    }
+
+    sayMyName("heisenberg");
+
+
+```
+
 Algo muy característico de la OOP son las clases, estas mismas pueden ser utilizadas en `ts`, pero su implementación cambia ligeramente, ya que ademas de que se tienen que declarar los tipos de las propiedades, también se tiene que declarar el tipo de dato que se utilizará en los métodos.
 
 ```ts
@@ -471,5 +506,114 @@ Algo muy característico de la OOP son las clases, estas mismas pueden ser utili
     const black = new CardsDeck("Samurai", 56, "Bicycle");
     
     console.log(black.giveMeOne());
+
+```
+
+Las clases pueden tener sus propiedades con 3 etiquetas, `public` (la que se usa normalmente, pudiendo acceder y modificarlas desde cualquier lado), `private` (solo pueden acceder y modificarse en la misma clase) y por ultimo `protected` (solo pueden acceder y modificarse en la misma clase o cuando viene de una clase padre).
+
+```ts
+
+    class Person {
+        private conName: string; // Solo en la clase
+        public conSurname: string; // Desde cualquier lado
+        protected conWorking: boolean; // Solo en la clase y al heredarse
+
+        constructor(name: string, surname: string) {
+            this.conName = name;
+            this.conSurname = surname;
+            this.conWorking = true;
+        }
+
+        public getConName(): string {
+            return this.conName;
+        }
+    }
+
+    class Employee extends Person {
+        conId: number;
+
+        constructor(id: number, name: string, surname: string) {
+            super(name, surname);
+            this.conId = id;
+        }
+
+        isWorker(): string {
+            if (this.conWorking) {
+                return "Es un empleado modelo";
+            } else {
+                return "No es posible llegar a este error sin modificar el código >:(";
+            }
+        }
+    }
+
+    let first = new Employee(1523, "Walter", "White");
+
+    console.log(first.conName); //ERROR, no se puede acceder desde fuera
+    console.log(first.getConName()); // Walter
+    console.log(first.isWorker()); // Es un empleado modelo
+
+```
+
+> Es posible agregar `readonly` para evitar la reasignación de datos (`private readonly conName: string`)
+
+En las clases es posible incluir una (o más, separadas con coma `,`) `interface` con la palabra reservada `implements`.
+
+```ts
+
+    interface ICharacter {
+        name: string;
+        surname: string;
+        age: number;
+        country?: string;
+    }
+
+    class Person implements ICharacter{
+        name: string;
+        surname: string;
+        age: number; 
+
+        constructor(name: string, surname: string, age: number) {
+            this.name = name;
+            this.surname = surname;
+            this.age = age;
+        }
+
+        public getData(): string {
+            return `${this.name} ${this.surname}, ${this.age} años`;
+        }
+    }
+
+    let first = new Person("Walter", "White", 52);
+
+    console.log(first.getData());
+
+```
+
+Es posible crear clases que sirvan unicamente como bases para crear otras bases, a estas se las conoce como `abstract`, y se las implementa nuevamente con el uso de la palabra reservada `extends`.
+
+```ts
+
+    abstract class Animal {
+        type: string;
+        name: string;
+        
+        constructor(type: string, name: string) {
+            this.type = type;
+            this.name = name;
+        }
+    
+        abstract makeNoise(): string;
+    }
+
+    class Cat extends Animal {
+        makeNoise(): string {
+            return "meow";
+        }
+    }
+
+    let white = new Animal("dog", "White"); // ERROR, las clases abstractas no se pueden llamar, solo usar en otras clases
+    let black = new Cat("feline", "Black");
+
+    console.log(black.makeNoise()); // meow
 
 ```
