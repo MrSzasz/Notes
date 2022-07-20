@@ -2,9 +2,7 @@
 
 Markdown es un lenguaje de marcado utilizado para escribir textos con un formato visible y adaptado para varias webs, el mismo tiene su propia sintaxis y reglas como todo lenguaje.
 
-El mismo se comienza creando un archivo con la extension .md, y contiene ciertos elementos para otorgarle diseño y funcionalidades, siendo estos los siguientes:
-
-<br>
+El mismo se comienza creando un archivo con la extension .md, y contiene ciertos elementos para otorgarle diseño y funcionalidades, siendo estos los siguientes:  
 
 ## = Headings =
 
@@ -24,15 +22,13 @@ CÓDIGO:
 
 ```
 
-<br>
-
 SALIDA:
 
 <h1 id="title"> Heading </h1>
   
 <h2> SubHeading </h2>
 
-<br><br>
+---
 
 ## Breaks
 
@@ -46,13 +42,13 @@ CÓDIGO:
 
 ```
 
-<br>
-
 SALIDA:
 
 &nbsp;&nbsp;&nbsp;&nbsp;Hola este <br> &nbsp;&nbsp;&nbsp;&nbsp;es el ejemplo.
 
-<br><br>
+> También es posible agregar dos espacios al final de una linea para hacer el salto
+
+---
 
 ### Estilos
 
@@ -69,8 +65,6 @@ CÓDIGO:
 
 ```
 
-<br>
-
 SALIDA:
 
 &nbsp;&nbsp;&nbsp;&nbsp;**texto en negrita**<br>
@@ -78,7 +72,7 @@ SALIDA:
 &nbsp;&nbsp;&nbsp;&nbsp;***texto en cursiva y negrita***<br>
 &nbsp;&nbsp;&nbsp;&nbsp;~~texto tachado~~<br>
 
-<br><br>
+---
 
 ### Bloques
 
@@ -92,13 +86,9 @@ CÓDIGO:
 
 ```
 
-<br>
-
 SALIDA:
 
 > Esto es un bloque de texto
-
-<br>
 
 ### Listas
 
@@ -114,14 +104,10 @@ CÓDIGO:
 
 ```
 
-<br>
-
 SALIDA:
 
 1. primero
 2. segundo
-
-<br>
 
 En cambio las listas desordenadas pueden tener diferentes puntos, independientemente de que sean consecutivos.
 
@@ -136,15 +122,10 @@ CÓDIGO:
 
 ```
 
-<br>
-
 SALIDA:
 
 - MarkDown
 - List
-
-
-<br>
 
 Es posible agregar listas de tareas a la misma, con marcas en las que estén completadas
 
@@ -157,14 +138,12 @@ CÓDIGO:
 
 ```
 
-<br>
-
 SALIDA:
 
 - [x] Hecho
 - [ ] Por hacer
 
-<br><br>
+---
 
 ### Bloques de CÓDIGO
 
@@ -181,8 +160,6 @@ CÓDIGO:
     }
 ```
 
-<br>
-
 SALIDA:
 
 ```json
@@ -192,7 +169,7 @@ SALIDA:
 }
 ```
 
-<br><br>
+---
 
 ### Imágenes y links
 
@@ -210,15 +187,13 @@ CÓDIGO:
 
 ```
 
-<br>
-
 SALIDA:
 
 ![petit](https://i.imgur.com/jPc865A.jpg)
 
 Documentación oficial de [Markdown](https://www.markdownguide.org/getting-started/)
 
-<br><br>
+---
 
 ### Division de textos
 
@@ -228,7 +203,7 @@ Se puede separar/dividir textos con una linea horizontal, marcándolos con `---`
 
 ---
 
-<br><br>
+---
 
 ### Tablas
 
@@ -244,8 +219,6 @@ CÓDIGO:
 
 ```
 
-<br>
-
 SALIDA:
 
 | Syntax      | Ejemplo     |
@@ -254,7 +227,7 @@ SALIDA:
 
 > Se puede cambiar la posición del texto con `:---` para iniciar en la izquierda, `:---:` para centrar el texto y `---:` para iniciar a la derecha, todos en la 2da linea de la tabla.
 
-<br><br>
+---
 
 ### Referencias
 
@@ -269,15 +242,13 @@ CÓDIGO:
 
 ```
 
-<br>
-
 SALIDA:
 
 &nbsp;&nbsp;&nbsp;&nbsp;Este es mi texto, y este[^1] mi referencia.
 
 &nbsp;&nbsp;&nbsp;&nbsp;[^1]: Automáticamente te dirige aca, aunque no se note por la cercanía
 
-<br><br>
+---
 
 ### Definiciones
 
@@ -292,14 +263,12 @@ CÓDIGO:
 
 ```
 
-
-
 SALIDA:
 
 &nbsp;&nbsp;&nbsp;&nbsp;Nombre
 &nbsp;&nbsp;&nbsp;&nbsp; : Definición
 
- <br><br>
+ ---
 
 ### Palabras destacadas
 
@@ -313,13 +282,11 @@ CÓDIGO:
 
 ```
 
-<br>
-
 SALIDA:
 
 &nbsp;&nbsp;&nbsp;&nbsp;Estas palabras ==son muy importantes==
 
-<br><br>
+---
 
 ### Posición numeral
 
@@ -333,13 +300,11 @@ CÓDIGO:
 
 ```
 
-<br>
-
 SALIDA:
 
 &nbsp;&nbsp;&nbsp;&nbsp;El numero UNO^1^ es superior al numero DOS~2~
 
-<br><br>
+---
 
 ### HTML
 
@@ -353,19 +318,17 @@ CÓDIGO:
 
 ```
 
-<br>
-
 SALIDA:
 
 &nbsp;&nbsp;&nbsp;&nbsp;<em>Hola en cursiva y en <span style="color:purple">VIOLETA</span></em>
 
-<br><br>
+---
 
 Estas son las bases de MarkDown, tiene sus limitaciones como todo lenguaje, pero aun asi con el agregado del HTML es posible crear desde un simple README hasta un libro completo, ¡unicamente limitado por la creatividad del editor!
 
 ## LINKS IMPORTANTES
 
-> [Dillinger](https://dillinger.io/), editor de markdown online, con previsualización automática.<br>
-> [MarkDownGuide](https://www.markdownguide.org/), guía sobre todo lo básico de markdown, desde la sintaxis hasta ciertas herramientas.<br>
-> [Guía de emojis en GitHub](https://github.com/ikatyang/emoji-cheat-sheet/blob/master/README.md), con tablas de emojis y su equivalente en CÓDIGO.<br>
-> [Buscador de emojis](https://emojipedia.org/), enciclopedia de emojis con servicio de búsqueda.
+- [Dillinger](https://dillinger.io/), editor de markdown online, con previsualización automática.
+- [MarkDownGuide](https://www.markdownguide.org/), guía sobre todo lo básico de markdown, desde la sintaxis hasta ciertas herramientas.
+- [Guía de emojis en GitHub](https://github.com/ikatyang/emoji-cheat-sheet/blob/master/README.md), con tablas de emojis y su equivalente en CÓDIGO.
+- [Buscador de emojis](https://emojipedia.org/), enciclopedia de emojis con servicio de búsqueda.
