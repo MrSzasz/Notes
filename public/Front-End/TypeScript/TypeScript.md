@@ -182,7 +182,7 @@ El tipo `any` puede dar algunos errores, para ello se creo el tipo [***`unknown`
 ```
 
 Esto se "soluciona" de dos formas, asignándole un valor con el método `as`.  
-El metodo `as` sirve para forzar el tipo de valor, siempre y cuando sea correcto.
+El método `as` sirve para forzar el tipo de valor, siempre y cuando sea correcto.
 
 ```ts
 
@@ -464,7 +464,7 @@ Las funciones en `ts` también pueden tener los tipos de entrada y salida marcad
 
 ```
 
-Sumado a esto, es posible crear funciones que no retornen ningun valor explicito, a esto se le llama `void`.
+Sumado a esto, es posible crear funciones que no retornen ningún valor explicito, a esto se le llama `void`.
 
 ```ts
 
@@ -615,5 +615,138 @@ Es posible crear clases que sirvan unicamente como bases para crear otras bases,
     let black = new Cat("feline", "Black");
 
     console.log(black.makeNoise()); // meow
+
+```
+
+Hay veces que necesitamos crear funciones o interfaces bases pero sin tener del todo claro que tipo de datos vamos a usar desde un principio, para eso se utilizan los `generic types`, los cuales sirven para crear tipos que se declararan en su uso y pueden reutilizarse.
+
+```ts
+
+    interface savedData<T>{
+        name: string;
+        id: number;
+        data: T;
+    }
+
+    const person1 : savedData<object> = {
+        name: "Luci",
+        id: 616,
+        data: {age: "unknown", status: "alive"}
+    }
+
+```
+
+> Es posible declarar un tipo default agregando = al generic `<T = string>`
+
+Ademas, es posible declarar los tipos de variables que se pueden usar desde un inicio, evitando poder pasar un tipo indeseado cuando se use.
+
+```ts
+
+    interface savedData<T extends object | string> {
+        name: string;
+        id: number;
+        data: T;
+    }
+
+    const person1 : savedData<object> = {
+        name: "Lucy",
+        id: 616,
+        data: {age: "unknown", status: "alive"}
+    }
+
+    const person2 : savedData<string> = {
+        name: "white shadow",
+        id: 111,
+        data: "unknown"
+    }
+
+    const person3 : savedData<number> = {  // ERROR, number no es un tipo que se haya declarado en el generic
+        name: "test",
+        id: 7357,
+        data: 0
+    }
+
+```
+
+Hay veces que necesitamos pasar solamente algunos datos de una interface, sin que todos sean obligatorios, para ello podemos usar la palabra reservada `Partial`, el cual evita que sean obligatorios.
+
+```ts
+
+    interface savedData<T> {
+        name: string;
+        id: number;
+        data: T;
+    }
+
+    const person1 : Partial<savedData<object>> = {
+        name: "Lucy",
+        data: {age: "unknown", status: "alive"} // Falta el ID, pero al ser Partial deja de ser necesario
+    }
+
+```
+
+Para el efecto contrario se utiliza `Required`.
+
+```ts
+
+    interface Person{
+        name: string;
+        surname: string;
+        code?: number;
+    }
+
+    let newPerson : Required<Person> = {
+        name: "James",
+        surname: "Bond"
+    } // ERROR, falta code ya que el Required lo convirtió en obligatorio
+
+```
+
+`Record` se utiliza para marcar como deben de ser estructurados los datos que se pasaran a un objeto.
+
+```ts
+
+    const errors : Record<number, string> ={
+        204: "No content",
+        400: "Bad request",
+        404: "Not found"
+    }
+
+```
+
+> También es posible llegar al mismo resultado usando `{[key: number]: string}`
+
+Es posible eliminar un dato necesario de una interface, para ello se utiliza `Omit`, el cual evita usar el valor que se declare en el mismo.
+
+```ts
+
+    interface savedData {
+        name: string;
+        id: number;
+        data: object;
+    }
+
+    const person1 : Omit<savedData, "name" | "id" > = {
+        name: "Lucy", // ERROR, Omit elimino este valor asi que no puede ser aplicado
+        id: 616,  // ERROR, Omit elimino este valor asi que no puede ser aplicado
+        data: {age: "unknown", status: "alive"}
+    }
+
+```
+
+Al contrario de este existe `Pick`, el cual solo declara los valores elegidos.
+
+```ts
+
+    interface savedData {
+        name: string;
+        id: number;
+        data: object;
+    }
+
+    const person1 : Pick<savedData, "name"> = {
+        name: "Lucy",
+        id: 616,  // ERROR, solo se eligió el valor name para declararse
+    }
 
 ```
