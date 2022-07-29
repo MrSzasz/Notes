@@ -269,6 +269,24 @@ Las interfaces se declaran con la palabra reservada `interface` y el nombre (que
 
 > Como se ve en el ejemplo, el dato `country` no es necesario (`?:`), pero el resto si.
 
+También es posible crear interfaces que requieran funciones con ciertos nombres predefinidos.
+
+```ts
+
+    interface IFly {
+        fly(): void;
+    }
+
+    let action: IFly = {
+        fly: function () {
+            console.log("I believe I can fly");
+        },
+    };
+
+    action.fly();
+
+```
+
 Las interfaces pueden juntarse para no repetir las mismas propiedades si una ya las tiene, dando asi un mejor flow a la hora de escribir el código. Esto es posible hacerlo con la palabra reservada `extends`, extendiendo todas las propiedades anteriormente nombradas.
 
 ```ts
