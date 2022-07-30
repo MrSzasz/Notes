@@ -244,3 +244,137 @@ En el `index.html` se escribirá el código que se mostrara en la dirección ra�
     </html>
 
 ```
+
+También es posible usar el método `GET` para mandar información por URL y utilizarla luego, ya sea para redirigir a otro sitio o para hacer un request de esos datos. Esto se puede demostrar usando el método desde un formulario.
+
+```HTML
+
+    <form action="/form" method="GET"> // Se define el método del envío de los datos, y con Action la pagina a la que se va a redirigir
+            <input type="text" name="nombre" placeholder="nombre">
+            <input type="text" name="apellido" placeholder="apellido">
+            <button type="submit">Enviar</button>
+    </form>
+
+```
+
+> El método `GET` es un método visible, asi que no se debería usar para enviar información sensible
+
+Gracias a esto es posible enviar los datos al completar el formulario, para luego tomarlos con `node`.
+
+```js
+
+    const express = require('express');
+    const app = express();
+    const port = 5000;
+
+    app.use(express.static("public")); // Toma los archivos estáticos como plantillas
+
+    app.get('/form', (req, res) => { // Toma los datos al completar el formulario con el método GET
+        console.log(req.query); // Imprime los datos en consola, con formato de objeto 
+        res.send('Formulario enviado!!') // Esto es lo que se vera en la pagina "/form"
+    })
+
+
+    app.listen(port, () => console.log("El servidor funciona a la perfección!!"));
+
+```
+
+> Los datos de `req.query` se verán con el formato de un objeto => { nombre: 'Tomas', apellido: 'Lugo' }
+
+El método `GET`, al ser visible, es peligroso para enviar datos sensibles, es por eso que para esos casos se utiliza el método `POST`, el mismo envía los datos de la misma forma y se pueden interceptar para su uso, pero para el mismo cambia un poco la forma del mismo.  
+En este caso los datos se envían a traves del `body`, no de la URL, es por eso que se tiene que usar un `middleware` para parsear los datos y poder recuperarlos, de lo contrario unicamente se recibiría como respuesta `undefined`.
+
+```js
+
+    app.use(express.static("public"));
+    app.use(express.urlencoded({ extended: true })); // Middleware para poder tomar los datos que se envían a traves del body
+
+    app.post('/form', (req, res) => {
+        console.log(req.body); // Como se hizo anteriormente, toma los datos enviados y los muestra en consola
+        res.send('Formulario enviado!!')
+    })
+
+    app.listen(port, () => console.log("El servidor funciona a la perfección!!"));
+
+```
+
+> El único cambio que se hizo en el HTML es que se cambio el método `GET` a `POST` del formulario
+
+Sumado a esto es posible hacer validaciones simples de los datos del formulario, redirigiendo a una pagina de error si es que faltan datos.
+
+```js
+
+    app.post('/form', (req, res) => {
+        const { nombre, apellido } = req.body; // Hace un destructuring de los datos para obtenerlos como variables
+        if (!nombre || !apellido) return res.redirect("/error.html"); // Comprueba los datos, si no se completan se hace una redirección a la pagina de error
+        res.send('Formulario enviado!!')
+    })
+
+```
+
+> Para la redirección se creo el archivo `error.html` dentro de la carpeta `public`
+
+Los datos que se obtienen del formulario pueden servir para diferentes motivos, ya sea para usarlos como request a una base de datos como para la creación de un archivo de texto. Esto ultimo es posible gracias al paquete que viene con `node` llamado `fileSystem`, el cual genera archivos en base al código.  
+Para iniciar el mismo es necesario hacer un `require`.
+
+```js
+
+    const fs = require('fs');
+
+```
+
+`FileSystem` solo creara un archivo, no una carpeta, asi que para desarrollar el ejemplo se creara una carpeta por fuera de `public` a la que llamaremos `archivos`, la misma contendrá los futuros archivos creados por `fs`.  
+Sumado a esto se modifico el formulario para darle sentido a la explicación.
+
+```HTML
+
+    <form action="/form" method="POST">
+        <input type="text" name="nombre" placeholder="nombre">
+        <input type="text" name="texto" placeholder="texto">
+        <button type="submit">enviar</button>
+    </form>
+
+```
+
+Es necesario llamar a `fs` luego de la comprobación para que la misma tome los datos y los transforme en el archivo en cuestión, usando el método `fs.writeFile`, el cual recibe los siguientes parámetros.
+
+```js
+
+    fs.writeFile(<NOMBRE DEL ARCHIVO>, <DATOS DENTRO DEL ARCHIVO>, (<CALLBACK>)) 
+
+```
+
+Para su correcto funcionamiento tomaremos los datos y crearemos dinámicamente el archivo en base al nombre ingresado por el usuario.
+
+```js
+
+    app.post('/form', (req, res) => {
+        const { nombre, texto } = req.body;
+
+        if (!nombre || !texto) return res.redirect("/error.html") // Comprueba que existan
+
+        fs.writeFile(`archivos/${nombre}.txt`, texto, (err)=>{ // Método para la creación del archivo 
+            if (err) return res.redirect("/error.html") // Acción si es que existe un error en la creación del mismo
+            res.send('Se creo el archivo con éxito!!') // Respuesta al crear el archivo
+        })
+    })
+
+```
+
+> Esto dará como resultado la creación del archivo con el nombre ingresado en el form y la extension `.txt` (`tomas.txt` en este caso), y contendrá el texto como cuerpo del archivo.
+
+Si se quiere facilitar el archivo creado para el usuario es posible usar el método `res.download` para generar la descarga automática.
+
+```js
+
+    app.post('/form', (req, res) => {
+        const { nombre, texto } = req.body;
+        if (!nombre || !texto) return res.redirect("/error.html")
+
+        fs.writeFile(`archivos/${nombre}.txt`, texto, (err)=>{
+            if (err) return res.redirect("/error.html")
+            res.download(__dirname + `/archivos/${nombre}.txt`) // Genera la descarga al crear el archivo
+        })
+    })
+
+```
