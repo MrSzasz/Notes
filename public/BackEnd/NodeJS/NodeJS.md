@@ -50,10 +50,10 @@ Y luego debe ser llamado con la palabra reservada `require`, en el cual ya puede
 
 ```js
 
-    const animals = require("./animals") //El require siempre requerirá el archivo sin ser necesario agregar la extension
+    const animals = require("./animals")    //El require siempre requerirá el archivo sin ser necesario agregar la extension
 
     animals.forEach(anim => {
-        console.log(anim) // 🦊, 🐱, 🐶, 🦅, 🐢
+        console.log(anim)   // 🦊, 🐱, 🐶, 🦅, 🐢
     });
 
 ```
@@ -78,10 +78,10 @@ El cambio que se hace al querer importarlos es el mismo, se debe aclarar todos l
     const {animals, names} = require("./animals")
 
     animals.forEach(an => {
-        console.log(an) // 🦊, 🐱, 🐶, 🦅, 🐢
+        console.log(an)     // 🦊, 🐱, 🐶, 🦅, 🐢
     });
 
-    console.log(`Hay un total de ${names.length} animales`) // Hay un total de 5 animales
+    console.log(`Hay un total de ${names.length} animales`)     // Hay un total de 5 animales
 
 ```
 
@@ -146,8 +146,8 @@ Para el uso de `nodemon` se deberá crear un script en el apartado del mismo nom
 ```json
 
     "scripts": {
-        "dev": "nodemon app.js", // Inicia el archivo con Nodemon
-        "start": "node app.js" // Inicia el archivo normalmente y se utilizará en su implementación automática
+        "dev": "nodemon app.js",    // Inicia el archivo con Nodemon
+        "start": "node app.js"    // Inicia el archivo normalmente y se utilizará en su implementación automática
     }
 
 ```
@@ -160,14 +160,14 @@ El protocolo HTTP es el protocolo que permite la comunicación y transferencia d
 
 ```js
 
-    const http = require('http'); // Modulo requerido
-    const port = 5000; // Puerto que usaremos para iniciar en el navegador
+    const http = require('http');   // Modulo requerido
+    const port = 5000;  // Puerto que usaremos para iniciar en el navegador
 
     const server = http.createServer((req, res) => { 
-        res.end("Esta es mi pagina :D"); // Esto es lo que se vera en la pagina cuando se inicie el servidor
+        res.end("Esta es mi pagina :D");    // Esto es lo que se vera en la pagina cuando se inicie el servidor
     });
 
-    server.listen(port, () => console.log("El servidor funciona a la perfección!!")); // Log en consola para saber si el mismo esta en funcionamiento
+    server.listen(port, () => console.log("El servidor funciona a la perfección!!"));   // Log en consola para saber si el mismo esta en funcionamiento
 
 ```
 
@@ -199,15 +199,15 @@ Ahora que tenemos `express` instalado podemos pasar a la creación de un servido
 
 ```js
 
-    const express = require('express'); // Importa express
+    const express = require('express');     // Importa express
     const app = express();
-    const port = 5000; // Puerto que usaremos para iniciar en el navegador
+    const port = 5000;      // Puerto que usaremos para iniciar en el navegador
 
     app.get('/', (req, res) => {
-        res.send("Esta es mi pagina :D"); // Esto es lo que se vera en la pagina cuando se inicie el servidor
+        res.send("Esta es mi pagina :D");       // Esto es lo que se vera en la pagina cuando se inicie el servidor
     })
 
-    app.listen(port, () => console.log("El servidor funciona a la perfección!!")); // Log en consola para saber si el mismo esta en funcionamiento
+    app.listen(port, () => console.log("El servidor funciona a la perfección!!"));      // Log en consola para saber si el mismo esta en funcionamiento
 
 ```
 
@@ -216,7 +216,7 @@ Aun asi, podemos hacer respuestas diferentes dependiendo de la pagina que se vis
 
 ```js
 
-    app.use(express.static("public"));
+    app.use(express.static(__dirname + "/public"));
 
 ```
 
@@ -249,7 +249,7 @@ También es posible usar el método `GET` para mandar información por URL y uti
 
 ```HTML
 
-    <form action="/form" method="GET"> // Se define el método del envío de los datos, y con Action la pagina a la que se va a redirigir
+    <form action="/form" method="GET">      <!-- Se define el método del envío de los datos, y con Action la pagina a la que se va a redirigir -->
             <input type="text" name="nombre" placeholder="nombre">
             <input type="text" name="apellido" placeholder="apellido">
             <button type="submit">Enviar</button>
@@ -267,11 +267,11 @@ Gracias a esto es posible enviar los datos al completar el formulario, para lueg
     const app = express();
     const port = 5000;
 
-    app.use(express.static("public")); // Toma los archivos estáticos como plantillas
+    app.use(express.static(__dirname + "/public"));     // Toma los archivos estáticos como plantillas
 
-    app.get('/form', (req, res) => { // Toma los datos al completar el formulario con el método GET
-        console.log(req.query); // Imprime los datos en consola, con formato de objeto 
-        res.send('Formulario enviado!!') // Esto es lo que se vera en la pagina "/form"
+    app.get('/form', (req, res) => {        // Toma los datos al completar el formulario con el método GET
+        console.log(req.query);     // Imprime los datos en consola, con formato de objeto 
+        res.send('Formulario enviado!!')        // Esto es lo que se vera en la pagina "/form"
     })
 
 
@@ -286,11 +286,11 @@ En este caso los datos se envían a traves del `body`, no de la URL, es por eso 
 
 ```js
 
-    app.use(express.static("public"));
-    app.use(express.urlencoded({ extended: true })); // Middleware para poder tomar los datos que se envían a traves del body
+    app.use(express.static(__dirname + "/public"));
+    app.use(express.urlencoded({ extended: true }));    // Middleware para poder tomar los datos que se envían a traves del body
 
     app.post('/form', (req, res) => {
-        console.log(req.body); // Como se hizo anteriormente, toma los datos enviados y los muestra en consola
+        console.log(req.body);    // Como se hizo anteriormente, toma los datos enviados y los muestra en consola
         res.send('Formulario enviado!!')
     })
 
@@ -305,8 +305,8 @@ Sumado a esto es posible hacer validaciones simples de los datos del formulario,
 ```js
 
     app.post('/form', (req, res) => {
-        const { nombre, apellido } = req.body; // Hace un destructuring de los datos para obtenerlos como variables
-        if (!nombre || !apellido) return res.redirect("/error.html"); // Comprueba los datos, si no se completan se hace una redirección a la pagina de error
+        const { nombre, apellido } = req.body;  // Hace un destructuring de los datos para obtenerlos como variables
+        if (!nombre || !apellido) return res.redirect("/error.html");   // Comprueba los datos, si no se completan se hace una redirección a la pagina de error
         res.send('Formulario enviado!!')
     })
 
@@ -351,11 +351,11 @@ Para su correcto funcionamiento tomaremos los datos y crearemos dinámicamente e
     app.post('/form', (req, res) => {
         const { nombre, texto } = req.body;
 
-        if (!nombre || !texto) return res.redirect("/error.html") // Comprueba que existan
+        if (!nombre || !texto) return res.redirect("/error.html")       // Comprueba que existan
 
-        fs.writeFile(`archivos/${nombre}.txt`, texto, (err)=>{ // Método para la creación del archivo 
-            if (err) return res.redirect("/error.html") // Acción si es que existe un error en la creación del mismo
-            res.send('Se creo el archivo con éxito!!') // Respuesta al crear el archivo
+        fs.writeFile(`archivos/${nombre}.txt`, texto, (err)=>{      // Método para la creación del archivo 
+            if (err) return res.redirect("/error.html")     // Acción si es que existe un error en la creación del mismo
+            res.send('Se creo el archivo con éxito!!')      // Respuesta al crear el archivo
         })
     })
 
@@ -373,8 +373,310 @@ Si se quiere facilitar el archivo creado para el usuario es posible usar el mét
 
         fs.writeFile(`archivos/${nombre}.txt`, texto, (err)=>{
             if (err) return res.redirect("/error.html")
-            res.download(__dirname + `/archivos/${nombre}.txt`) // Genera la descarga al crear el archivo
+            res.download(__dirname + `/archivos/${nombre}.txt`)     // Genera la descarga al crear el archivo
         })
     })
 
 ```
+
+## Motores de plantillas
+
+Antes de React, Vue y Angular existieron ciertos motores de plantilla que servían para generar código mas rápido y reutilizable, ademas de dinámico y liviano.
+
+> Antes de seguir es necesario eliminar el archivo de `index.html`, ya que podrá interferir en la explicación.
+
+Para comenzar a usar las plantillas es necesario instalar [`Handlebars`](https://handlebarsjs.com/), para ello vamos a utilizar el comando que se sugiere en su [página de npm](https://www.npmjs.com/package/express-handlebars).
+
+```cmd
+
+    npm i express-handlebars
+
+```
+
+Luego se precisa hacer las carpetas para los layouts como las indica la documentación, estando por fuera organizadas de la siguiente forma.
+
+```text
+
+    views (carpeta)
+        |-> layouts (carpeta)
+                  |-> main.hbs (archivo)
+        |-> components (carpeta)
+
+```
+
+Esto nos servirá mas adelante para probar `node`, pero `nodemon` no detecta automáticamente los cambios en `handlebars`, por lo que es necesario crear un archivo de configuraciones.  
+Al nivel de la carpeta raíz (fuera de public) crearemos un archivo llamado `nodemon.json` que contendrá el siguiente comando.
+
+```json
+
+    {
+        "ext": "js,json,hbs"
+    }
+
+```
+
+Esto hará que `nodemon` detecte los cambios en los archivos con esas extensiones (se pueden agregar mas si se desea) y reiniciará el servidor.  
+Luego de esto nos queda configurar la extensión `.hbs` para que `node` lo detecte, para esto es necesario hacer un `require` de los handlebars en el `index.js`.
+
+```js
+
+    const { create } = require("express-handlebars")
+
+```
+
+Luego, habrá que indicarle a `node` la ruta donde se encuentran las plantillas y extensiones que se deberán renderizar.
+
+```js
+
+    const express = require('express');
+    const { create } = require("express-handlebars")
+
+    const app = express();
+
+    const hbs = create({
+        extname: ".hbs",    // Toma la extension
+        partialsDir: ["views/components"],    // Define la ruta donde se encuentran los componentes
+    });
+
+    app.engine(".hbs", hbs.engine);     // Define el motor de plantillas
+    app.set("view engine", ".hbs");     // Define la extension del mismo
+    app.set("views", "./views");    // Define la ruta en donde se encuentran las plantillas
+
+    const port = 5000;
+
+```
+
+Hay que saber que la base de todo el contenido se creara en el archivo `main.hbs`, aca es donde debería tener todo el contenido del head y demás, para luego agregar el contenido dinámico en otros archivos.  
+Ahora, dentro del mismo nos quedaría algo así.
+
+```HTML
+
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>= URL shortener =</title>
+    </head>
+
+
+    <body>
+        {{{body}}}
+    </body>
+
+
+    </html>
+
+```
+
+> La etiqueta `{{{body}}}` sirve para agregar el contenido que tendremos en los otros archivos
+
+Para crear el contenido que ira dentro de esta etiqueta crearemos un archivo llamado `home.hbs` dentro de la carpeta `views` (por fuera de la carpeta `layouts`), ahora lo que agreguemos en este archivo quedara reflejado en el main.
+
+```HTML
+
+    <h1>Bienvenidos al convertor de URLs</h1>
+
+```
+
+Por ultimo deberemos decirle a node que renderice estos archivos, para ello usaremos el método `render`.  
+Nuestro archivo `index.js` debería habernos quedado asi.
+
+```js
+
+    const express = require('express');
+    const { create } = require("express-handlebars")
+
+    const app = express();
+
+    const hbs = create({
+        extname: ".hbs",
+        partialsDir: ["views/components"],
+    });
+
+
+    app.engine(".hbs", hbs.engine);
+    app.set("view engine", ".hbs");
+    app.set("views", "./views");
+
+    const port = 5000;
+
+
+    app.get('/', (req, res) => {
+        res.render("home")      // Renderiza el archivo que indiquemos cuando sea la ruta raíz
+    })
+
+    app.use(express.static(__dirname + "/public"))
+
+    app.listen(port, () => console.log(`server listening on port ${port} :D`))
+
+```
+
+> El middleware `use static` debe estar DESPUÉS del render, dado que si esta antes solo se renderizará lo que este dentro de la carpeta `public`
+
+Los handlebars nos dan la posibilidad de crear paginas dinámicas con contenido dividido en `componentes` (anteriormente conocidos como `partials`), los cuales son pedazos de código que se repiten en otros lados, organizando mejor todo el código.  
+Para hacer una demostración podemos empezar con el uso de [`Bootstrap`](https://getbootstrap.com/docs/5.2/getting-started/introduction/), el cual llamaremos en base a su [`CDN`](https://getbootstrap.com/docs/5.2/getting-started/download/#cdn-via-jsdelivr) en el archivo `main.hbs`, ya que este, al ser la base de todas las paginas, renderizará Bootstrap en todos los lugares necesarios.  
+A la par de esto, dentro de la carpeta `components` crearemos un archivo llamado `NavBar.hbs` que contendrá nuestro [navbar](https://getbootstrap.com/docs/5.2/components/navbar/), quedando de la siguiente forma.
+
+```HTML
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Navbar</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Features</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+```
+
+Este componente lo llamaremos dentro de `main.hbs` para que se repita en todas las paginas, poniendo el nombre del archivo dentro de `{{> }}` (llaves dobles). El body de nuestro archivo principal debería quedarnos de la siguiente forma.
+
+```HTML
+
+    <body>
+   
+        {{> NavBar}}    <!-- Llamado al componente NavBar -->
+
+    <div>
+        
+        {{{body}}}      <!-- Llamado al componente principal general -->
+        
+    </div>
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+        crossorigin="anonymous"
+    ></script>      <!-- Script de Bootstrap -->
+    </body>
+
+```
+
+También es posible "modularizar" las rutas para un código mas limpio utilizando `router` de `express`. Para ello es necesario crear la carpeta `routes` al mismo nivel de la raíz (por fuera de public). Dentro de la misma crearemos el archivo `home.js`, usando el método `router` y pasando los datos de la ruta hacia el home que se encuentra en el `index.js`, quedando el mismo de la siguiente forma.
+
+```js
+
+    const express = require('express');
+    const router = express.Router();    // Uso del método Router
+
+    router.get('/', (req, res) => {     // Aquí se usa "router" en vez de "App"
+        const links = [
+            {link: "google.com/1", short: "JH244k1"},
+            {link: "google.com/2", short: "JH245k2"},
+            {link: "google.com/3", short: "JH246k3"},
+            {link: "google.com/4", short: "JH246k4"},
+        ]
+        res.render("home", {links: links})
+    })
+
+    module.exports = router;    // Al ser un modulo se tiene que exportar
+
+```
+
+Esto se tiene que llamar en el index principal, reemplazando la redirección anterior de la siguiente forma.
+
+```js
+
+    const express = require('express');
+    const { create } = require("express-handlebars")
+
+    const app = express();
+
+    const hbs = create({
+        extname: ".hbs",
+        partialsDir: ["views/components"],
+    });
+
+
+    app.engine(".hbs", hbs.engine);
+    app.set("view engine", ".hbs");
+    app.set("views", "./views");
+
+    const port = 5000;
+
+
+    app.use(express.static(__dirname + "/public"))
+    app.use("/", require("./routes/home"))      // Es el llamado que se usaba anteriormente para las rutas
+
+    app.listen(port, () => console.log(`server listening on port ${port} :D`))
+
+```
+
+Esto puede repetirse las veces que sea necesaria, para ponerlo como ejemplo vamos a crear una ruta de login, para ello comenzamos creando un archivo llamado `login.hbs` dentro de la carpeta `views`, el cual contendrá un `h1` como marca para indicar en que pagina estamos.
+
+```HTML
+
+    <h1>LOGIN</h1>
+
+```
+
+Luego, dentro de la carpeta `routes` crearemos su propio archivo llamado `auth.js` en el cual crearemos la ruta hacia el mismo como se indico anteriormente.
+
+```js
+
+    const express = require('express');
+    const router = express.Router();
+
+    router.get('/login', (req, res) => {
+        res.render("login")
+    })
+
+    module.exports = router;
+
+```
+
+> Como podemos ver, la base es la misma, lo único que cambia son los componentes a renderizar dependiendo de la ruta base que se requiere
+
+Como vimos anteriormente, hay que agregar esta nueva ruta al `index.js` que teníamos para node, quedando debajo de la ruta que genera el contenido principal.
+
+```js
+
+const port = 5000;
+
+    app.use(express.static(__dirname + "/public"))
+    app.use("/", require("./routes/home"))
+    app.use("/auth", require("./routes/auth"))      // Nueva ruta
+
+    app.listen(port, () => console.log(`server listening on port ${port} :D`))
+
+```
+
+Como podemos ver, esta nueva ruta se generará cuando la URL sea `/auth/login`, por lo que sera preciso cambiar los datos que se encuentra en el NavBar para acceder correctamente a ellas.
+
+```HTML
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Navbar</a>     <!-- Ruta que lleva a la pagina principal -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/">Home</a>    <!-- Ruta que lleva a la pagina principal -->
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/auth/login">Login</a>    <!-- Ruta que lleva a la nueva pagina de login -->
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+```
+
+Con esto hecho tenemos disponible dos rutas, la ruta raíz (`"/"`) que nos lleva a la pagina principal, y la ruta que nos lleva al login (`"/auth/login"`).
