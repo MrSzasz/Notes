@@ -161,13 +161,13 @@ El protocolo HTTP es el protocolo que permite la comunicación y transferencia d
 ```js
 
     const http = require('http');   // Modulo requerido
-    const port = 5000;  // Puerto que usaremos para iniciar en el navegador
 
     const server = http.createServer((req, res) => { 
         res.end("Esta es mi pagina :D");    // Esto es lo que se vera en la pagina cuando se inicie el servidor
     });
 
-    server.listen(port, () => console.log("El servidor funciona a la perfección!!"));   // Log en consola para saber si el mismo esta en funcionamiento
+    const PORT = process.env.PORT || 5000;  // Puerto que usaremos para iniciar en el navegador
+    server.listen(PORT, () => console.log("El servidor funciona a la perfección!!"));   // Log en consola para saber si el mismo esta en funcionamiento
 
 ```
 
@@ -201,13 +201,13 @@ Ahora que tenemos `express` instalado podemos pasar a la creación de un servido
 
     const express = require('express');     // Importa express
     const app = express();
-    const port = 5000;      // Puerto que usaremos para iniciar en el navegador
 
     app.get('/', (req, res) => {
         res.send("Esta es mi pagina :D");       // Esto es lo que se vera en la pagina cuando se inicie el servidor
     })
 
-    app.listen(port, () => console.log("El servidor funciona a la perfección!!"));      // Log en consola para saber si el mismo esta en funcionamiento
+    const PORT = process.env.PORT || 5000;      // Puerto que usaremos para iniciar en el navegador
+    app.listen(PORT, () => console.log("El servidor funciona a la perfección!!"));      // Log en consola para saber si el mismo esta en funcionamiento
 
 ```
 
@@ -265,7 +265,6 @@ Gracias a esto es posible enviar los datos al completar el formulario, para lueg
 
     const express = require('express');
     const app = express();
-    const port = 5000;
 
     app.use(express.static(__dirname + "/public"));     // Toma los archivos estáticos como plantillas
 
@@ -274,8 +273,8 @@ Gracias a esto es posible enviar los datos al completar el formulario, para lueg
         res.send('Formulario enviado!!')        // Esto es lo que se vera en la pagina "/form"
     })
 
-
-    app.listen(port, () => console.log("El servidor funciona a la perfección!!"));
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => console.log("El servidor funciona a la perfección!!"));
 
 ```
 
@@ -294,7 +293,7 @@ En este caso los datos se envían a traves del `body`, no de la URL, es por eso 
         res.send('Formulario enviado!!')
     })
 
-    app.listen(port, () => console.log("El servidor funciona a la perfección!!"));
+    app.listen(PORT, () => console.log("El servidor funciona a la perfección!!"));
 
 ```
 
@@ -442,7 +441,7 @@ Luego, habrá que indicarle a `node` la ruta donde se encuentran las plantillas 
     app.set("view engine", ".hbs");     // Define la extension del mismo
     app.set("views", "./views");    // Define la ruta en donde se encuentran las plantillas
 
-    const port = 5000;
+    const PORT = process.env.PORT || 5000;
 
 ```
 
@@ -501,16 +500,14 @@ Nuestro archivo `index.js` debería habernos quedado asi.
     app.set("view engine", ".hbs");
     app.set("views", "./views");
 
-    const port = 5000;
-
-
     app.get('/', (req, res) => {
         res.render("home")      // Renderiza el archivo que indiquemos cuando sea la ruta raíz
     })
 
     app.use(express.static(__dirname + "/public"))
 
-    app.listen(port, () => console.log(`server listening on port ${port} :D`))
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => console.log(`server listening on port ${PORT} :D`))
 
 ```
 
@@ -605,13 +602,11 @@ Esto se tiene que llamar en el index principal, reemplazando la redirección ant
     app.set("view engine", ".hbs");
     app.set("views", "./views");
 
-    const port = 5000;
-
-
     app.use(express.static(__dirname + "/public"))
     app.use("/", require("./routes/home"))      // Es el llamado que se usaba anteriormente para las rutas
 
-    app.listen(port, () => console.log(`server listening on port ${port} :D`))
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => console.log(`server listening on PORT ${port} :D`))
 
 ```
 
@@ -644,13 +639,13 @@ Como vimos anteriormente, hay que agregar esta nueva ruta al `index.js` que ten�
 
 ```js
 
-const port = 5000;
 
     app.use(express.static(__dirname + "/public"))
     app.use("/", require("./routes/home"))
     app.use("/auth", require("./routes/auth"))      // Nueva ruta
 
-    app.listen(port, () => console.log(`server listening on port ${port} :D`))
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => console.log(`server listening on port ${PORT} :D`))
 
 ```
 
@@ -680,3 +675,133 @@ Como podemos ver, esta nueva ruta se generará cuando la URL sea `/auth/login`, 
 ```
 
 Con esto hecho tenemos disponible dos rutas, la ruta raíz (`"/"`) que nos lleva a la pagina principal, y la ruta que nos lleva al login (`"/auth/login"`).
+
+## MongoDB
+
+Para seguir con nuestro proyecto vamos a hacer uso de [`MongoDB`](https://www.mongodb.com/) como nuestra base de datos. `MongoDB` es una base de datos no relacional (`NoSql`) que nos servirá para almacenar nuestros datos y hacer pedidos a la misma.  
+Para ello lo primero que tendremos que hacer es crear nuestra cuenta gratuita en su [página oficial](https://account.mongodb.com/account/register), yendo por las opciones gratuitas, luego de ello nos pedirá crear un usuario y contraseña, tomamos nota de los mismos ya que lo utilizaremos posteriormente.
+
+> También se pueden ver los pasos en [este](https://youtu.be/EkV2IBZL4C8) y [este](https://youtu.be/xkHyM-K3Cd8?t=11729) tutorial
+
+Luego, es preciso crear un archivo `.env` al nivel de la raíz (fuera de public) en el que tendremos guardados nuestros datos privados, el mismo debe agregarse dentro del archivo `.gitignore`, quedando el mismo de la siguiente forma.
+
+```text
+
+    node_modules
+    .env
+
+```
+
+Dentro de este nuevo archivo agregaremos nuestro `URI` proporcionado por MongoDB, al que reemplazaremos los datos entre <> con nuestros datos.
+
+```text
+
+    mongodb+srv://<username>:<password>@linkshortener.htlxrqb.mongodb.net/<dataBaseName>
+
+```
+
+Esto quedará dentro de nuestro `.env` como valor de `URI` de la siguiente forma.
+
+```env
+
+    URI=mongodb+srv://user:abcde12345@linkshortener.htlxrqb.mongodb.net/linkdatabase
+
+```
+
+Sumado a esto podemos instalar [`dotenv`](https://www.npmjs.com/package/dotenv), el cual es un paquete que nos ayudara a la gestión de las variables de entorno. Para ello usaremos el siguiente comando.
+
+```cmd
+
+    npm i dotenv
+
+```
+
+Con nuestra base de datos configurada podemos empezar a crear y modificar datos en la misma, para ello usaremos un paquete que nos ayudara con el proceso, llamado [`mongoose`](https://mongoosejs.com/), el cual deberemos instalar con el comando indicado en su [documentación](https://mongoosejs.com/docs/index.html).
+
+```cmd
+
+    npm install mongoose
+
+```
+
+Ahora es necesario crear nuestro archivo en el que llamaremos a nuestra base de datos, para ello crearemos la carpeta `database` al mismo nivel que la carpeta raíz, dentro de ella crearemos el archivo `db.js` en el que usaremos `mongoose` para la conexión con MongoDB.
+
+```js
+
+    const mongoose = require('mongoose');   // Requerimos Mongoose
+
+    mongoose.connect(process.env.URI)   // Conectamos Mongoose con los datos de Mongo en .env
+        .then(()=>{console.log("Base de datos conectada!!")})   // Nos indica que la conexión fue exitosa
+        .catch(err=>{console.log("Error: " + err)})     // Si hay un error lo detecta y aclara cual es
+
+```
+
+Ademas de esto, en el `index.js` deberemos agregar el pedido a la base de datos y a Mongoose, ambos usando `require` al inicio del archivo, quedando el mismo de la siguiente manera.
+
+```js
+
+    const express = require('express');
+    const { create } = require("express-handlebars")
+    require("dotenv").config();     // Requerimos dotenv para la configuración del .env
+    require("./database/db");   // Llamamos a la configuración de la base de datos
+
+```
+
+Ahora que terminamos de configurar la base de datos es necesario usar mongoose para crear nuestra colección de datos en Mongo, para ello deberemos crear una carpeta para los `models` en el mismo nivel de la carpeta raíz, dentro de esta deberemos crear el archivo que va a contener las colecciones (en este caso, la colección de URLs), al cual llamaremos `Url.js` (en singular y comenzando con mayúsculas).
+
+```js
+
+    const mongoose = require('mongoose');   // Requerimos mongoose de base
+    const { nanoid } = require("nanoid");   // Llamamos a nanoid para usarlo luego
+    const { Schema } = mongoose;    // Requerimos el método Schema para crear la colección
+
+    const urlSchema = new Schema({      // Al ser una clase, Schema usa el método new
+        link: {                         // Nombre del objeto que ira dentro del documento
+            type: 'string',     // Tipo de dato que se enviara
+            unique: true,       // Indicamos que sera un dato único e irrepetible
+            required: true      // Sera un dato requerido
+        },
+        short: {
+            type: 'string',
+            unique: true,
+            required: true,
+            default: nanoid(5)      // Por default nanoid genera un numero random de 5 caracteres
+        }
+
+    });
+
+    const Url = mongoose.model('Url', urlSchema);       // Indicamos que modelo usaremos para la colección
+    module.exports = Url;       // Exportamos la Url para poder usarla en otros lados y modificar o agregar datos
+
+```
+
+> Para generar los shorts para los url utilizaremos [`nanoid`](https://www.npmjs.com/package/nanoid), el cual instalaremos con el comando `npm i nanoid`
+
+Para seguir con la idea de usar un `modelo vista controlador` necesitaremos tener los controladores, es por eso que crearemos la carpeta `controllers` al mismo nivel que la carpeta raíz, aquí es donde tendremos los controladores que nos ayudaran para mantener los request y responses ordenados.  
+Luego de crear la carpeta deberemos crear el archivo `homeController.js`, el cual contendrá el controlador para la pagina inicial de nuestro proyecto, llevando el callback que esta en `/routes/home`, quedando de la siguiente forma.
+
+```js
+
+    const readURLs = async (req, res) => {      // Le asignamos un nombre para llamarlo en home
+        res.render("home")
+    }
+
+    module.exports = {          // Exportamos el modulo
+        readURLs,
+    }
+
+```
+
+Con este cambio podemos modularizar `home.js` quedando de las siguiente forma.
+
+```js
+
+    const express = require('express');
+    const { readURLs } = require('../controllers/homeController');      // Si no se importa automáticamente debe escribirse manualmente
+    const router = express.Router();
+
+    router.get('/', readURLs)       // Reemplazamos el callback con el modulo
+
+    module.exports = router;
+
+```
