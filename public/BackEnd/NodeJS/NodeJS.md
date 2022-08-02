@@ -854,7 +854,7 @@ Luego de esto, deberemos llamar a `addURLs` en el `home.js` como un método `POS
 
 ```
 
-Luego de esto es necesario agregar un input que nos ayudara a enviar los datos con un método `POST`, para ello crearemos un nuevo componente en su carpeta que se llame `Form.hbs`, en el mismo crearemos nuestro input.
+Ahora es necesario agregar un input que nos ayudara a enviar los datos con un método `POST`, para ello crearemos un nuevo componente en su carpeta que se llame `Form.hbs`, en el mismo crearemos nuestro input.
 
 ```HTML
 
@@ -873,6 +873,48 @@ Este componente lo agregaremos en la pagina principal (`/views/home.hbs`) para q
     <h2>Agregue su URL</h2>
 
     {{> Form}}      <!-- Importamos el componente -->
+
+```
+
+También es necesario validar que la entrada sea una URL valida, para ello crearemos nuestro propio middleware. Empezaremos creando la carpeta `middlewares` al nivel de la raíz, y dentro del mismo crearemos el archivo llamado `validateUrl.js`.
+
+```js
+
+    const {URL} = require('url');       // Requerimos el modulo url de Node
+
+    const validateUrls = (req, res, next) => {
+        try {
+            const { urlInput } = req.body;      //Tomamos la url
+            const urlFrontEnd = new URL(urlInput)       // Valida que sea url
+            if (urlFrontEnd.origin !== "null") {    // Si no es null sigue al método
+            return next()
+            } else {
+                throw new Error("Link invalido")    // Si es null genera un nuevo error
+            }
+        } catch (err) {
+            console.log("Oh no! Hubo un error: " + err)
+            return res.send("error!")       // Nos manda a una pagina de error
+        }
+    }
+
+    module.exports = validateUrls;      // Lo exporta
+
+```
+
+Por ultimo debemos hacer uso de este nuevo middleware cuando añadimos la url en `home.js`, quedando el mismo de la siguiente forma.
+
+```js
+
+    const express = require('express');
+    const { readURLs, addURLs, deleteURLs } = require('../controllers/homeController');
+    const validateUrls = require('../middlewares/validateUrls');        // Importa el middleware recién creado
+    const router = express.Router();
+
+    router.get('/', readURLs)
+    router.post('/', validateUrls, addURLs)     // Primero valida la url, si es valida sigue al método de añadir Url
+    router.get('/delete/:linkId', deleteURLs)
+
+    module.exports = router;
 
 ```
 
@@ -902,7 +944,7 @@ Teniendo estos datos deberemos mostrarlos en pantalla, para ello crearemos un nu
 
     {{#each links }}        <!-- ForEach propio de handlebars -->
 
-    <div class="card m-3" style="width: 18rem;">
+    <div class="card m-auto my-3 w-75 text-center">
     <div class="card-body">
         <h5 class="card-title">Link id: {{this._id}}</h5>       <!-- El this. toma de base el parámetro pasado y sus propiedades como un forEach normal de JS -->
         <h6 class="card-subtitle mb-2 text-muted">Short URL: {{this.short}}</h6>
@@ -910,7 +952,7 @@ Teniendo estos datos deberemos mostrarlos en pantalla, para ello crearemos un nu
         <div>
             <a class="btn btn-success" href="#">copiar</a>
             <a class="btn btn-primary" href="#">editar</a>
-            <a class="btn btn-danger" href="#">eliminar</a>
+            <a class="btn btn-danger" href="/delete/{{this._id}}">eliminar</a>      <!-- Esto lo usaremos como parámetros para eliminar -->
         </div>
     </div>
     </div>
@@ -920,3 +962,41 @@ Teniendo estos datos deberemos mostrarlos en pantalla, para ello crearemos un nu
 ```
 
 > Este nuevo componente deberemos llamarlo en el `home.hbs` como lo hicimos con el `Form`
+
+Luego de esto podemos probar una manera (no muy eficiente) de borrar un dato, para esto deberemos crear una nueva respuesta en el `homeController` llamada `deleteUrls`, la cual deberá hacer uso del método `findByIdAndDelete` basado en el id del link a borrar.
+
+```js
+
+    const deleteURLs = async (req, res) => {
+
+        const { linkId } = req.params           // Tomamos el parámetro pasado por URL
+
+        try {
+            await Url.findByIdAndDelete(linkId)     // Busca el link en base al id en el parámetro
+            res.redirect("/")
+        } catch (err) {
+            console.log(err);
+            res.send("OH NO! Hubo un error! Error: " + err)
+        }
+
+    }
+
+    module.exports = {
+        readURLs,
+        addURLs,
+        deleteURLs,         // Lo exporta para usarlo como callback
+    }
+
+```
+
+> Esto no es muy eficiente ya que se llaman los datos cada vez que se cumple una acción, dando como resultado un uso mayor al debido de la base de datos
+
+Hecho esto debemos llamarlo en el `home.js` para que se ejecute cada vez que se pase la URL.
+
+```js
+
+    router.get('/', readURLs)
+    router.post('/', addURLs)
+    router.get('/delete/:linkId', deleteURLs)       // Cuando la URL se pase con el id, se ejecutará y eliminará de la base de datos
+
+```
