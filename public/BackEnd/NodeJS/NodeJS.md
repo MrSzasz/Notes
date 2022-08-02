@@ -505,6 +505,7 @@ Nuestro archivo `index.js` debería habernos quedado asi.
     })
 
     app.use(express.static(__dirname + "/public"))
+    app.use(express.urlencoded({extended: true}))
 
     const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => console.log(`server listening on port ${PORT} :D`))
@@ -603,6 +604,7 @@ Esto se tiene que llamar en el index principal, reemplazando la redirección ant
     app.set("views", "./views");
 
     app.use(express.static(__dirname + "/public"))
+    app.use(express.urlencoded({extended: true}))
     app.use("/", require("./routes/home"))      // Es el llamado que se usaba anteriormente para las rutas
 
     const PORT = process.env.PORT || 5000;
@@ -641,6 +643,7 @@ Como vimos anteriormente, hay que agregar esta nueva ruta al `index.js` que ten�
 
 
     app.use(express.static(__dirname + "/public"))
+    app.use(express.urlencoded({extended: true}))
     app.use("/", require("./routes/home"))
     app.use("/auth", require("./routes/auth"))      // Nueva ruta
 
@@ -752,7 +755,6 @@ Ahora que terminamos de configurar la base de datos es necesario usar mongoose p
 ```js
 
     const mongoose = require('mongoose');   // Requerimos mongoose de base
-    const { nanoid } = require("nanoid");   // Llamamos a nanoid para usarlo luego
     const { Schema } = mongoose;    // Requerimos el método Schema para crear la colección
 
     const urlSchema = new Schema({      // Al ser una clase, Schema usa el método new
@@ -765,13 +767,12 @@ Ahora que terminamos de configurar la base de datos es necesario usar mongoose p
             type: 'string',
             unique: true,
             required: true,
-            default: nanoid(5)      // Por default nanoid genera un numero random de 5 caracteres
         }
 
     });
 
     const Url = mongoose.model('Url', urlSchema);       // Indicamos que modelo usaremos para la colección
-    module.exports = Url;       // Exportamos la Url para poder usarla en otros lados y modificar o agregar datos
+    module.exports = Url;       // Exportamos la Url para poder usarla en otros lados, y utilizar sus metodos para modificar o agregar datos
 
 ```
 
@@ -805,3 +806,117 @@ Con este cambio podemos modularizar `home.js` quedando de las siguiente forma.
     module.exports = router;
 
 ```
+
+Para leer los datos, es necesario TENER datos para leer, es por eso que crearemos los datos desde nuestra pagina principal, para ello crearemos la respuesta para el request en el controlador del `homeController`, el cual quedaria de la siguente manera.
+
+```js
+
+    const Url = require("../models/Url");   // Llamamos al modelo de la base de datos que creamos anteriormente
+    const { nanoid } = require("nanoid");   // Llamamos a nanoid para usarlo luego
+
+    const readURLs = async (req, res) => {
+        res.render("home")
+    }
+
+    const addURLs = async (req, res) => {
+
+        const { urlInput } = req.body       // Tomamos el dato enviado por el formulario
+
+        try {
+            const url = new Url({link: urlInput, short: nanoid(8)})      // El link lo tomaremos desde el input y el short se crea aleatoriamente 
+            await url.save()            // Guarda los datos en la base de datos
+            res.redirect("/")         // Al crearse con exito nos devuelve a la pagina principal
+        } catch (err) {
+            console.log(err);   // Si hay un error durante la creacion lo podremos ver en consola
+            res.send("OH NO! Hubo un error! Error: " + err)     //Y tambien nos saldra en la pagina
+        }
+    }
+
+    module.exports = {
+        readURLs,
+        addURLs,        // Lo exportamos para usarlo en el home.js
+    }
+
+```
+
+Luego de esto, deberemos llamar a `addURLs` en el `home.js` como un metodo `POST` que vemdra desde un input.
+
+```js
+
+    const express = require('express');
+    const { readURLs, addURLs } = require('../controllers/homeController');     // VSC importa automáticamente si lo necesitamos
+    const router = express.Router();
+
+    router.get('/', readURLs)
+    router.post('/', addURLs)       // El autocompletar lo importa automáticamente
+
+    module.exports = router;
+
+```
+
+Luego de esto es necesario agregar un input que nos ayudara a enviar los datos con un metodo `POST`, para ello crearemos un nuevo componente en su carpeta que se llame `Form.hbs`, en el mismo crearemos nuestro input.
+
+```HTML
+
+    <form class="w-75 m-auto" action="/" method="post">     <!-- El action sirve para la redireccion y el metodo para subir los datos -->
+        <input class="form-control mb-2" type="text" name="urlInput" id="urlInput" placeholder="Inserte una URL valida" required>
+        <button type="submit" class="btn btn-success w-100">Agregar URL</button>
+    </form>
+
+```
+
+Este componente lo agregaremos en la pagina principal (`/views/home.hbs`) para que se renderice unicamente ahi.
+
+```HTML
+
+    <h1>Bienvenidos al convertor de URLs con Node y Handlebars</h1>
+    <h2>Agregue su URL</h2>
+
+    {{> Form}}      <!-- Importamos el componente -->
+
+```
+
+> Con esto hecho podemos probar nuestro proyecto, iniciamos el servidor (`npm run dev`) y agregamos una url, si no hay problemas deberiamos ver el nuevo dato en la base de datos de MongoDB.
+
+Ahora que pudimos crear nuestro primer dato es necesario poder leer esos datos, para ello usaremos el metodo `find`, el cual nos trae todos los datos de la base de datos, y el metodo `lean`, que "formatea" los datos en datos mas simples.  
+Para ello nos iremos a `homeController.js` y agregaremos los datos a `readURLs`.
+
+```js
+
+    const readURLs = async (req, res) => {
+
+        try {
+            const links = await Url.find().lean()       // Toma los datos de la base de datos 
+            res.render("home", {links: links})      // Lo usaremos para renderizar los datos en la pagina principal
+        } catch (err) {
+            console.log(err);
+            res.send("OH NO! Hubo un error! Error: " + err)
+        }
+    }
+
+```
+
+Tenioendo estos datos deberemos mostrarlos en pantalla, para ello crearemos un nuevo componente llamado `UrlCard.hbs` que creara una card por cada dato que viene de nuestra base de datos (es decir, `forEach`), utilizando un metodo porpio de handlebars.
+
+```HTML
+
+    {{#each links }}        <!-- ForEach propio de handlebars -->
+
+    <div class="card m-3" style="width: 18rem;">
+    <div class="card-body">
+        <h5 class="card-title">Link id: {{this._id}}</h5>       <!-- El this. toma de base el parametro pasado y sus propiedades como un forEach normal de JS -->
+        <h6 class="card-subtitle mb-2 text-muted">Short URL: {{this.short}}</h6>
+        <a href={{this.link}} class="card-link" target="_blank">Link: {{this.link}}</a>
+        <div>
+            <a class="btn btn-success" href="#">copiar</a>
+            <a class="btn btn-primary" href="#">editar</a>
+            <a class="btn btn-danger" href="#">eliminar</a>
+        </div>
+    </div>
+    </div>
+
+    {{/each}}       <!-- Cierre del forEach de handlebars -->
+
+```
+
+> Este nuevo componente deberemos llamarlo en el `home.hbs` como lo hicimos con el `Form`
