@@ -772,7 +772,7 @@ Ahora que terminamos de configurar la base de datos es necesario usar mongoose p
     });
 
     const Url = mongoose.model('Url', urlSchema);       // Indicamos que modelo usaremos para la colección
-    module.exports = Url;       // Exportamos la Url para poder usarla en otros lados, y utilizar sus metodos para modificar o agregar datos
+    module.exports = Url;       // Exportamos la Url para poder usarla en otros lados, y utilizar sus métodos para modificar o agregar datos
 
 ```
 
@@ -807,7 +807,7 @@ Con este cambio podemos modularizar `home.js` quedando de las siguiente forma.
 
 ```
 
-Para leer los datos, es necesario TENER datos para leer, es por eso que crearemos los datos desde nuestra pagina principal, para ello crearemos la respuesta para el request en el controlador del `homeController`, el cual quedaria de la siguente manera.
+Para leer los datos, es necesario TENER datos para leer, es por eso que crearemos los datos desde nuestra pagina principal, para ello crearemos la respuesta para el request en el controlador del `homeController`, el cual quedaría de la siguiente manera.
 
 ```js
 
@@ -825,10 +825,10 @@ Para leer los datos, es necesario TENER datos para leer, es por eso que crearemo
         try {
             const url = new Url({link: urlInput, short: nanoid(8)})      // El link lo tomaremos desde el input y el short se crea aleatoriamente 
             await url.save()            // Guarda los datos en la base de datos
-            res.redirect("/")         // Al crearse con exito nos devuelve a la pagina principal
+            res.redirect("/")         // Al crearse con éxito nos devuelve a la pagina principal
         } catch (err) {
-            console.log(err);   // Si hay un error durante la creacion lo podremos ver en consola
-            res.send("OH NO! Hubo un error! Error: " + err)     //Y tambien nos saldra en la pagina
+            console.log(err);   // Si hay un error durante la creación lo podremos ver en consola
+            res.send("OH NO! Hubo un error! Error: " + err)     //Y también nos saldrá en la pagina
         }
     }
 
@@ -839,7 +839,7 @@ Para leer los datos, es necesario TENER datos para leer, es por eso que crearemo
 
 ```
 
-Luego de esto, deberemos llamar a `addURLs` en el `home.js` como un metodo `POST` que vemdra desde un input.
+Luego de esto, deberemos llamar a `addURLs` en el `home.js` como un método `POST` que vendrá desde un input.
 
 ```js
 
@@ -854,11 +854,11 @@ Luego de esto, deberemos llamar a `addURLs` en el `home.js` como un metodo `POST
 
 ```
 
-Luego de esto es necesario agregar un input que nos ayudara a enviar los datos con un metodo `POST`, para ello crearemos un nuevo componente en su carpeta que se llame `Form.hbs`, en el mismo crearemos nuestro input.
+Luego de esto es necesario agregar un input que nos ayudara a enviar los datos con un método `POST`, para ello crearemos un nuevo componente en su carpeta que se llame `Form.hbs`, en el mismo crearemos nuestro input.
 
 ```HTML
 
-    <form class="w-75 m-auto" action="/" method="post">     <!-- El action sirve para la redireccion y el metodo para subir los datos -->
+    <form class="w-75 m-auto" action="/" method="post">     <!-- El action sirve para la redirección y el método para subir los datos -->
         <input class="form-control mb-2" type="text" name="urlInput" id="urlInput" placeholder="Inserte una URL valida" required>
         <button type="submit" class="btn btn-success w-100">Agregar URL</button>
     </form>
@@ -876,9 +876,9 @@ Este componente lo agregaremos en la pagina principal (`/views/home.hbs`) para q
 
 ```
 
-> Con esto hecho podemos probar nuestro proyecto, iniciamos el servidor (`npm run dev`) y agregamos una url, si no hay problemas deberiamos ver el nuevo dato en la base de datos de MongoDB.
+> Con esto hecho podemos probar nuestro proyecto, iniciamos el servidor (`npm run dev`) y agregamos una url, si no hay problemas deberíamos ver el nuevo dato en la base de datos de MongoDB.
 
-Ahora que pudimos crear nuestro primer dato es necesario poder leer esos datos, para ello usaremos el metodo `find`, el cual nos trae todos los datos de la base de datos, y el metodo `lean`, que "formatea" los datos en datos mas simples.  
+Ahora que pudimos crear nuestro primer dato es necesario poder leer esos datos, para ello usaremos el método `find`, el cual nos trae todos los datos de la base de datos, y el método `lean`, que "formatea" los datos en datos mas simples.  
 Para ello nos iremos a `homeController.js` y agregaremos los datos a `readURLs`.
 
 ```js
@@ -896,7 +896,7 @@ Para ello nos iremos a `homeController.js` y agregaremos los datos a `readURLs`.
 
 ```
 
-Tenioendo estos datos deberemos mostrarlos en pantalla, para ello crearemos un nuevo componente llamado `UrlCard.hbs` que creara una card por cada dato que viene de nuestra base de datos (es decir, `forEach`), utilizando un metodo porpio de handlebars.
+Teniendo estos datos deberemos mostrarlos en pantalla, para ello crearemos un nuevo componente llamado `UrlCard.hbs` que creara una card por cada dato que viene de nuestra base de datos (es decir, `forEach`), utilizando un método propio de handlebars.
 
 ```HTML
 
@@ -904,7 +904,7 @@ Tenioendo estos datos deberemos mostrarlos en pantalla, para ello crearemos un n
 
     <div class="card m-3" style="width: 18rem;">
     <div class="card-body">
-        <h5 class="card-title">Link id: {{this._id}}</h5>       <!-- El this. toma de base el parametro pasado y sus propiedades como un forEach normal de JS -->
+        <h5 class="card-title">Link id: {{this._id}}</h5>       <!-- El this. toma de base el parámetro pasado y sus propiedades como un forEach normal de JS -->
         <h6 class="card-subtitle mb-2 text-muted">Short URL: {{this.short}}</h6>
         <a href={{this.link}} class="card-link" target="_blank">Link: {{this.link}}</a>
         <div>
