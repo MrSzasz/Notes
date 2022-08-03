@@ -858,12 +858,21 @@ Ahora es necesario agregar un input que nos ayudara a enviar los datos con un m�
 
 ```HTML
 
-    <form class="w-75 m-auto" action="/" method="post">     <!-- El action sirve para la redirección y el método para subir los datos -->
-        <input class="form-control mb-2" type="text" name="urlInput" id="urlInput" placeholder="Inserte una URL valida" required>
-        <button type="submit" class="btn btn-success w-100">Agregar URL</button>
-    </form>
+    {{#if url}}         <!-- If propio de handlebars que nos servirá mas adelante para editar los datos -->
+        <form class="w-75 m-auto" action="/update/{{url._id}}" method="post">       <!-- El action sirve para la redirección y el método para subir los datos -->
+            <input value="{{url.link}}" class="form-control mb-2" type="text" name="urlInput" id="urlInput" placeholder="Inserte una URL valida" required>
+            <button type="submit" class="btn btn-primary w-100">Editar URL</button>
+        </form>
+    {{else}}
+        <form class="w-75 m-auto" action="/" method="post">
+            <input class="form-control mb-2" type="text" name="urlInput" id="urlInput" placeholder="Inserte una URL valida" required>
+            <button type="submit" class="btn btn-success w-100">Agregar URL</button>
+        </form>
+    {{/if}}
 
 ```
+
+> La primer parte del formulario se renderizará unicamente cuando querramos editar un dato en la base de datos
 
 Este componente lo agregaremos en la pagina principal (`/views/home.hbs`) para que se renderice unicamente ahi.
 
@@ -998,5 +1007,72 @@ Hecho esto debemos llamarlo en el `home.js` para que se ejecute cada vez que se 
     router.get('/', readURLs)
     router.post('/', addURLs)
     router.get('/delete/:linkId', deleteURLs)       // Cuando la URL se pase con el id, se ejecutará y eliminará de la base de datos
+
+```
+
+Lo que nos queda por hacer para tener el CRUD (create, read, update, delete) completo es poder editar nuestros links guardados. Para ello crearemos la nueva respuesta en el `homeController.js`, primero para crearemos la redirección para el formulario de edición.
+
+```js
+
+    const updateUrlsForm = async (req, res) => {
+        
+        const { linkId } = req.params           // Tomamos el parámetro pasado por URL
+        
+        try {
+            const url = await Url.findById(linkId).lean()       // Busca el link en la base de datos
+            res.render("home", {url})           // Renderiza el home pasando el objeto como parámetro para que funcione el if del formulario
+        } catch (err) {
+            console.log(err);
+            res.send("OH NO! Hubo un error! Error: " + err)
+        }
+    }
+
+    module.exports = {
+        readURLs,
+        addURLs,
+        deleteURLs,
+        updateUrlsForm,
+    }
+
+```
+
+Ahora debemos agregarlo al `home`, agregándolo directamente para que se haga la autoimportación.
+
+```js
+
+    router.get('/', readURLs)
+    router.post('/', validateUrls, addURLs)
+    router.get('/delete/:linkId', deleteURLs)
+    router.get('/update/:linkId', updateUrlsForm)
+
+    module.exports = router;
+
+```
+
+Por ultimo debemos crear la respuesta para editar el link en la base de datos, para ello deberemos usar el método `findByIdAndUpdate`, el cual busca y trae el objeto de la base de datos.
+
+```js
+
+    const updateUrls = async (req, res) => {        // Creamos la respuesta
+        
+        const { linkId } = req.params           // Toma el id del objeto
+        const { urlInput } = req.body           // Toma el dato escrito en el input
+
+        try {
+            await Url.findByIdAndUpdate(linkId, {link: urlInput})       // Toma el dato del id y después crea el objeto y lo edita en la base de datos
+            res.redirect("/")       // Redirige a la pagina principal
+        } catch (err) {
+            console.log(err);
+            res.send("OH NO! Hubo un error! Error: " + err)
+        }
+    }
+
+    module.exports = {
+        readURLs,
+        addURLs,
+        deleteURLs,
+        updateUrlsForm,
+        updateUrls,         // Exporta para usarlo luego
+    }
 
 ```
