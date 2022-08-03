@@ -1112,3 +1112,135 @@ En la carpeta public crearemos nuestra carpeta contenedora de scripts, dentro de
 ```
 
 > Este script hay que importarlo en el `main.hbs` para que lo detecte el front-end
+
+## Autorización
+
+Ahora que tenemos nuestra pagina completamente funcional es tiempo de agregar usuarios y sus autorizaciones, para ello empezamos creando un archivo llamado `auth.js` en nuestra carpeta de rutas y un `authController.js` en la carpeta de los controladores.  
+Para nuestro controlador crearemos dos respuestas, `loginForm` y `registerForm`, exportando ambos.
+
+```js
+
+    const loginForm = (req, res) => {
+        res.render("login")             // Render para el login
+    }
+
+    const registerUser = async (req, res) => {
+        res.json(req.body)          // Toma los datos del formulario de registro
+    }
+
+    const registerForm = (req, res) => {
+        res.render("register")          // Render para el register
+    }
+
+    module.exports = {                  // Exportamos los módulos
+        loginForm,
+        registerForm,
+        registerUser,
+    }
+
+```
+
+Los mismos deberemos llevarlos a `auth.js`, creando como respuesta a los requires, importando ambos (si se crea primero los módulos, VSC los importa automáticamente).
+
+```js
+
+    const express = require('express');
+    const { loginForm, registerUser, registerForm } = require('../controllers/authController');   // Importamos los módulos
+    const router = express.Router();
+
+    router.get('/register', registerForm)       // Creamos el router para el register
+    router.post('/register', registerUser)       // Creamos el router para los datos del formulario de registro
+    router.get('/login', loginForm)             // Creamos el router para el login
+
+    module.exports = router;
+
+```
+
+Ademas deberemos crear la vista del register, es decir, crear el archivo `register.hbs` en la carpeta de `views`, en el cual agregaremos nuestro formulario de registro.
+
+```HTML
+
+    <h1 class="text-center">Ingrese los datos para crear un nuevo usuario</h1>
+
+    <form class="d-flex flex-column w-50 gap-2 m-auto" action="/auth/register" method="post">
+        <input type="text" name="userName" id="userName" placeholder="Inserte su nombre" required>
+        <input type="text" name="userMail" id="userMail" placeholder="ejemplo@mail.com" required>
+        <input type="password" name="userPass" id="userPass" placeholder="********" required>
+        <input type="password" name="userPassConfirmation" id="userPassConfirmation" placeholder="Repita su contraseña" required>
+        <button class="form-control btn btn-primary" type="submit">Registrarse</button>
+    </form>
+
+```
+
+Para poder guardar los datos de los usuarios es necesario crear nuestro modelo, para ello crearemos el archivo `User.js` en la carpeta de modelos.
+
+```js
+
+    const mongoose = require('mongoose');   // Requerimos Mongoose
+    const { Schema } = mongoose;    // Método para creare Schemas de Mongoose
+
+    const userSchema = new Schema({
+
+        userName: {                  // Nombre de usuario
+            type: String,
+            lowercase: true,                 // Transforma el dato en lowercase
+            required: true,                  // Lo vuelve obligatorio
+        },
+        userMail:{
+            type: String,
+            lowercase: true,
+            required: true,
+            unique: true,                  // Verifica que no se repita
+            index: { unique: true }        // Verifica que el index no se repita
+        },
+        userPass:{
+            type: String,
+            required: true,
+        },
+        tokenConfirmation:{                  // Lo usaremos para confirmar el mail
+            type: String,
+            default: null,
+        },
+        isConfirmed:{                  // Detecta si confirmo el mail
+            type: Boolean,
+            default: false,
+        }    
+
+    });
+
+    module.exports = mongoose.model('User', userSchema);        // Exporta el esquema
+
+```
+
+Esto lo usaremos en el controlador para llevarlo como respuesta y enviarlo a la base de datos, pero primero debemos confirmar que el usuario no este registrado.
+
+```js
+
+    const registerUser = async (req, res) => {
+        
+        const { userName, userMail, userPass } = req.body       // Toma los datos enviados por el formulario
+
+        try {
+            let user = await User.findOne({ userMail: userMail})      // Comprueba que no exista el mail en la base de datos
+            if(user) throw new Error(`El mail ${user.userMail} ya esta en uso`)       // Si el usuario existe genera un nuevo error
+            user = new User({userName, userMail, userPass})        // Si no existe genera un nuevo usuario con el esquema que creamos anteriormente
+            await user.save()           // Guarda el usuario en la base de datos
+            res.json(user)        // Muestra en pantalla los datos creados
+        } catch (err) {
+            console.log("Oh no! Hubo un error: " + err.message)
+            res.send("ERROR: " + err.message)
+        }
+    }
+
+```
+
+> El método `User` es necesario importarlo al inicio del documento, en VSC se hace la autoimportación (`const User = require("../models/User")`)
+
+Ya tenemos la creación del usuario y el envío de datos a la base de datos, pero la contraseña es un dato sensible, por lo que hay que encriptarla antes de subirla a la misma, para ello haremos uso del paquete llamado `bcrypt.js`, el cual genera una encriptación de la misma.  
+Para instalar el paquete usaremos el comando indicado en su [documentación](https://www.npmjs.com/package/bcryptjs).
+
+```cmd
+
+    npm i bcryptjs
+
+```
