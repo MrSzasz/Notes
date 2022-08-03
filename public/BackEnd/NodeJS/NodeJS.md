@@ -959,7 +959,7 @@ Teniendo estos datos deberemos mostrarlos en pantalla, para ello crearemos un nu
         <h6 class="card-subtitle mb-2 text-muted">Short URL: {{this.short}}</h6>
         <a href={{this.link}} class="card-link" target="_blank">Link: {{this.link}}</a>
         <div>
-            <a class="btn btn-success" href="#">copiar</a>
+            <button data-shortUrl="{{this.short}}" class="btn btn-success" href="#">copiar</button>         <!-- Tomaremos el dataAttribute cuando editemos en la base de datos-->
             <a class="btn btn-primary" href="#">editar</a>
             <a class="btn btn-danger" href="/delete/{{this._id}}">eliminar</a>      <!-- Esto lo usaremos como parámetros para eliminar -->
         </div>
@@ -1076,3 +1076,39 @@ Por ultimo debemos crear la respuesta para editar el link en la base de datos, p
     }
 
 ```
+
+Esta ultima la agregaremos al `home` para dar por finalizado el CRUD.
+
+```js
+
+    router.get('/', readURLs)
+    router.post('/', validateUrls, addURLs)
+    router.get('/delete/:linkId', deleteURLs)
+    router.get('/update/:linkId', updateUrlsForm)
+    router.post('/update/:linkId', validateUrls, updateUrls)        // Agregamos la validación de URL que creamos anteriormente
+
+    module.exports = router;
+
+```
+
+Para el completo funcionamiento de nuestra pagina es necesario tomar los datos del link acortado y poder usarlo para redirigir a la pagina guardada, para ello usaremos el Front-End.  
+En la carpeta public crearemos nuestra carpeta contenedora de scripts, dentro de ella crearemos el archivo `app.js` que contendrá el siguiente script.
+
+```js
+
+    document.addEventListener("click", (e)=>{       // Detecta el click en el documento
+        if (e.target.getAttribute("data-shortUrl")){        // Si hacemos click en el botón con el atributo
+            const url = `http://localhost:5000/${e.target.getAttribute("data-shortUrl")}`        // Crea la URL
+        
+            navigator.clipboard
+                .writeText(url)     // Copia la URL al portapapeles
+                .then(()=>{
+                    console.log("Copiado con éxito!")       // Verificación si funciona
+                })
+                .catch((err)=>{console.log("Oh no! Hubo un error: " + err)});
+        }
+    })
+
+```
+
+> Este script hay que importarlo en el `main.hbs` para que lo detecte el front-end
