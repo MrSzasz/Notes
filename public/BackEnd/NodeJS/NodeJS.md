@@ -896,10 +896,11 @@ También es necesario validar que la entrada sea una URL valida, para ello crear
             const { urlInput } = req.body;      //Tomamos la url
             const urlFrontEnd = new URL(urlInput)       // Valida que sea url
             if (urlFrontEnd.origin !== "null") {    // Si no es null sigue al método
-            return next()
-            } else {
-                throw new Error("Link invalido")    // Si es null genera un nuevo error
+                if(urlFrontEnd.protocol === "https:" || urlFrontEnd.protocol === "http:"){
+                    return next()            
+                }
             }
+            throw new Error("Link invalido")        // Si es null genera un nuevo error
         } catch (err) {
             console.log("Oh no! Hubo un error: " + err)
             return res.send("error!")       // Nos manda a una pagina de error
@@ -1223,9 +1224,9 @@ Esto lo usaremos en el controlador para llevarlo como respuesta y enviarlo a la 
         try {
             let user = await User.findOne({ userMail: userMail})      // Comprueba que no exista el mail en la base de datos
             if(user) throw new Error(`El mail ${user.userMail} ya esta en uso`)       // Si el usuario existe genera un nuevo error
-            user = new User({userName, userMail, userPass})        // Si no existe genera un nuevo usuario con el esquema que creamos anteriormente
+            user = new User({userName, userMail, userPass, tokenConfirmation: nanoid()})        // Si no existe genera un nuevo usuario con el esquema que creamos anteriormente
             await user.save()           // Guarda el usuario en la base de datos
-            res.json(user)        // Muestra en pantalla los datos creados
+            res.redirect("/auth/login")        // Envía a la pagina de login
         } catch (err) {
             console.log("Oh no! Hubo un error: " + err.message)
             res.send("ERROR: " + err.message)
@@ -1234,7 +1235,7 @@ Esto lo usaremos en el controlador para llevarlo como respuesta y enviarlo a la 
 
 ```
 
-> El método `User` es necesario importarlo al inicio del documento, en VSC se hace la autoimportación (`const User = require("../models/User")`)
+> El método `User` es necesario importarlo al inicio del documento, en VSC se hace la autoimportación (`const User = require("../models/User")`) junto a `nanoid` (`const nanoid = require("nanoid")`)
 
 Ya tenemos la creación del usuario y el envío de datos a la base de datos, pero la contraseña es un dato sensible, por lo que hay que encriptarla antes de subirla a la misma, para ello haremos uso del paquete llamado `bcrypt.js`, el cual genera una encriptación de la misma.  
 Para instalar el paquete usaremos el comando indicado en su [documentación](https://www.npmjs.com/package/bcryptjs).
@@ -1244,3 +1245,160 @@ Para instalar el paquete usaremos el comando indicado en su [documentación](htt
     npm i bcryptjs
 
 ```
+
+Para generar nuestra encriptación usaremos el método `.pre` de `mongoose`, el cual realiza una acción antes de guardarla en la base de datos. Esto lo haremos en el modelo del user.
+
+```js
+
+    userSchema.pre("save", async function(next){            // Usamos .pre para realizar la acción antes de guardar los datos
+        const user = this;      // Definimos el user en base al this
+        if(!user.isModified("userPass")) return next();     // Si la contraseña no se modifica no se vuelve a hacer el hash
+
+        try {
+        
+            const salt = await bcrypt.genSalt(10);      // Genera los saltos 
+            const hash = await bcrypt.hashSync(user.userPass, salt);        // Encripta la contraseña en base a los saltos
+            user.userPass = hash;       // Reemplaza la contraseña con el hash
+
+            next();
+
+        } catch (err) {
+        
+            console.log("Oh no! Hubo un error: " + err.message)
+            
+            next();
+        
+        }
+    })
+
+```
+
+> Para usar `bcrypt` es necesario importarlo al inicio con `const bcrypt = require('bcryptjs')`
+
+El siguiente paso sera confirmar la cuenta del usuario con el token, para ello crearemos un nuevo controlador que importaremos en el auth llamado `tokenConfirmation`.
+
+```js
+
+    const tokenConfirmation = async (req, res) => {
+        const { tokenForConfirmation } = req.params;        // Tomamos el token que enviaremos por URL
+
+        try {
+            const user = await User.findOne({ tokenConfirmation: tokenForConfirmation });       // Buscamos el usuario en la base de datos
+            if(!user) throw new Error("No se encontró el usuario")      // Si no se encuentra el usuario se genera un nuevo error
+
+            user.isConfirmed = true;        // Si se encuentra cambiamos la confirmación
+            user.tokenConfirmation = null;      // Ademas, borramos el token
+            await user.save();              // Guardamos los nuevos datos del usuario
+            res.redirect("/auth/login")         // Redirigimos a la pagina de login
+        } catch (err) {
+            console.log("Oh no! Hubo un error: " + err.message)
+            res.send("ERROR: " + err.message)
+        }
+    }
+
+```
+
+> Como con todos los controladores, deberemos exportarlo
+
+Luego, usamos el controlador en `auth.js`, el cual debería quedar de la siguiente forma.
+
+```js
+
+    const express = require('express');
+    const { loginForm, registerForm, registerUser, tokenConfirmation } = require('../controllers/authController');
+    const router = express.Router();
+
+    router.get('/register', registerForm)
+    router.post('/register', registerUser)
+    router.get('/confirmation/:tokenForConfirmation', tokenConfirmation)
+    router.get('/login', loginForm)
+
+    module.exports = router;
+
+```
+
+> De momento podemos generar la confirmación manual del token, ingresando a `/auth/confirmation/{aca va el token en la base de datos}`
+
+Ahora seguiremos con el siguiente paso lógico, crear el login para el usuario. Para ello empezamos creando el formulario para el mismo en el archivo `login.hbs`.
+
+```js
+
+    <h1 class="text-center">Inicie sesión con sus datos</h1>
+
+    <form class="d-flex flex-column w-50 gap-2 m-auto" action="/auth/login" method="post">
+        <input type="text" name="userMail" id="userMail" placeholder="ejemplo@mail.com" required>
+        <input type="password" name="userPass" id="userPass" placeholder="********" required>
+        <button class="form-control btn btn-primary" type="submit">Iniciar sesión</button>
+    </form>
+
+```
+
+Uno de los métodos que usaremos será la comprobación de contraseña, para ello crearemos un método junto a `bcrypt` en nuestro modelo `User.js`.
+
+```js
+
+    userSchema.methods.comparePassword = async function(candidatePassword) {        // methods nos facilita la creación de métodos
+        return await bcrypt.compare(candidatePassword, this.userPass)       // Compara la contraseña que le pasamos junto a la contraseña almacenada
+    }
+
+```
+
+Ahora deberemos crear los controladores para mostrar el formulario de inicio de sesión y para comprobar los datos en la base de datos, ambos en `authController.js`.
+
+```js
+
+    const loginForm = (req, res) => {
+        res.render("login")             // Render para el formulario de inicio de sesión
+    }
+
+    const loginUser = async (req, res) => {
+        
+        const { userMail, userPass } = req.body;      // Toma los datos del formulario
+
+        try {
+            
+            const user = await User.findOne({ userMail });      // Busca el usuario en la base de datos
+
+            if(!user) throw new Error("No existe el usuario")       // Error por si no existe el usuario
+
+            if(!user.isConfirmed) throw new Error("Falta confirmar la cuenta")      // Error por si no esta confirmada la cuenta
+
+            if(!await user.comparePassword(userPass)) throw new Error("Contraseña incorrecta")      // Error que compara la contraseña ingresada con la que esta en la base de datos gracias a nuestro método
+
+            res.redirect("/")
+        } catch (err) {
+            console.log("Oh no! Hubo un error: " + err.message)
+            res.send("ERROR: " + err.message)
+        }
+        
+    }
+
+    module.exports = {
+        registerForm,
+        registerUser,
+        tokenConfirmation,
+        loginUser,
+        loginForm,
+    }
+
+```
+
+Por ultimo debemos agregar los controladores a `auth.js` para generar la respuesta al require de la url, quedándonos este de la siguiente forma.
+
+```js
+
+    const express = require('express');
+    const { registerForm, registerUser, tokenConfirmation, loginForm, loginUser } = require('../controllers/authController');
+    const router = express.Router();
+
+    router.get('/register', registerForm)
+    router.post('/register', registerUser)
+    router.get('/confirmation/:tokenForConfirmation', tokenConfirmation)
+    router.get('/login', loginForm)
+    router.post('/login', loginUser)
+
+    module.exports = router;
+
+```
+
+Hecho todo esto ya podemos comprobar el registro e inicio de sesión de nuestros usuarios.
