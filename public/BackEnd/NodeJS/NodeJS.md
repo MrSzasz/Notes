@@ -1264,9 +1264,8 @@ Para generar nuestra encriptación usaremos el método `.pre` de `mongoose`, el 
 
         } catch (err) {
         
-            console.log("Oh no! Hubo un error: " + err.message)
-            
-            next();
+            console.log(err)
+            throw new Error("Oh no! Hubo un error al codificar la contraseña")
         
         }
     })
@@ -1401,4 +1400,200 @@ Por ultimo debemos agregar los controladores a `auth.js` para generar la respues
 
 ```
 
-Hecho todo esto ya podemos comprobar el registro e inicio de sesión de nuestros usuarios.
+Hecho todo esto ya podemos comprobar el registro e inicio de sesión de nuestros usuarios.  
+Para seguir con nuestra pagina es necesario mantener los datos de nuestros usuarios en sesiones, para ello haremos uso de unos cuantos paquetes de validaciones y sesiones.  
+Los paquetes que usaremos serán [Connect Flash](https://www.npmjs.com/package/connect-flash) (Paquete para mantener los mensajes de error), [Express Session](https://www.npmjs.com/package/express-session) (Paquete para mantener la sesión), [Express Validator](https://www.npmjs.com/package/express-validator) (Paquete para las validaciones) y [Connect Mongo](https://www.npmjs.com/package/connect-mongo) (Paquete para enviar los datos de sesión a Mongo), los mismos los instalaremos de la siguiente forma.
+
+```js
+
+    npm i express-session
+    npm i connect-mongo
+    npm i express-validator
+    npm i connect-flash
+
+```
+
+Teniendo esto instalado procederemos a crear una sesión y configurarla en el `index.js` de la siguiente manera.
+
+```js
+
+    app.use(
+        session({
+            secret: "secret-key-name",      // Nombre secreto, usado solo de ejemplo
+            resave: false,      // No fuerza el autoguardado
+            saveUninitialized: false,       // No lo guarda si no esta inicializado
+            name: "secret-name-session",        // Nombre de la sesión
+    }))
+
+    app.use(flash());
+
+```
+
+> Es necesario recordar que ambos se tienen que importar al inicio del documento, por debajo de `express`, siendo las mismas `const session = require('express-session')` y `const flash = require('connect-flash')` respectivamente
+
+Para generar las validaciones usaremos `express-validator` en el `auth.js` antes de que se envíen los datos de registro y de inicio de sesión, para ello usaremos los datos del body de la siguiente manera.
+
+```js
+
+    const { body } = require('express-validator');
+
+    router.post('/register', [
+        body("userName", "Ingrese un nombre de usuario válido")
+            .trim()         // Elimina los espacios al inicio y final
+            .notEmpty()     // Comprueba que no este vació
+            .escape(),      // Comprueba que no sea HTML
+        
+        body("userMail", "Ingrese un mail válido")
+            .trim()
+            .isEmail()
+            .normalizeEmail(),        // Valida el mail en su formato
+        
+        body("userPass", "La contraseña debe tener mínimo 6 caracteres")
+            .trim()
+            .notEmpty()
+            .escape()
+            .isLength({         // Comprueba que no tenga menos de 6 caracteres
+                min: 6
+            })
+            .custom((value, { req }) => {       // Crea una comprobación personalizada
+                if (value !== req.body.userPassConfirmation) {      // Si las contraseñas no coinciden
+                    throw new Error("Las contraseñas no coinciden")     // Genera un error
+                } else {
+                    return value;       // Sino devuelve el valor de al contraseña
+                }
+            })
+    ], registerUser)
+
+    router.post('/login', [
+        body("userMail", "Ingrese un mail válido")
+            .trim()
+            .notEmpty()
+            .escape(),
+        
+        body("userPass", "La contraseña debe tener mínimo 6 caracteres")
+            .trim()
+            .notEmpty()
+            .escape()
+            .isLength({
+                min: 6
+            })
+    ], loginUser)
+
+```
+
+Y en el controlador de autenticaciones (`authController.js`) tomaremos las respuesta de los errores para devolverlos como respuestas con el uso de `flash` y las validaciones (`validationResult`) que vienen del `auth.js`, para luego pasarlos como parámetros y pintarlos en el home.
+
+```js
+
+    const { validationResult } = require("express-validator")       // Importamos el resultado de la validación
+
+    const registerForm = (req, res) => {
+        res.render("register", {messages: req.flash("messages")});      // Envía los datos de error para generar las alertas
+    }
+
+    const registerUser = async (req, res) => {
+
+        const errors = validationResult(req)        // Toma los errores
+
+        if(!errors.isEmpty()){          // Si hay errores
+            req.flash("messages", errors.array())       // Guarda los errores en el array
+            return res.redirect("/auth/register")
+        }
+        
+        const { userName, userMail, userPass } = req.body
+        
+        try {
+            let user = await User.findOne({ userMail: userMail})
+            if(user) throw new Error(`El mail ${user.userMail} ya esta en uso`)
+            user = new User({userName, userMail, userPass, tokenConfirmation: nanoid()})
+            await user.save()
+            
+            req.flash("messages", [{ msg: "¡Registrado con éxito! Revise su correo para verificar su usuario"}])        // Crea el mensaje de error
+            res.redirect("/auth/login")
+        } catch (err) {
+            req.flash("messages",[{ msg: err.message }])        // Envía el mensaje de error para generarlo como alerta
+            res.redirect("/auth/register")
+        }
+    }
+
+    const tokenConfirmation = async (req, res) => {
+        const { tokenForConfirmation } = req.params;
+        
+        try {
+            const user = await User.findOne({ tokenConfirmation: tokenForConfirmation });
+            if(!user) throw new Error("No se encontró el usuario")
+            
+            user.isConfirmed = true;
+            user.tokenConfirmation = null;
+            await user.save();
+            req.flash("messages", [{ msg: "¡Cuenta verificada con éxito!"}])
+            res.redirect("/auth/login")
+        } catch (err) {
+            req.flash("messages",[{ msg: err.message }])
+            res.redirect("/auth/login")
+        }
+    }
+
+    const loginForm = (req, res) => {
+        res.render("login", {messages: req.flash("messages")});
+    }
+
+    const loginUser = async (req, res) => {
+        
+        const errors = validationResult(req)
+
+        if(!errors.isEmpty()){
+            req.flash("messages", errors.array())
+            return res.redirect("/auth/login")
+        }
+
+        const {userMail, userPass} = req.body
+
+        try {
+            
+            const user = await User.findOne({ userMail })
+            if(!user) throw new Error("No existe el usuario")
+
+            if(!user.isConfirmed) throw new Error("Falta confirmar la cuenta")
+
+            if(!await user.comparePassword(userPass)) throw new Error("Contraseña incorrecta")
+
+            res.redirect("/")
+        } catch (err) {
+            req.flash("messages",[{ msg: err.message }])
+            res.redirect("/auth/login")
+        }
+    }
+
+```
+
+Para mostrar los errores es necesario crear una alerta en el `main.hbs`, para que genere cada uno de los mismos cuando los haya, quedando el body de la siguiente manera.
+
+```HTML
+
+    <body>
+
+        {{> NavBar}}
+
+        <div>
+
+        {{#each messages }}
+
+                <div class="alert alert-danger w-75 m-auto my-3">{{this.msg}}</div>         <!-- Toma los errores y los envía como alertas -->
+        
+        {{/each}}
+
+        {{{body}}}
+        
+        </div>
+
+        <script src="../scripts/app.js"></script>
+        <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+        crossorigin="anonymous"
+        ></script>
+
+    </body>
+
+```
