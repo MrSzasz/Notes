@@ -668,7 +668,13 @@ Como podemos ver, esta nueva ruta se generará cuando la URL sea `/auth/login`, 
                         <a class="nav-link active" aria-current="page" href="/">Home</a>    <!-- Ruta que lleva a la pagina principal -->
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/auth/login">Login</a>    <!-- Ruta que lleva a la nueva pagina de login -->
+                        <a class="nav-link" href="/auth/register">Register</a>    <!-- Ruta que lleva a la pagina de registro -->
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/auth/login">Login</a>    <!-- Ruta que lleva a la pagina de inicio de sesión -->
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/auth/logout">Logout</a>    <!-- Ruta que cierra la sesión -->
                     </li>
                 </ul>
             </div>
@@ -1597,3 +1603,100 @@ Para mostrar los errores es necesario crear una alerta en el `main.hbs`, para qu
     </body>
 
 ```
+
+Ya tenemos hechos los registros e inicio de sesión, es momento de mantener ese inicio de sesión y proteger nuestros links guardados, para ello usaremos el paquete llamado [`passport`](http://www.passportjs.org/), el cual instalaremos con el siguiente comando.
+
+```cmd
+
+    npm install passport
+
+```
+
+Ahora usaremos el mismo en el `index.js`, el cual hará la verificación del usuario para comprobar si tiene una sesión abierta, importando el mismo con `require`.
+
+```js
+
+    const passport = require('passport');       // Llamamos a passport
+    const User = require('./models/User');      // Llamamos al User
+
+    app.use(passport.initialize());         // Inicializamos passport
+    app.use(passport.session());        // Creamos la sesión
+
+    passport.serializeUser((user, done)=> done(null, {id: user._id, userName: user.userName}));         // Guarda los datos del usuario en la sesión
+    
+    passport.deserializeUser(async (user, done)=> {         // Toma los datos guardados en la sesión
+        const userInDataBase = await User.findById(user.id)         // Busca los datos en la base de datos
+        return done(null, {id: userInDataBase._id, userName: userInDataBase.userName});         // Comprueba que sea correcto
+    });
+
+```
+
+Luego de esto necesitaremos crear un middleware que verifique que el usuario tenga una sesión valida abierta antes de entrar en los links, esto lo haremos creando el archivo `userVerification.js` en su carpeta correspondiente.
+
+```js
+
+    module.exports = (req, res, next) => {      // Creamos el middleware
+        if (req.isAuthenticated()) {          // Si el usuario esta autenticado
+            return next();          // Siga con el redireccionamiento
+        }
+        res.redirect("/auth/login");        // Si no lo esta, se envía al login
+    }
+
+```
+
+Este middleware lo usaremos en nuestro `/routes/home.js` para que verifique la sesión antes de ir a la pagina principal.
+
+```js
+
+    const userVerification = require('../middlewares/userVerification');        // Requerimos el middleware recién creado
+
+    router.get('/', userVerification, readURLs)         // Usamos el mismo como comprobación antes de ir a la pagina principal
+
+```
+
+Hecho esto, configuramos el inicio de sesión en la respuesta del login que tendremos en el `authController`, quedando de la siguiente manera.
+
+```js
+
+    req.login(user, function(err){          // Usamos el método de passport para el login
+        if(err) throw new Error("Hubo un error en la sesión");      // Si hay un error lo devuelve 
+        return res.redirect("/")        // Si no, redirige a la pagina principal
+    })
+
+```
+
+> De este modo, ahora podemos intentar entrar en la pagina principal (`"/"`) y nos devolverá a la pagina de inicio de sesión (`"/auth/login"`) hasta que iniciemos sesión
+
+Aunque tengamos la sesión iniciada, no queremos que esto sea asi siempre, asi que para ello crearemos la lógica para cerrar sesión, empezando por crear nuestra respuesta en el `authController`.
+
+```js
+
+    const logOut = (req, res) => {
+        req.logout(function (err) {              // Usamos el método para cerrar sesión de passport
+        if (err) { return next(err) }       // Si hay un error lo devuelve
+        return res.redirect("/auth/login");         // Nos redirige a la pagina de inicio de sesión
+        });
+    }
+
+    module.exports = {
+        registerForm,
+        registerUser,
+        tokenConfirmation,
+        loginUser,
+        loginForm,
+        logOut      // Lo exportamos para su uso luego
+    }
+
+```
+
+Y este lo utilizamos en el `auth.js` para crear la redirección en base al request.
+
+```js
+
+    router.get('/logout', logOut)
+
+```
+
+> Como todos los otros, es necesario importarlo junto a los otros controladores
+
+.
