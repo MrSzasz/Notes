@@ -1699,7 +1699,7 @@ Y este lo utilizamos en el `auth.js` para crear la redirección en base al reque
 
 > Como todos los otros, es necesario importarlo junto a los otros controladores
 
-Ahora que tenemos las validaciopnes podemos llevarlas al input de las urls y sumarlas a nuestro middleware, ademas de agregar la validacion de usuario, para ello empezaremos editando el `home.js` para agregar los metodos de `express-validator` y el `userVerification` quedandonos de la siguiente forma.
+Ahora que tenemos las validaciones podemos llevarlas al input de las urls y sumarlas a nuestro middleware, ademas de agregar la validación de usuario, para ello empezaremos editando el `home.js` para agregar los métodos de `express-validator` y el `userVerification` quedándonos de la siguiente forma.
 
 ```js
 
@@ -1915,7 +1915,7 @@ Y deberemos cambiar los mismos errores en el middleware que valida las urls, que
 
 ```
 
-Para añadir seguridad a la pagina y los formularios haremos uso del paquete llamado [`csurf`](https://github.com/expressjs/csurf), instalandolo con el siguiente comando.
+Para añadir seguridad a la pagina y los formularios haremos uso del paquete llamado [`csurf`](https://github.com/expressjs/csurf), instalándolo con el siguiente comando.
 
 ```cmd
 
@@ -1942,7 +1942,7 @@ Luego deberemos llamarlo en el `index.js` con su respectivo require.
 
 ```
 
-> Ahora que creamos el general para el token podemos crear el general para los mensajes de `flash()` y reempplazarlos en los render, pasando de `res.render("login",{messages: req.flash("messages")})` a quedar `res.render("login")`, tomando el `authController` como ejemplo
+> Ahora que creamos el general para el token podemos crear el general para los mensajes de `flash()` y reemplazarlos en los render, pasando de `res.render("login",{messages: req.flash("messages")})` a quedar `res.render("login")`, tomando el `authController` como ejemplo
 
 Ahora que tenemos el token tenemos que agregar el input oculto en todos los formularios. El siguiente ejemplo toma el formulario del componente `Form.hbs`.
 
@@ -1950,7 +1950,7 @@ Ahora que tenemos el token tenemos que agregar el input oculto en todos los form
 
     {{#if url}}
             <form class="w-75 m-auto" action="/update/{{url._id}}" method="post">
-                <input type="hidden" name="_csrf" value="{{csrfToken}}">        <!-- Al ser hidden se mantiene oculto, y el valor se toma por la generacion que hicimos en el index.js -->
+                <input type="hidden" name="_csrf" value="{{csrfToken}}">        <!-- Al ser hidden se mantiene oculto, y el valor se toma por la generación que hicimos en el index.js -->
                 <input value="{{url.link}}" class="form-control mb-2" type="text" name="urlInput" id="urlInput" placeholder="Inserte una URL valida" required>
                 <button type="submit" class="btn btn-primary w-100">Editar URL</button>
             </form>
