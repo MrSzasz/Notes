@@ -1963,3 +1963,249 @@ Ahora que tenemos el token tenemos que agregar el input oculto en todos los form
     {{/if}}
 
 ```
+
+Ya tenemos las sesiones y autenticaciones, es momento de crear los links para cada uno de los usuarios sin que se compartan entre ellos, por lo que sera necesario eliminar nuestra colección de Urls actual.  
+Luego deberemos agregar un nuevo apartado a nuestro schema de URLs, quedando el mismo de la siguiente forma.
+
+```js
+
+    const urlSchema = new Schema({
+
+        link: {
+            type: 'String',
+            unique: true,
+            required: true
+        },
+        short: {
+            type: 'String',
+            unique: true,
+            required: true,
+        },
+        user:{                              // Nueva característica que se linkea al id
+            type: Schema.Types.ObjectId,    // Toma el id del user
+            ref: 'User',                    // Toma el esquema del user para tener el id
+            required: true,
+        }
+    });
+
+```
+
+Al haber modificado esto es momento de modificar todo nuestro controller para que compruebe que el usuario sea el correcto, quedando de la siguiente manera.
+
+```js
+
+    const readURLs = async (req, res) => {
+
+        try {
+            const links = await Url.find({ user: req.user.id }).lean()      // Al buscar toma como parámetro el id del usuario qur armamos anteriormente
+            res.render("home", { links: links });
+        } catch (err) {
+            req.flash("messages", [{
+                msg: err.message
+            }])
+            res.redirect("/")
+        }
+    }
+
+    const addURLs = async (req, res) => {
+
+        const errors = validationResult(req)
+
+        if (!errors.isEmpty()) {
+            req.flash("messages", errors.array())
+            return res.redirect("/")
+        }
+
+        const { urlInput } = req.body
+
+        try {
+            const url = new Url({
+                link: urlInput,
+                short: nanoid(8),
+                user: req.user.id,      // Toma el id del user
+            })
+
+            await url.save()
+
+            req.flash("messages", [{
+                msg: "¡Url agregada!"
+            }])
+
+            res.redirect("/")
+
+        } catch (err) {
+
+            req.flash("messages", [{
+                msg: err.message
+            }])
+
+            res.redirect("/")
+        }
+
+    }
+
+    const deleteURLs = async (req, res) => {
+
+        const { linkId } = req.params
+
+        try {
+            const urlFromDataBase = await Url.findById(linkId)      // Busca el id en base al link
+            
+            if (!url.user.equals(req.user.id)) {        // Si no coincide la url de la base de datos con la enviada, se genera el error
+                throw new Error("URL no encontrada")
+            }
+            
+            await urlFromDataBase.remove();         // Si se encuentra, se elimina
+            
+            req.flash("messages", [{
+                msg: "URL eliminada"
+            }])
+            
+            res.redirect("/")
+        } catch (err) {
+            req.flash("messages", [{
+                msg: err.message
+            }])
+            
+            res.redirect("/")
+        }
+
+    }
+
+    const updateUrlsForm = async (req, res) => {
+
+        const { linkId } = req.params
+
+        try {
+            const urlFromDataBaseForEdit = await Url.findById(linkId).lean()
+            
+            if (!url.user.equals(req.user.id)) {
+                throw new Error("URL no encontrada")
+            }
+            
+            return res.render("home", {
+                urlFromDataBaseForEdit
+            })
+        } catch (err) {
+            req.flash("messages", [{
+                msg: err.message
+            }])
+            
+            res.redirect(`/update/${linkId}`)
+        }
+
+    }
+
+    const updateUrls = async (req, res) => {
+
+        const errors = validationResult(req)
+
+        if (!errors.isEmpty()) {
+            req.flash("messages", errors.array())
+            return res.redirect(`/update/${linkId}`)
+        }
+
+        const { linkId } = req.params
+        const { urlInput } = req.body
+
+        try {
+            const urlFromDataBase = await Url.findById(linkId)
+            
+            if (!url.user.equals(req.user.id)) {
+                throw new Error("URL no encontrada")
+            }
+            
+            await urlFromDataBase.updateOne({ link: urlInput });        // Modifica solamente la propiedad con la url pasada por el input
+            
+            req.flash("messages", [{
+                msg: "URL editada"
+            }])
+            
+            res.redirect("/")
+        } catch (err) {
+            req.flash("messages", [{
+                msg: err.message
+            }])
+            
+            res.redirect(`/update/${linkId}`)
+        }
+
+    }
+
+    const redirectToShortUrl = async (req, res) => {
+        const { shortUrl } = req.params;
+        
+        try {
+            const urlInDB = await Url.findOne({
+                short: shortUrl
+            })
+            
+            res.redirect(urlInDB.link)
+        } catch (err) {
+            req.flash("messages", [{
+                msg: "URL no encontrada"
+            }])
+            
+            res.redirect("/auth/login")
+        }
+    }
+
+```
+
+No podemos hacer que el usuario escriba su propio token cada vez que necesite confirmar su cuenta, por eso le enviaremos un mail cuando se registre. Para ello haremos uso del paquete [`nodemailer`](https://nodemailer.com/about/), el cual instalaremos con el siguiente comando.
+
+```cmd
+
+    npm i nodemailer
+
+```
+
+Para la prueba de los mails usaremos [`mailtrap`](https://mailtrap.io/), en el cual deberemos crear una cuenta. Al iniciar sesión deberemos ir a nuestro inbox y seleccionar la integración con NodeJs/Nodemailer.
+
+```text
+
+    home (https://mailtrap.io/inboxes)
+        |
+        |> My inbox
+            |
+            |> Integrations |> Node.js |> Nodemailer        // Copiamos el modulo que nos da
+
+```
+
+Los datos que nos da nodemailer deberían ser ocultos, por ello tenemos que crear una variable en el `.env` que luego tomaremos para reemplazarla como usuario y contraseña. En el mismo tendremos los datos `user` y `pass` del modulo respectivamente.
+
+```env
+
+    mailUser= <código del user de nodemailer>
+    mailPass= <código del pass de nodemailer>
+
+```
+
+Ahora podemos llevar el modulo al `authController` para enviarlo cada vez que se crea el usuario, quedando el mismo de la siguiente forma.
+
+```js
+
+    const nodemailer = require('nodemailer');
+    require("dotenv").config();
+
+    const transport = nodemailer.createTransport({
+        host: "smtp.mailtrap.io",
+        port: 2525,
+        auth: {
+            user: process.env.mailUser,
+            pass: process.env.mailPass
+        }
+    });
+
+    await transport.sendMail({
+        from: 'URL shortener',
+        to: user.userMail,
+        subject: "Verifique su casilla de correo",
+        html: `<a href="http://localhost:5000/auth/confirmation/${user.tokenConfirmation}"> Haga click aquí para verificar su cuenta </a><br>
+        O copie y pegue el siguiente link en su navegador:<br> 
+        http://localhost:5000/auth/confirmation/${user.tokenConfirmation}`,
+    });
+
+```
+
+Con esto tenemos nuestro mail hecho, el cual podemos probar su uso gracias a mailtrap.
