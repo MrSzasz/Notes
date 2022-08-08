@@ -1699,4 +1699,267 @@ Y este lo utilizamos en el `auth.js` para crear la redirección en base al reque
 
 > Como todos los otros, es necesario importarlo junto a los otros controladores
 
-.
+Ahora que tenemos las validaciopnes podemos llevarlas al input de las urls y sumarlas a nuestro middleware, ademas de agregar la validacion de usuario, para ello empezaremos editando el `home.js` para agregar los metodos de `express-validator` y el `userVerification` quedandonos de la siguiente forma.
+
+```js
+
+    const express = require('express');
+    const {
+        body
+    } = require('express-validator');
+    const { readURLs, addURLs, deleteURLs, updateUrlsForm, updateUrls, redirectToShortUrl} = require('../controllers/homeController');
+    const userVerification = require('../middlewares/userVerification');
+    const router = express.Router();
+
+    router.get('/', userVerification, readURLs)
+    router.post('/', [userVerification,
+        body("urlInput", "Ingrese una URL válida")
+        .trim()
+        .notEmpty()
+        .isURL()        // Comprueba que lo ingresado sea una URL valida
+    ], validateUrls, addURLs)
+    router.get('/delete/:linkId', userVerification, deleteURLs)
+    router.get('/update/:linkId', userVerification, updateUrlsForm)
+    router.post('/update/:linkId', [userVerification, 
+        body("urlInput", "Ingrese una URL válida")
+        .trim()
+        .notEmpty()
+        .isURL()
+    ], validateUrls, updateUrls)
+    router.get('/:shortUrl', redirectToShortUrl)
+
+    module.exports = router;
+
+```
+
+Para luego poder agregar los errores en los controladores (`homeController.js`).
+
+```js
+
+    const Url = require("../models/Url");
+    const {
+        validationResult
+    } = require("express-validator")
+    const nanoid = require("nanoid");
+
+    const readURLs = async (req, res) => {
+
+        try {
+            const links = await Url.find().lean()
+            res.render("home", {
+                links: links,
+                messages: req.flash("messages")         // Renderiza el home con el mensaje que se envió
+            });
+        } catch (err) {
+            req.flash("messages", [{
+                msg: err.message
+            }])
+            res.redirect("/")       // Redirige al home con el mensaje de error
+        }
+    }
+
+    const addURLs = async (req, res) => {
+
+        const errors = validationResult(req)        // Toma los errores de las validaciones
+
+        if (!errors.isEmpty()) {
+            req.flash("messages", errors.array())       // Junta los errores en array
+            return res.redirect("/")
+        }
+
+        const { urlInput } = req.body
+
+        try {
+            const url = new Url({
+                link: urlInput,
+                short: nanoid(8)
+            })
+            await url.save()
+            res.redirect("/")
+        } catch (err) {
+            req.flash("messages", [{
+                msg: err.message
+            }])
+            res.redirect("/")
+        }
+
+    }
+
+    const deleteURLs = async (req, res) => {
+
+        const {
+            linkId
+        } = req.params
+
+        try {
+            await Url.findByIdAndDelete(linkId)
+            res.redirect("/")
+        } catch (err) {
+            req.flash("messages", [{
+                msg: err.message
+            }])
+            res.redirect("/")
+        }
+
+    }
+
+    const updateUrlsForm = async (req, res) => {
+
+        const {
+            linkId
+        } = req.params
+
+        try {
+            const url = await Url.findById(linkId).lean()
+            res.render("home", {
+                url,
+                messages: req.flash("messages")
+            })
+        } catch (err) {
+            req.flash("messages", [{
+                msg: err.message
+            }])
+            res.redirect(`/update/${linkId}`)
+        }
+
+    }
+
+    const updateUrls = async (req, res) => {
+
+        const errors = validationResult(req)
+
+        if (!errors.isEmpty()) {
+            req.flash("messages", errors.array())
+            return res.redirect(`/update/${linkId}`)
+        }
+
+        const {
+            linkId
+        } = req.params
+        const {
+            urlInput
+        } = req.body
+
+        try {
+            await Url.findByIdAndUpdate(linkId, {
+                link: urlInput
+            })
+            res.redirect("/")
+        } catch (err) {
+            req.flash("messages", [{
+                msg: err.message
+            }])
+            res.redirect(`/update/${linkId}`)
+        }
+
+    }
+
+    const redirectToShortUrl = async (req, res) => {
+        const {
+            shortUrl
+        } = req.params;
+        try {
+            const urlInDB = await Url.findOne({
+                short: shortUrl
+            })
+            res.redirect(urlInDB.link)
+        } catch (err) {
+            req.flash("messages", [{
+                msg: err.message
+            }])
+            res.redirect("/")
+        }
+    }
+
+    module.exports = {
+        readURLs,
+        addURLs,
+        deleteURLs,
+        updateUrlsForm,
+        updateUrls,
+        redirectToShortUrl,
+    }
+
+```
+
+Y deberemos cambiar los mismos errores en el middleware que valida las urls, quedando el mismo de la siguiente forma
+
+```js
+
+    const { URL } = require('url');
+
+    const validateUrls = (req, res, next) => {
+        try {
+            const { urlInput } = req.body;
+            const urlFrontEnd = new URL(urlInput)
+            
+            if (urlFrontEnd.origin !== "null") {
+                if (urlFrontEnd.protocol === "https:" || urlFrontEnd.protocol === "http:") {
+                    return next()
+                }
+                throw new Error("El link debe tener http:// o https://")        // Genera el error si no es https o http
+            }
+            throw new Error("No valido")
+        } catch (err) {
+            if(err.message === "Invalid URL") {
+            req.flash("messages", [{msg: "URL invalida"}])
+            }else{   
+                req.flash("messages", [{msg: err.message}])
+            }
+            
+            return res.redirect("/")
+        }
+    }
+
+    module.exports = validateUrls;
+
+```
+
+Para añadir seguridad a la pagina y los formularios haremos uso del paquete llamado [`csurf`](https://github.com/expressjs/csurf), instalandolo con el siguiente comando.
+
+```cmd
+
+    npm install csurf
+
+```
+
+Luego deberemos llamarlo en el `index.js` con su respectivo require.
+
+```js
+
+    const csrf = require('csurf');      // Lo importamos
+
+    app.use(csrf())         // Lo inicializamos
+
+    app.use((req, res, next) => {
+        res.locals.csrfToken = req.csrfToken();         // Generamos el token para los forms
+        res.locals.messages = req.flash("messages");    // General para reemplazarlo en los controladores
+        next();
+    })
+
+    app.use("/", require("./routes/home"))
+    app.use("/auth", require("./routes/auth"))
+
+```
+
+> Ahora que creamos el general para el token podemos crear el general para los mensajes de `flash()` y reempplazarlos en los render, pasando de `res.render("login",{messages: req.flash("messages")})` a quedar `res.render("login")`, tomando el `authController` como ejemplo
+
+Ahora que tenemos el token tenemos que agregar el input oculto en todos los formularios. El siguiente ejemplo toma el formulario del componente `Form.hbs`.
+
+```HTML
+
+    {{#if url}}
+            <form class="w-75 m-auto" action="/update/{{url._id}}" method="post">
+                <input type="hidden" name="_csrf" value="{{csrfToken}}">        <!-- Al ser hidden se mantiene oculto, y el valor se toma por la generacion que hicimos en el index.js -->
+                <input value="{{url.link}}" class="form-control mb-2" type="text" name="urlInput" id="urlInput" placeholder="Inserte una URL valida" required>
+                <button type="submit" class="btn btn-primary w-100">Editar URL</button>
+            </form>
+        {{else}}
+            <form class="w-75 m-auto" action="/" method="post">
+                <input type="hidden" name="_csrf" value="{{csrfToken}}">
+                <input class="form-control mb-2" type="text" name="urlInput" id="urlInput" placeholder="Inserte una URL valida" required>
+                <button type="submit" class="btn btn-success w-100">Agregar URL</button>
+            </form>
+    {{/if}}
+
+```
