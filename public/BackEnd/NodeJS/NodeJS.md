@@ -2410,3 +2410,56 @@ Por ultimo debemos agregar el redireccionamiento al `NavBar.hbs`.
     <>...</>
 
 ```
+
+## Sesión en MongoDB
+
+Actualmente nuestra sesión esta guardada en local, aunque funciona no es una buena practica, es por ello que vamos a subir nuestra sesión a MongoDb. Para ello usaremos el paquete llamado `connect-mongo` que habíamos instalado previamente (`npm i connect-mongo`) y la requeriremos en el `index.js`.
+
+```js
+
+    [...]   // El resto del código
+    
+    const MongoStore = require('connect-mongo')
+    const clientDB = require("./database/db")
+    
+    [...]
+
+    [...]
+
+    app.use(
+        session({
+            secret: "secret-key-name",
+            resave: false,
+            saveUninitialized: false,
+            name: "secret-name-session",
+            store: MongoStore.create({
+                clientPromise: clientDB,        // Exportación del cliente y la base de datos
+                dbName: = nombre de la base de datos =        // Aca va el nombre de la base de datos que estamos usando en Mongo, sin los = y entre comillas ("")
+            }),
+    }))
+    
+    app.use(flash());
+
+    [...]
+
+```
+
+> El nombre de la base de datos esta al final de la URI en `.env` (mongodb.net/"esta es la base de datos")
+
+Y ademas cambiamos la configuración de la base de datos que se encuentra en (`/database/db.js`) para exportarla, quedando de la siguiente manera
+
+```js
+
+    const mongoose = require('mongoose');
+    require("dotenv").config();         // Llamamos a las variables de entorno
+
+    const clientDB = mongoose.connect(process.env.URI)
+        .then((m)=>{
+            console.log("Base de datos conectada!!")
+            return m.connection.getClient()         // Retornamos el cliente
+        })
+        .catch(err=>{console.log("Error: " + err)})
+
+    module.exports = clientDB;      // Lo exportamos para su uso 
+
+```
