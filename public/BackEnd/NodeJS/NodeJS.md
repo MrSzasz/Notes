@@ -182,7 +182,7 @@ Existen un conjunto de métodos importantes de HTTP, los cuales sirven para trab
 
 - ***DELETE***: Este método se utiliza para eliminar un dato en la base de datos.
 
-## Express
+## Expressjs
 
 Luego de haber visto como se crea un servidor HTTP podemos pasar a usar `Express`, el cual es un paquete que nos ayuda y agiliza la creación de APIs solidas.  
 Para ello lo primero que se deberá hacer es instalar `express` como lo dice en su [documentación](https://expressjs.com/en/starter/installing.html).
@@ -397,9 +397,12 @@ Luego se precisa hacer las carpetas para los layouts como las indica la document
 ```text
 
     views (carpeta)
-        |-> layouts (carpeta)
-                  |-> main.hbs (archivo)
-        |-> components (carpeta)
+        |
+        |> components (carpeta)
+        |> layouts (carpeta)
+                  |
+                  |> main.hbs (archivo)
+        
 
 ```
 
@@ -562,6 +565,8 @@ Este componente lo llamaremos dentro de `main.hbs` para que se repita en todas l
     </body>
 
 ```
+
+## Rutas
 
 También es posible "modularizar" las rutas para un código mas limpio utilizando `router` de `express`. Para ello es necesario crear la carpeta `routes` al mismo nivel de la raíz (por fuera de public). Dentro de la misma crearemos el archivo `home.js`, usando el método `router` y pasando los datos de la ruta hacia el home que se encuentra en el `index.js`, quedando el mismo de la siguiente forma.
 
@@ -756,6 +761,8 @@ Ademas de esto, en el `index.js` deberemos agregar el pedido a la base de datos 
 
 ```
 
+## Mongoose
+
 Ahora que terminamos de configurar la base de datos es necesario usar mongoose para crear nuestra colección de datos en Mongo, para ello deberemos crear una carpeta para los `models` en el mismo nivel de la carpeta raíz, dentro de esta deberemos crear el archivo que va a contener las colecciones (en este caso, la colección de URLs), al cual llamaremos `Url.js` (en singular y comenzando con mayúsculas).
 
 ```js
@@ -812,6 +819,8 @@ Con este cambio podemos modularizar `home.js` quedando de las siguiente forma.
     module.exports = router;
 
 ```
+
+## CRUD - Create
 
 Para leer los datos, es necesario TENER datos para leer, es por eso que crearemos los datos desde nuestra pagina principal, para ello crearemos la respuesta para el request en el controlador del `homeController`, el cual quedaría de la siguiente manera.
 
@@ -936,6 +945,8 @@ Por ultimo debemos hacer uso de este nuevo middleware cuando añadimos la url en
 
 > Con esto hecho podemos probar nuestro proyecto, iniciamos el servidor (`npm run dev`) y agregamos una url, si no hay problemas deberíamos ver el nuevo dato en la base de datos de MongoDB.
 
+## CRUD - Read
+
 Ahora que pudimos crear nuestro primer dato es necesario poder leer esos datos, para ello usaremos el método `find`, el cual nos trae todos los datos de la base de datos, y el método `lean`, que "formatea" los datos en datos mas simples.  
 Para ello nos iremos a `homeController.js` y agregaremos los datos a `readURLs`.
 
@@ -979,6 +990,8 @@ Teniendo estos datos deberemos mostrarlos en pantalla, para ello crearemos un nu
 
 > Este nuevo componente deberemos llamarlo en el `home.hbs` como lo hicimos con el `Form`
 
+## CRUD - Delete
+
 Luego de esto podemos probar una manera (no muy eficiente) de borrar un dato, para esto deberemos crear una nueva respuesta en el `homeController` llamada `deleteUrls`, la cual deberá hacer uso del método `findByIdAndDelete` basado en el id del link a borrar.
 
 ```js
@@ -1016,6 +1029,8 @@ Hecho esto debemos llamarlo en el `home.js` para que se ejecute cada vez que se 
     router.get('/delete/:linkId', deleteURLs)       // Cuando la URL se pase con el id, se ejecutará y eliminará de la base de datos
 
 ```
+
+## CRUD - Update
 
 Lo que nos queda por hacer para tener el CRUD (create, read, update, delete) completo es poder editar nuestros links guardados. Para ello crearemos la nueva respuesta en el `homeController.js`, primero para crearemos la redirección para el formulario de edición.
 
@@ -1405,6 +1420,8 @@ Por ultimo debemos agregar los controladores a `auth.js` para generar la respues
     module.exports = router;
 
 ```
+
+## Validaciones
 
 Hecho todo esto ya podemos comprobar el registro e inicio de sesión de nuestros usuarios.  
 Para seguir con nuestra pagina es necesario mantener los datos de nuestros usuarios en sesiones, para ello haremos uso de unos cuantos paquetes de validaciones y sesiones.  
@@ -2152,6 +2169,8 @@ Al haber modificado esto es momento de modificar todo nuestro controller para qu
 
 ```
 
+## Confirmación de token por mail
+
 No podemos hacer que el usuario escriba su propio token cada vez que necesite confirmar su cuenta, por eso le enviaremos un mail cuando se registre. Para ello haremos uso del paquete [`nodemailer`](https://nodemailer.com/about/), el cual instalaremos con el siguiente comando.
 
 ```cmd
@@ -2201,11 +2220,193 @@ Ahora podemos llevar el modulo al `authController` para enviarlo cada vez que se
         from: 'URL shortener',
         to: user.userMail,
         subject: "Verifique su casilla de correo",
-        html: `<a href="http://localhost:5000/auth/confirmation/${user.tokenConfirmation}"> Haga click aquí para verificar su cuenta </a><br>
+        html: `
+        <a href="http://localhost:5000/auth/confirmation/${user.tokenConfirmation}"> Haga click aquí para verificar su cuenta </a><br>
         O copie y pegue el siguiente link en su navegador:<br> 
-        http://localhost:5000/auth/confirmation/${user.tokenConfirmation}`,
+        http://localhost:5000/auth/confirmation/${user.tokenConfirmation}
+        `,
     });
 
 ```
 
 Con esto tenemos nuestro mail hecho, el cual podemos probar su uso gracias a mailtrap.
+
+## Perfil de usuario
+
+Hecho esto podemos crear un perfil para que nuestro usuario agregue y modifique su foto de perfil dado que, aunque no sea imprescindible, nos ayuda a repasar ciertos contenidos vistos anteriormente. Para ello empezaremos agregando la propiedad `userImg` a nuestro modelo de `User`.
+
+```js
+
+    const userSchema = new Schema({
+
+        userName: { ... },
+
+        userMail: { ... },
+
+        userPass: { ... },
+
+        tokenConfirmation: { ... },
+
+        isConfirmed: { ... },
+
+        userImg: {
+            type: String,
+            default: null,      // Por defecto no tendrá ninguna imagen
+        }
+    });
+
+```
+
+Ahora creamos la vista para el usuario, creando el archivo `profile.hbs` dentro de la carpeta `/views`.
+
+```HTML
+
+    <h1 class="text-center">Bienvenido a tu panel de usuario, {{user.userName}}</h1>
+    <h2 class="text-center">Edita tus datos de usuario</h2>
+
+    <div class="w-75 m-auto text-center">
+    
+    {{#if userImg}}         <!-- Si se encuentra una imagen se genera en base a los datos pasados de la base de datos -->
+
+        <img class="my-3 rounded-circle" src="/resources/profiles/{{userImg}}" alt="profileImage" />      <!-- {{userImg}} es la dirección de la imagen que pasamos desde la base de datos y tomamos de nuestro proyecto -->
+
+    {{else}}
+
+        <img class="my-3 rounded-circle" src="./resources/profiles/default.png" alt="profileImage" />       <!-- Esta es la imagen por defecto que se toma al crear un nuevo usuario -->
+
+    {{/if}}
+    </div>
+
+    <form action="/profile?_csrf={{csrfToken}}" method="POST" enctype="multipart/form-data" class="d-flex w-50 text-center m-auto" >        <!-- La acción redirige el token -->
+    <input class="form-control w-75" type="file" id="userImg" name="userImg" />         <!-- Declaramos que es un tipo "file" y usamos el nombre luego para tomarlo como dato -->
+    <button class="btn btn-primary w-25">Cambiar imagen</button>
+    </form>
+
+```
+
+Para subir y editar las imágenes haremos uso de los paquetes llamados [`formidable`](https://www.npmjs.com/package/formidable) para la gestión de subida de archivos y [`jimp`](https://www.npmjs.com/package/jimp) para la manipulación de imágenes, los cuales instalaremos de la siguiente manera.
+
+```cmd
+
+    npm i formidable
+    npm i jimp
+
+```
+
+Luego de esto creamos el nuevo controlador llamado `profileController.js` en el cual crearemos las respuestas a nuestros requires.  
+La respuesta `profileForm` genera el formulario y pasa los datos del usuario, y `changeProfileImage` es toda la teoría del cambio de imagen, desde la subida a la base de datos hasta editarla y guardarla.
+
+```js
+
+    const formidable = require("formidable");       // Llamamos a formidable
+    const path = require("path");       // Requerimos el modulo path de node
+    const fs = require("fs");       // Requerimos el modulo filesystem de node
+    const Jimp = require("jimp");       // Requerimos Jimp para editar las imágenes
+    const User = require("../models/User");         // Llamamos al User del modelo
+
+    const profileForm = async (req, res) => {
+        try {
+        const user = await User.findById(req.user.id);      // Traemos el usuario de la base de datos
+        res.render('profile', {user: req.user, userImg: user.userImg})      // Hacemos el render de la pagina al llamarla en la url y le pasamos los datos como parámetros
+    } catch (err) {
+        req.flash("messages", [{
+            msg: "Error al cargar el perfil"
+        }]);
+        res.redirect("/profile")
+    }
+    }
+
+    const changeProfileImage = async (req, res) => {
+
+        const form = new formidable.IncomingForm();         // Creamos la instancia de formidable
+        form.maxFileSize = 5 * 1024 * 1024;        // Indicamos el tamaño máximo de la imagen
+
+        form.parse(req, async (err, fields, files)=> {
+            try {
+                if(err){
+                    throw new Error("Fallo la subida de la imagen");
+                }
+
+                const file = files.userImg            // Tomamos la imagen que se envió por medio del formulario
+
+                if(file.originalFilename === ""){
+                    throw new Error("Ingrese una imagen")       // Si no se subió genera un error
+                }
+
+                const imgTypes = ["image/jpeg", "image/png", "image/svg+xml", "image/webp"]         // Array de formatos de imágenes aceptadas
+
+                if(!imgTypes.includes(file.mimetype)){
+                    throw new Error("Ingrese una imagen válida")        // Si es un formato no aceptado genera un error
+                }
+
+                if(file.size > 5 * 1024 * 1024){
+                    throw new Error("Peso máximo de la imagen: 5MB")        // Si la imagen es mayor a 5MB genera un error
+                }
+
+                const imgExt = file.mimetype.split("/")[1]          // Toma la propiedad mimetype de la imagen subida(image/<ext>) y la divide para generar la extension
+                const dirFile = path.join(__dirname, `../public/resources/profiles/${req.user.id}.${imgExt}`)        // Genera el directorio uniendo la base junto al nombre de los archivos
+
+                fs.renameSync(file.filepath, dirFile)        // Renombra el directorio con el que generamos
+
+                const editImgForProfile = await Jimp.read(dirFile)      // Jimp lee la imagen que guardamos en el directorio
+                editImgForProfile.resize(200,200).quality(90).writeAsync(dirFile)       // La escala a 200x200, le baja la calidad y la reemplaza
+
+                const user = await User.findById(req.user.id)       // Busca el user en la base de datos
+                user.userImg = `${req.user.id}.${imgExt}`       // Guarda el directorio en la base de datos
+                await user.save()       // Actualiza la base de datos con la imagen
+
+                return req.flash("messages",[{msg: "Imagen subida correctamente"}])
+            } catch (error) {
+                req.flash("messages", [{
+                    msg: err.message
+                }])
+            } finally{
+                return res.redirect("/profile")         // Redirige al /profile siempre que termine el request, sea con o sin error
+            }
+        })
+
+    }
+
+    module.exports = {      // Los exportamos para usarlos en el home
+        profileForm,
+        changeProfileImage,
+    }
+
+```
+
+Y las mismas las importamos en nuestro `home.js` de la siguiente manera.
+
+```js
+
+    const { profileForm, changeProfileImage } = require('../controllers/profileController');
+
+    router.get('/profile', userVerification, profileForm)
+    router.post('/profile', userVerification, changeProfileImage)
+
+```
+
+Por ultimo debemos agregar el redireccionamiento al `NavBar.hbs`.
+
+```hbs
+
+    <>...</>
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/">Inicio</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/auth/register">Registro</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/auth/login">Login</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/profile">Perfil</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/auth/logout">Logout</a>
+            </li>
+        </ul>
+    <>...</>
+
+```
