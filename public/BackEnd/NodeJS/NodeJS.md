@@ -1120,7 +1120,7 @@ En la carpeta public crearemos nuestra carpeta contenedora de scripts, dentro de
 
     document.addEventListener("click", (e)=>{       // Detecta el click en el documento
         if (e.target.getAttribute("data-shortUrl")){        // Si hacemos click en el botón con el atributo
-            const url = `http://localhost:5000/${e.target.getAttribute("data-shortUrl")}`        // Crea la URL
+            const url = `${window.location.origin}/${e.target.getAttribute("data-shortUrl")}`        // Crea la URL en base a la URL
         
             navigator.clipboard
                 .writeText(url)     // Copia la URL al portapapeles
@@ -2463,3 +2463,137 @@ Y ademas cambiamos la configuración de la base de datos que se encuentra en (`/
     module.exports = clientDB;      // Lo exportamos para su uso 
 
 ```
+
+## Mongo Sanitizer
+
+Para poder pasar a publicar nuestro proyecto nunca esta de mas agregar mas y mejores formas de protegernos de ataques, es por eso que intentaremos evitar inyecciones SQL con un paquete llamado [Express Mongo Sanitizer](https://www.npmjs.com/package/express-mongo-sanitize) y agregaremos [CORS](https://expressjs.com/en/resources/middleware/cors.html), los cuales instalaremos con los siguientes comandos.
+
+```cmd
+
+    npm i express-mongo-sanitize
+    npm i cors
+
+```
+
+Hecho esto podemos llamarlos en nuestro `index.js`, llamándolos y usándolos luego de `csurf`, antes de las request para poder interceptarlas.
+
+```js
+
+    [...]
+
+    const User = require('./models/User');
+    const clientDB = require("./database/db")
+    const mongoSanitize = require('express-mongo-sanitize')
+    const cors = require('cors')
+    require("dotenv").config();
+
+    const app = express();
+
+    const corsOptions = {       // Configuramos las opciones de CORS
+        credentials: true,      // Declaramos que vamos a usar credenciales
+        origin: process.env.Herokurl || "*",        // El origen que tendremos en Heroku si existe o cualquiera
+        methods: ['GET', 'POST']        // Los métodos que admitiremos ya que son los únicos que usaremos
+    }
+    app.use(cors(corsOptions));         // Usamos CORS con las opciones que configuramos
+
+    [...]
+
+    app.use(csrf())
+    app.use(mongoSanitize());       // Lo llamamos para interceptar los requests
+
+    app.use((req, res, next) => {
+        res.locals.csrfToken = req.csrfToken();
+        res.locals.messages = req.flash("messages");
+        next();
+    })
+
+    [...]
+
+```
+
+Ahora sera necesario configurar las variables de entorno que queremos ocultar, para ello agregaremos nuevas y cambiaremos algunas que ya estamos usando en nuestro `.env`.
+
+```env
+
+    secretKey=<nombre de la keySession>
+    dbName=<nombre de la colección en MongoDB>
+    Herokurl=<Aca agregaremos la URL de Heroku>
+    mode=Heroku
+
+```
+
+> El `mode` sirve para declarar las cookies, si queremos usarla como desarrollador deberemos cambiar el modo a cualquier cosa que no sea Heroku para que el resultado sea `false`
+
+Con nuestras variables de entorno creadas debemos cambiarlas en los archivos `index.js`.
+
+```js
+
+    app.set("trust proxy", 1);      // Agregamos el proxy
+    app.use(
+        session({
+            secret: process.env.secretKey,
+            resave: false,
+            saveUninitialized: false,
+            name: "session-from-user",
+            store: MongoStore.create({
+                clientPromise: clientDB,
+                dbName: process.env.dbName
+            }),
+            cookie: {       // Agregamos las cookies 
+                secure: process.env.mode === "Heroku",       // Las hacemos seguras
+                maxAge: 30 * 24 * 60 * 60 * 1000         // Declaramos que el tiempo de vida sera de un mes
+            },
+    }))
+
+```
+
+> Aprovechamos para agregar las cookies y el proxy
+
+Y en el `authController.js`
+
+```js
+
+    const registerUser = async (req, res) => {
+
+        [...]
+
+            await transport.sendMail({
+                from: 'URL shortener',
+                to: user.userMail,
+                subject: "Verifique su casilla de correo",
+                html: `<a href="${process.env.Herokurl||'http://localhost:5000/'}auth/confirmation/${user.tokenConfirmation}"> Haga click aquí para verificar su cuenta </a> <br>
+                O copie y pegue el siguiente link en su navegador: <br>
+                ${process.env.Herokurl||'http://localhost:5000/'}auth/confirmation/${user.tokenConfirmation}`,
+            });
+
+            req.flash("messages", [{
+                msg: "¡Registrado con éxito! Revise su correo para verificar su usuario"
+            }])
+            res.redirect("/auth/login")
+
+        [...]
+    }
+
+```
+
+## Heroku
+
+Ahora es momento de subir nuestra app a [Heroku](https://www.heroku.com/home), para ello deberemos [crearnos nuestro usuario](https://signup.heroku.com/) e ir a nuestro [dashboard](https://dashboard.heroku.com/apps) para [crear nuestra nueva app](https://dashboard.heroku.com/new-app) solo cambiando el nombre y dejando el resto por defecto.  
+Ahora deberemos subir nuestra app a un repositorio de Github en la rama main para poder hacer el deploy automático cada vez que cambiemos algo. Hecho esto en la pagina que nos quedamos (nuestro proyecto en Heroku) seleccionamos la opción para conectar nuestra cuenta de GitHub y luego seleccionamos nuestro repositorio. Con nuestra cuenta linkeada debemos seleccionar la opción de `habilitar deploy automático` y `deploy branch`.  
+Por ultimo debemos configurar las variables de entorno que teníamos en nuestro `.env` yendo a la pestaña de ajustes y bajando hasta las `variables de configuración`, ahi es donde crearemos las mismas.  
+
+> Al agregar la variable `Herokurl` le daremos como valor nuestra url base de Heroku (`https://nombredelaapp.herokuapp.com/`)
+
+Luego de cambiar las variables de entorno podemos volver a hacer un deploy para estar seguros.  
+
+## Final
+
+Hecho todo esto, tendremos nuestro primer proyecto básico de prueba con `NodeJS` hecho y listo para probar en el servidor. Hay que recordar que los mails actualmente no llegaran al destinatario, ya que el mismo es unicamente una prueba, pero todavía podremos probarlos y enviar el token manualmente si se desea, hasta que se contrate un servicio de mail automático.  
+Este proyecto fue posible gracias a los tutoriales de [Bluuweb](https://www.youtube.com/c/Bluuweb), siendo los siguientes respectivamente.
+
+- [NodeJS parte 1](https://youtu.be/xkHyM-K3Cd8)
+- [NodeJS parte 2](https://youtu.be/k6gaP1AK4nQ)
+- [NodeJS parte 3](https://youtu.be/iU3mnrw48I0)
+- [NodeJS parte final](https://youtu.be/aOlWTBho9zc)
+
+Todo el proceso esta hecho en [mi repositorio de GitHub](https://github.com/MrSzasz/nodeTest)
