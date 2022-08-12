@@ -7,10 +7,16 @@
 Esta es la guía general (indice) desde donde se redirige toda la información.
 La misma se actualizará a medida que se agregue mas contenido.
 
+## MarkDown
+
 [MarkDown](MARKDOWN.md)
+
+## Front-End
+
+[ReactJS](public/Front-End/ReactJS/ReactJS.md)
 
 [TypeScript](public/Front-End/TypeScript/TypeScript.md)
 
-[NodeJS](public/BackEnd/NodeJS/NodeJS.md)
+## Back-End
 
-[API Rest](public/BackEnd/API-Rest/API-Rest.md)
+[NodeJS](public/BackEnd/NodeJS/NodeJS.md)

@@ -1,11 +1,16 @@
 # NodeJS
 
-[NodeJS](https://nodejs.org/es/) es un entorno de ejecución en el lado del servidor, basado en JavaScript, el cual soporta una gran carga de procesos y peticiones simultaneas, con un tiempo de respuesta muy corto.
+[NodeJS](https://nodejs.org/es/) es un entorno de ejecución en el lado del servidor, basado en JavaScript, el cual soporta una gran carga de procesos y peticiones simultáneas, con un tiempo de respuesta muy corto.  Las notas de este módulo las haré basándome en el curso de NodeJS de [Bluuweb](https://www.youtube.com/c/Bluuweb) el cual se encuentra dividido en 4 videos.  
+
+- [NodeJS parte 1](https://youtu.be/xkHyM-K3Cd8)
+- [NodeJS parte 2](https://youtu.be/k6gaP1AK4nQ)
+- [NodeJS parte 3](https://youtu.be/iU3mnrw48I0)
+- [NodeJS parte final](https://youtu.be/aOlWTBho9zc)
 
 ## Instalación
 
-Para iniciar el uso de `NodeJS` es necesario instalarlo en nuestro dispositivo, para ello se tendrá que acceder a su [pagina web](https://nodejs.org/es/) e instalar la version recomendada para su sistema, ignorando la ultima version, ya que en su mayoría agregan [funcionalidades nuevas](https://node.green/) pero están en una version de pruebas.
-Luego de la instalación es recomendado reiniciar la pc, luego de ello es bueno abrir [la consola](https://linube.com/ayuda/articulo/174/abrir-una-consola-de-comandos#:~:text=Windows%20y%20Mac.-,En%20Windows,En%20ella%20debes%20escribir%20cmd.) y comprobar la version que se instalo de Node con el siguiente comando.
+Para iniciar el uso de `NodeJS` es necesario instalarlo en nuestro dispositivo, para ello se tendrá que acceder a su [página web](https://nodejs.org/es/) e instalar la versión recomendada para su sistema, ignorando la última versión, ya que en su mayoría agregan [funcionalidades nuevas](https://node.green/) pero están en una versión de pruebas.  
+Luego de la instalación es recomendado reiniciar la pc, luego de ello es bueno abrir [la consola](https://linube.com/ayuda/articulo/174/abrir-una-consola-de-comandos#:~:text=Windows%20y%20Mac.-,En%20Windows,En%20ella%20debes%20escribir%20cmd.) y comprobar la versión que se instaló de Node con el siguiente comando.
 
 ```cmd
 
@@ -15,7 +20,7 @@ Luego de la instalación es recomendado reiniciar la pc, luego de ello es bueno 
 
 ## Coding
 
-Para probar el funcionamiento de `nodejs` podemos hacer un archivo con la extension `.js`, la misma utilizada por `JavaScript`, en el mismo podemos tener un `console.log()` común y corriente.
+Para probar el funcionamiento de `nodejs` podemos hacer un archivo con la extensión `.js`, la misma utilizada por `JavaScript`, en el mismo podemos tener un `console.log()` común y corriente.
 
 ```js
 
@@ -31,7 +36,7 @@ La diferencia en este caso es que, al ser `node`, este deberá ser ejecutado en 
 
 ```
 
-> No es necesario agregar la extension del archivo (`.js`) luego del comando `node`, funciona de ambas formas.
+> No es necesario agregar la extensión del archivo (`.js`) luego del comando `node`, funciona de ambas formas.
 
 ## Módulos
 
@@ -50,7 +55,7 @@ Y luego debe ser llamado con la palabra reservada `require`, en el cual ya puede
 
 ```js
 
-    const animals = require("./animals")    //El require siempre requerirá el archivo sin ser necesario agregar la extension
+    const animals = require("./animals")    //El require siempre requerirá el archivo sin ser necesario agregar la extensión
 
     animals.forEach(anim => {
         console.log(anim)   // 🦊, 🐱, 🐶, 🦅, 🐢
@@ -58,7 +63,7 @@ Y luego debe ser llamado con la palabra reservada `require`, en el cual ya puede
 
 ```
 
-Sumado a esto también es posible exportar mas de un dato, basándose en la misma premisa para la exportación y su uso.
+Sumado a esto también es posible exportar más de un dato, basándose en la misma premisa para la exportación y su uso.
 
 ```js
 
@@ -87,8 +92,8 @@ El cambio que se hace al querer importarlos es el mismo, se debe aclarar todos l
 
 > También es posible exportar solo un dato si es el único que se va a utilizar
 
-Node tiene incorporado unos cuantos módulos que se pueden utilizar con diferentes fines, es posible ver todos, leer su documentación en implementación [desde aca](https://nodejs.org/dist/latest-v16.x/docs/api/).  
-Ademas es [posible instalar diferentes módulos](https://www.npmjs.com/), que sean necesarios para correr la app que se este creando, pero al momento de su ejecución en otros dispositivos serán necesarios instalarlos también.  
+Node tiene incorporado unos cuantos módulos que se pueden utilizar con diferentes fines, es posible ver todos, leer su documentación en implementación [desde acá](https://nodejs.org/dist/latest-v16.x/docs/api/).  
+Además es [posible instalar diferentes módulos](https://www.npmjs.com/), que sean necesarios para correr la app que se esté creando, pero al momento de su ejecución en otros dispositivos serán necesarios instalarlos también.  
 Esto se logra con un registro en formato `JSON` llamado `package.json`, el cual deja una descripción de nuestro proyecto junto a los paquetes que van a ser necesarios instalar para su correcto funcionamiento. Este mismo se crea automáticamente con el siguiente comando.
 
 ```cmd
@@ -97,7 +102,7 @@ Esto se logra con un registro en formato `JSON` llamado `package.json`, el cual 
 
 ```
 
-En el archivo que se creo es posible cambiar ciertos parámetros, siendo los mas importantes los siguientes.
+En el archivo que se creó es posible cambiar ciertos parámetros, siendo los má importantes los siguientes.
 
 - ***name***: Nombre del archivo.
 
@@ -109,16 +114,16 @@ En el archivo que se creo es posible cambiar ciertos parámetros, siendo los mas
 
 > Si no se usa `-y` con el `init` es posible ir uno por uno editando estos parámetros al momento de su creación.
 
-Es importante saber que cada vez que se instala una dependencia se creara la propiedad `dependencies`, el cual deja en claro que dependencia (y version de la misma) se necesitara instalar.  
-El apartado de `dependencies` registra las dependencias necesarias para el funcionamiento de la app, y cada una de ellas tendrá una version con un símbolo delante, los cuales tienen diferentes significados.
+Es importante saber que cada vez que se instala una dependencia se creara la propiedad `dependencies`, el cual deja en claro que dependencia (y versión de la misma) se necesitara instalar.  
+El apartado de `dependencies` registra las dependencias necesarias para el funcionamiento de la app, y cada una de ellas tendrá una versión con un símbolo delante, los cuales tienen diferentes significados.
 
-- `^` : Se actualizara el paquete unicamente en la version base => ^2.**34.56** (no pasa de la version 2).
+- `^` : Se actualizará el paquete unicamente en la versión base => ^2.**34.56** (no pasa de la versión 2).
 
-- `~` : Se actualizaran solamente los parches del paquete => 2.34.**56** (No pasa de la version 2.34).
+- `~` : Se actualizarán solamente los parches del paquete => 2.34.**56** (No pasa de la versión 2.34).
 
-- `*` : Se actualizara por completo => **2.34.56** (Puede ir a la version 3).
+- `*` : Se actualizará por completo => **2.34.56** (Puede ir a la versión 3).
 
-> Al tener el `*` puede dar problemas si un paquete se actualiza, ya que pueden cambiar (o deprecar) código que se este utilizando en el proyecto.
+> Al tener el `*` puede dar problemas si un paquete se actualiza, ya que pueden cambiar (o deprecar) código que se esté utilizando en el proyecto.
 
 Para probar la instalación de dependencias y paquetes se puede comenzar con la instalación de `nodemon`, el cual es un paquete que nos ayuda a la hora de probar nuestro código, ya que funciona como lo haría `live server` en HTML, actualizándose con cada cambio para no tener que estar constantemente corriendo la aplicación cada vez que la necesitemos.  
 Para comenzar se deberá instalar `nodemon` como lo indica su [documentación](https://www.npmjs.com/package/nodemon) con el siguiente comando.
@@ -139,8 +144,7 @@ Luego de esto se agregara como dependencia y se creara la carpeta `node_modules`
     
 ```
 
-Como una linea de texto normal, automáticamente luego de iniciar `GIT` esta carpeta sera ignorada y no se subirá al repositorio. Esto mismo sera importante mas adelante cuando necesitemos agregar archivos privados.
-
+Como una línea de texto normal, automáticamente luego de iniciar `GIT` esta carpeta será ignorada y no se subirá al repositorio. Esto mismo será importante mas adelante cuando necesitemos agregar archivos privados.  
 Para el uso de `nodemon` se deberá crear un script en el apartado del mismo nombre dentro del archivo `package.json`, agregando una palabra que se utilizará para iniciarlo.
 
 ```json
@@ -156,7 +160,7 @@ Luego de esto, para iniciar el archivo se deberá utilizar el comando que creamo
 
 ## Servidor HTTP
 
-El protocolo HTTP es el protocolo que permite la comunicación y transferencia de información de un cliente con el servidor. Para crear nuestro primer servidor sera necesario usar el modulo `HTTP` y darle las instrucciones de lo que se deberá escuchar y responder.
+El protocolo HTTP es el protocolo que permite la comunicación y transferencia de información de un cliente con el servidor. Para crear nuestro primer servidor será necesario usar el modulo `HTTP` y darle las instrucciones de lo que se deberá escuchar y responder.
 
 ```js
 
@@ -193,7 +197,7 @@ Para ello lo primero que se deberá hacer es instalar `express` como lo dice en 
 
 ```
 
-> Aunque en la página se agregue `--save` al comando, desde versiones actuales de `npm` esto ya no es necesario.
+> Aunque en la página se agregue `--save` al comando, desde versiónes actuales de `npm` esto ya no es necesario.
 
 Ahora que tenemos `express` instalado podemos pasar a la creación de un servidor con el mismo, para ello modificaremos el servidor que teníamos creado con anterioridad, agregando los `require` necesarios y la forma de escritura que nos proporciona `express` en su [documentación oficial](https://expressjs.com/en/starter/hello-world.html).
 
@@ -211,7 +215,7 @@ Ahora que tenemos `express` instalado podemos pasar a la creación de un servido
 
 ```
 
-Al utilizar `npm run dev` se inicializara como lo hizo con el servidor anterior, la única diferencia visual sera que `express` tiene un formateo por detrás, el cual cambia la fuente por default.  
+Al utilizar `npm run dev` se inicializara como lo hizo con el servidor anterior, la única diferencia visual será que `express` tiene un formateo por detrás, el cual cambia la fuente por default.  
 Aun asi, podemos hacer respuestas diferentes dependiendo de la pagina que se visite, no unicamente el directorio raíz (`/`), para esto se utilizará un middleware de express con la palabra reservada `use`.
 
 ```js
@@ -360,7 +364,7 @@ Para su correcto funcionamiento tomaremos los datos y crearemos dinámicamente e
 
 ```
 
-> Esto dará como resultado la creación del archivo con el nombre ingresado en el form y la extension `.txt` (`tomas.txt` en este caso), y contendrá el texto como cuerpo del archivo.
+> Esto dará como resultado la creación del archivo con el nombre ingresado en el form y la extensión `.txt` (`tomas.txt` en este caso), y contendrá el texto como cuerpo del archivo.
 
 Si se quiere facilitar el archivo creado para el usuario es posible usar el método `res.download` para generar la descarga automática.
 
@@ -417,7 +421,7 @@ Al nivel de la carpeta raíz (fuera de public) crearemos un archivo llamado `nod
 
 ```
 
-Esto hará que `nodemon` detecte los cambios en los archivos con esas extensiones (se pueden agregar mas si se desea) y reiniciará el servidor.  
+Esto hará que `nodemon` detecte los cambios en los archivos con esas extensiónes (se pueden agregar mas si se desea) y reiniciará el servidor.  
 Luego de esto nos queda configurar la extensión `.hbs` para que `node` lo detecte, para esto es necesario hacer un `require` de los handlebars en el `index.js`.
 
 ```js
@@ -426,7 +430,7 @@ Luego de esto nos queda configurar la extensión `.hbs` para que `node` lo detec
 
 ```
 
-Luego, habrá que indicarle a `node` la ruta donde se encuentran las plantillas y extensiones que se deberán renderizar.
+Luego, habrá que indicarle a `node` la ruta donde se encuentran las plantillas y extensiónes que se deberán renderizar.
 
 ```js
 
@@ -436,19 +440,19 @@ Luego, habrá que indicarle a `node` la ruta donde se encuentran las plantillas 
     const app = express();
 
     const hbs = create({
-        extname: ".hbs",    // Toma la extension
+        extname: ".hbs",    // Toma la extensión
         partialsDir: ["views/components"],    // Define la ruta donde se encuentran los componentes
     });
 
     app.engine(".hbs", hbs.engine);     // Define el motor de plantillas
-    app.set("view engine", ".hbs");     // Define la extension del mismo
+    app.set("view engine", ".hbs");     // Define la extensión del mismo
     app.set("views", "./views");    // Define la ruta en donde se encuentran las plantillas
 
     const PORT = process.env.PORT || 5000;
 
 ```
 
-Hay que saber que la base de todo el contenido se creara en el archivo `main.hbs`, aca es donde debería tener todo el contenido del head y demás, para luego agregar el contenido dinámico en otros archivos.  
+Hay que saber que la base de todo el contenido se creara en el archivo `main.hbs`, acá es donde debería tener todo el contenido del head y demás, para luego agregar el contenido dinámico en otros archivos.  
 Ahora, dentro del mismo nos quedaría algo así.
 
 ```HTML
@@ -657,7 +661,7 @@ Como vimos anteriormente, hay que agregar esta nueva ruta al `index.js` que ten�
 
 ```
 
-Como podemos ver, esta nueva ruta se generará cuando la URL sea `/auth/login`, por lo que sera preciso cambiar los datos que se encuentra en el NavBar para acceder correctamente a ellas.
+Como podemos ver, esta nueva ruta se generará cuando la URL sea `/auth/login`, por lo que será preciso cambiar los datos que se encuentra en el NavBar para acceder correctamente a ellas.
 
 ```HTML
 
@@ -750,7 +754,7 @@ Ahora es necesario crear nuestro archivo en el que llamaremos a nuestra base de 
 
 ```
 
-Ademas de esto, en el `index.js` deberemos agregar el pedido a la base de datos y a Mongoose, ambos usando `require` al inicio del archivo, quedando el mismo de la siguiente manera.
+Además de esto, en el `index.js` deberemos agregar el pedido a la base de datos y a Mongoose, ambos usando `require` al inicio del archivo, quedando el mismo de la siguiente manera.
 
 ```js
 
@@ -773,7 +777,7 @@ Ahora que terminamos de configurar la base de datos es necesario usar mongoose p
     const urlSchema = new Schema({      // Al ser una clase, Schema usa el método new
         link: {                         // Nombre del objeto que ira dentro del documento
             type: 'string',     // Tipo de dato que se enviara
-            unique: true,       // Indicamos que sera un dato único e irrepetible
+            unique: true,       // Indicamos que será un dato único e irrepetible
             required: true      // Sera un dato requerido
         },
         short: {
@@ -1178,7 +1182,7 @@ Los mismos deberemos llevarlos a `auth.js`, creando como respuesta a los require
 
 ```
 
-Ademas deberemos crear la vista del register, es decir, crear el archivo `register.hbs` en la carpeta de `views`, en el cual agregaremos nuestro formulario de registro.
+Además deberemos crear la vista del register, es decir, crear el archivo `register.hbs` en la carpeta de `views`, en el cual agregaremos nuestro formulario de registro.
 
 ```HTML
 
@@ -1295,7 +1299,7 @@ Para generar nuestra encriptación usaremos el método `.pre` de `mongoose`, el 
 
 > Para usar `bcrypt` es necesario importarlo al inicio con `const bcrypt = require('bcryptjs')`
 
-El siguiente paso sera confirmar la cuenta del usuario con el token, para ello crearemos un nuevo controlador que importaremos en el auth llamado `tokenConfirmation`.
+El siguiente paso será confirmar la cuenta del usuario con el token, para ello crearemos un nuevo controlador que importaremos en el auth llamado `tokenConfirmation`.
 
 ```js
 
@@ -1307,7 +1311,7 @@ El siguiente paso sera confirmar la cuenta del usuario con el token, para ello c
             if(!user) throw new Error("No se encontró el usuario")      // Si no se encuentra el usuario se genera un nuevo error
 
             user.isConfirmed = true;        // Si se encuentra cambiamos la confirmación
-            user.tokenConfirmation = null;      // Ademas, borramos el token
+            user.tokenConfirmation = null;      // Además, borramos el token
             await user.save();              // Guardamos los nuevos datos del usuario
             res.redirect("/auth/login")         // Redirigimos a la pagina de login
         } catch (err) {
@@ -1337,7 +1341,7 @@ Luego, usamos el controlador en `auth.js`, el cual debería quedar de la siguien
 
 ```
 
-> De momento podemos generar la confirmación manual del token, ingresando a `/auth/confirmation/{aca va el token en la base de datos}`
+> De momento podemos generar la confirmación manual del token, ingresando a `/auth/confirmation/{acá va el token en la base de datos}`
 
 Ahora seguiremos con el siguiente paso lógico, crear el login para el usuario. Para ello empezamos creando el formulario para el mismo en el archivo `login.hbs`.
 
@@ -1981,7 +1985,7 @@ Ahora que tenemos el token tenemos que agregar el input oculto en todos los form
 
 ```
 
-Ya tenemos las sesiones y autenticaciones, es momento de crear los links para cada uno de los usuarios sin que se compartan entre ellos, por lo que sera necesario eliminar nuestra colección de Urls actual.  
+Ya tenemos las sesiones y autenticaciones, es momento de crear los links para cada uno de los usuarios sin que se compartan entre ellos, por lo que será necesario eliminar nuestra colección de Urls actual.  
 Luego deberemos agregar un nuevo apartado a nuestro schema de URLs, quedando el mismo de la siguiente forma.
 
 ```js
@@ -2343,7 +2347,7 @@ La respuesta `profileForm` genera el formulario y pasa los datos del usuario, y 
                     throw new Error("Peso máximo de la imagen: 5MB")        // Si la imagen es mayor a 5MB genera un error
                 }
 
-                const imgExt = file.mimetype.split("/")[1]          // Toma la propiedad mimetype de la imagen subida(image/<ext>) y la divide para generar la extension
+                const imgExt = file.mimetype.split("/")[1]          // Toma la propiedad mimetype de la imagen subida(image/<ext>) y la divide para generar la extensión
                 const dirFile = path.join(__dirname, `../public/resources/profiles/${req.user.id}.${imgExt}`)        // Genera el directorio uniendo la base junto al nombre de los archivos
 
                 fs.renameSync(file.filepath, dirFile)        // Renombra el directorio con el que generamos
@@ -2511,7 +2515,7 @@ Hecho esto podemos llamarlos en nuestro `index.js`, llamándolos y usándolos lu
 
 ```
 
-Ahora sera necesario configurar las variables de entorno que queremos ocultar, para ello agregaremos nuevas y cambiaremos algunas que ya estamos usando en nuestro `.env`.
+Ahora será necesario configurar las variables de entorno que queremos ocultar, para ello agregaremos nuevas y cambiaremos algunas que ya estamos usando en nuestro `.env`.
 
 ```env
 
@@ -2541,7 +2545,7 @@ Con nuestras variables de entorno creadas debemos cambiarlas en los archivos `in
             }),
             cookie: {       // Agregamos las cookies 
                 secure: process.env.mode === "Heroku",       // Las hacemos seguras
-                maxAge: 30 * 24 * 60 * 60 * 1000         // Declaramos que el tiempo de vida sera de un mes
+                maxAge: 30 * 24 * 60 * 60 * 1000         // Declaramos que el tiempo de vida será de un mes
             },
     }))
 
