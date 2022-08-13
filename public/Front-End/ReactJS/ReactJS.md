@@ -218,5 +218,352 @@ Como se puede observar, el componente es prácticamente una sintaxis HTML, dado 
 
 ```
 
-Como se puede ver, el componente tiene una forma de llamarse particular, esta sintaxis es propia de JSX, la cual genera los componentes como si fueran etiquetas HTML, las cuales se cierran en la misma, sin necesidad de tener una etiqueta de cierre como tal, a esto se lo llama `Self-closing tag`, dado a que no necesitan un tag de cierre (a menos que tengamos componentes hijos, lo cual veremos mas adelante).
+Como se puede ver, el componente tiene una forma de llamarse particular, esta sintaxis es propia de JSX, la cual genera los componentes como si fueran etiquetas HTML, y si no tienen elementos `child` no tienen la necesidad de tener una etiqueta de cierre como tal, a esto se lo llama `Self-closing tag`.
 Hecho esto tenemos nuestra base de React configurada, esto es todo lo que se crea automáticamente con ambas herramientas, ya sea con `npx` o `Vite`.
+
+## Props
+
+Como vimos al principio, los componentes son reutilizables, los mismos pueden ser solo una maqueta base que cambia dependiendo el contenido, es decir, podemos crear un componente `Title` que sea un `h1` con cierto estilo, y a este lo podemos llamar en diferentes paginas de nuestra aplicación, solamente cambiando el texto que contiene dentro. Esto es posible gracias al uso dinámico de las `props`, los cuales son, como su nombre lo indican, propiedades que cambiamos cuando llamamos a ciertos componentes.  
+Los props pueden ser dinámicos, y para entender el concepto completo vamos a hacer un ejemplo con la venta de una propiedad. Empezamos creando una carpeta llamada `Components` dentro de la carpeta `src`. Dentro de la misma creamos una carpeta llamada `HouseCard` y dentro el archivo `HouseCard.jsx` en la cual tendremos nuestro primer componente.
+
+```jsx
+
+    const HouseCard = () => {
+        return (
+            <div>HouseCard</div>
+        )
+    }
+
+    export default HouseCard
+
+```
+
+> Este es el formato que creamos automáticamente con `racfe`
+
+Dentro del mismo podemos tener nuestra base de componente para repetir con diferentes contenidos, para ello empezamos haciendo el maquetado con datos que cambiaremos luego.
+
+```jsx
+
+    const HouseCard = () => {
+        return (
+            <div>
+            <h1>Nombre</h1>
+            <h2>Dirección</h2>
+            <p>$Precio</p>
+            <h3>Características</h3>
+            <ul>
+                <li>Tamaño:</li>
+                <li>Habitaciones:</li>
+                <li>Mascotas:</li>
+            </ul>
+            <p>Disponible: </p>
+            <button>Contacto</button>
+            <hr />
+            </div>
+        );
+    };
+
+    export default HouseCard;
+
+```
+
+> El contenido del un componente SIEMPRE tiene que estar dentro de una etiqueta contenedora, ya sea un `div`, `button`, o hasta una etiqueta vacía (`<> </>`)
+
+Ahora podemos ir a nuestra `App.jsx` e importarlo para su uso.
+
+```jsx
+
+    import HouseCard from "./Components/HouseCard/HouseCard"      // Debemos importarlo 
+
+    const App = () => {
+        return (
+            <HouseCard />       // El componente se llama como si fuera una etiqueta HTML con cierre en el mismo
+        )
+    }
+
+    export default App
+
+```
+
+> En VSC el componente se importa automáticamente siempre que se empiece con `<` y se escriba la primer letra en mayúsculas
+
+Ahora podemos levantar nuestro servidor usando `npm run dev` en la consola y podremos observar que el componente se refleja en la pagina.  
+Pero si queremos reutilizar el mismo con diferentes valores debemos hacer uso de las props de las mismas, estas son equivalentes a los parámetros en las funciones normales de JavaScript, las mismas se pasan de la siguiente forma.
+
+```jsx
+
+    const HouseCard = ({ nombre, direccion, precio, caracteristicas, disponibilidad, funcionBoton }) => {
+        return (
+            [...]       // Aca esta el código hecho anteriormente
+        );
+    };
+
+    export default HouseCard;
+
+```
+
+Las props se pasan como un componente general llamado `props`, el cual es un objeto con todas las propiedades dentro, es por eso que usamos las llaves (`{ }`) para hacer un destructuring del mismo. Hecho esto, podemos acomodar las props en el componente, dependiendo donde las vamos a usar. Las props se escriben entre llaves para declarar que son las props, usando JavaScript para las mismas, es por eso que podemos hacer operaciones ternarias (`if/else`) para generar cierto código si se declara un ternario o se cumple cierta condición.
+
+```jsx
+
+    const HouseCard = ({ nombre, direccion, precio, caracteristicas, disponibilidad, funcionBoton }) => {
+        return (
+            <div>
+            <h1>{ nombre }</h1>         {/* Las props deben de tener el mismo nombre que se pasan para que funcione correctamente */}
+            <h2>{ direccion }</h2>
+            <p>${ precio }</p>
+            <h3>Características</h3>
+            <ul>
+                <li>Tamaño: { caracteristicas.tamaño }</li>         {/* Como le vamos a pasar un objeto, es necesario tomar las caracteristicas de los mismos */}
+                <li>Habitaciones: { caracteristicas.habitaciones }</li>
+                <li>Mascotas: { caracteristicas.mascotas ? '✔' : '❌' }</li>       {/* Al ser JavaScript podemos tomar el ternario para generar diferentes respuestas */}
+            </ul>
+            <p>Disponible: { disponibilidad ? '✔' : '❌' }</p>
+            <button>Contacto</button>
+            <hr />
+            </div>
+        );
+    };
+
+    export default HouseCard;
+
+```
+
+Lo único que nos falta ahora es pasar las props cuando lo llamamos, esto se hace de la siguiente manera.
+
+```jsx
+
+    import HouseCard from "./Components/HouseCard/HouseCard"
+
+    const App = () => {
+        return (
+            <HouseCard nombre="Lake Manor" direccion="35 Main Street" precio={1200000} caracteristicas={{tamaño: "100m2", habitaciones: 3, mascotas: true}} disponibilidad={true} />
+        )
+    }
+
+    export default App
+
+```
+
+> Las props tienen su forma de pasarse, si son strings se envían normalmente con comillas (`"", ''`), en cambio si son cualquier otro tipo de dato se envían entre llaves (`{ }`), y los objetos se envían con doble llave (`{{ }}`) ya que necesitan una llave para enviarse, y otra para declarar que son objetos
+
+Gracias a React podemos reutilizar este componente las veces que sean necesarias, solo cambiando las props que le pasamos de la siguiente manera.
+
+```jsx
+
+    import HouseCard from "./Components/HouseCard/HouseCard";
+
+    const App = () => {
+        return (
+            <>      {/* Utilizamos los tags vacíos para que no se genere un div en el HTML */}
+                <HouseCard      // Este formato se usa para que sea mas Comodo a la vista
+                    nombre="Lake Manor"
+                    direccion="35 Main Street"
+                    precio={2600000}
+                    caracteristicas={{ tamaño: "1300m2", habitaciones: 7, mascotas: true }}
+                    disponibilidad={true}
+                />
+                <HouseCard
+                    nombre="Minimal Dream"
+                    direccion="13 Main Street"
+                    precio={1000000}
+                    caracteristicas={{ tamaño: "90m2", habitaciones: 1, mascotas: true }}
+                    disponibilidad={true}
+                />
+                <HouseCard
+                    nombre="Commercial Block 3"
+                    direccion="3 Commercial Street"
+                    precio={500000}
+                    caracteristicas={{ tamaño: "72m2", habitaciones: 1, mascotas: false }}
+                    disponibilidad={false}
+                />
+            </>
+        );
+    };
+
+    export default App;
+
+```
+
+Algo que nos falto pasar es la prop `funcionBoton`, al cual sera una funcion que crearemos en `App.jsx` para mostrar como se pasaria, aunque siempre es recomendable dejar la misma limpia y modularizar todo lo que se pueda.
+
+```jsx
+
+    import HouseCard from "./Components/HouseCard/HouseCard";
+
+    const App = () => {
+
+    function contacto(nombre, precio) {
+        alert(`En breve se le contactará por la propiedad ${nombre} valorada en $${precio}`)
+    }
+
+    return (
+            <>
+                <HouseCard
+                    nombre="Lake Manor"
+                    direccion="35 Main Street"
+                    precio={2600000}
+                    caracteristicas={{ tamaño: "1300m2", habitaciones: 7, mascotas: true }}
+                    disponibilidad={true}
+                    funcionBoton={contacto}         // Le pasamos la funcion que creamos anteriormente
+                />
+
+                [...]
+                
+                />
+            </>
+        );
+    };
+
+    export default App;
+
+```
+
+Y luego debemos ubicarla en nuestro componente para que se accione cada vez que se haga click en el mismo, haciendo uso del [evento](https://es.reactjs.org/docs/events.html) llamado `onClick`.
+
+```jsx
+
+    const HouseCard = ({ nombre, direccion, precio, caracteristicas, disponibilidad, funcionBoton }) => {
+        return (
+            <div>
+            [...]
+            <button onClick={ ()=>funcionBoton(nombre, precio) }>Contacto</button>      {/* Le pasamos las props que vamos a necesitar como parametros */}
+            <hr />
+            </div>
+        );
+    };
+
+    export default HouseCard;
+
+```
+
+> Las funciones pueden abarcar desde una alerta simple como ahora hasta un cambio de componente, ocultarlo o hasta cambios en la base de datos, siempre y cuando se tengan los conocimientos de JavaScript necesarios
+
+## Estilos
+
+Como podemos observar, a nuestro componente le falta un estilo visual para que no sea un simple HTML plano, para ello haremos uso de `CSS`, creando un archivo llamado `HouseCard.css` dentro de la carpeta `HouseCard`.  
+Este archivo sera nuestro archivo de estilos para el componente, cada carpeta de componente contiene el archivo `.jsx` de código y el `.css` de estilos propio, el cual debemos importar en el mismo de la siguiente manera.
+
+```jsx
+
+    import "./HouseCard.css"        // Importamos el css del componente
+
+    const HouseCard = ({ nombre, direccion, precio, caracteristicas, disponibilidad, funcionBoton }) => {
+        return (
+            [...]
+        );
+    };
+
+```
+
+Y ahora es posible cambiar cualquier estilo del componente, y el mismo se aplicará cada vez que se llame, para ello tendremos un ejemplo base.
+
+```css
+
+    .houseCard {
+        min-width: min-content;
+        width: 50%;
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        border: 2px solid black;
+        border-radius: 10px;
+        padding: 10%;
+        margin-bottom: 10px;
+        background-color: #0d0d0d;
+        color: white;
+    }
+
+    .houseCard h1 {
+        font-family: 'Courier New', Courier, monospace;
+    }
+
+    .houseCard ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    button {
+        background-color: #2e2e2e;
+        padding: 10px;
+        border: 2px solid white;
+        border-radius: 10px;
+        color: white;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: ease all .5s;
+        margin-top: 15px;
+    }
+
+    button:hover {
+        scale: 1.1;
+        background-color: #3e3e3e;
+    }
+
+```
+
+En este caso hicimos uso de una clase que debemos crear, pero para ello no se usa simplemente `class` como en HTML, sino que necesitamos hacer uso de `className`, la forma de declarar clases dada por React.
+
+```jsx
+
+    import "./HouseCard.css"
+
+    const HouseCard = ({ nombre, direccion, precio, caracteristicas, disponibilidad, funcionBoton }) => {
+        return (
+            <div className="houseCard">         {/* Siempre se usa className, ya que si usamos simplemente class nos dará un error en consola */}
+            <h1>{nombre}</h1>
+            <h2>{direccion}</h2>
+            <p>${precio}</p>
+            <h3>Características</h3>
+            <ul>
+                <li>Tamaño: {caracteristicas.tamaño}</li>
+                <li>Habitaciones: {caracteristicas.habitaciones}</li>
+                <li>Mascotas: {caracteristicas.mascotas ? '✔' : '❌'}</li>
+            </ul>
+            <p>Disponible: {disponibilidad ? '✔' : '❌'}</p>
+            <button onClick={()=>funcionBoton(nombre, precio)}>Contacto</button>
+            </div>
+        );
+    };
+
+    export default HouseCard;
+
+```
+
+Volviendo a aclarar que está basado en JavaScript podemos hacer que las clases sean dinámicas, agregándolas dentro de un ternario si son `true` o `false`, cambiando la clase en cada uno de ellos de la siguiente manera.
+
+```jsx
+
+    const HouseCard = ({ nombre, direccion, precio, caracteristicas, disponibilidad, funcionBoton }) => {
+        return (
+            [...]
+                <li className={disponibilidad ? "text-disp" : "text-no-disp"}>Mascotas: {caracteristicas.mascotas ? '✔' : '❌'}</li>
+            </ul>
+            <p className={disponibilidad ? "text-disp" : "text-no-disp"}>Disponible: {disponibilidad ? '✔' : '❌'}</p>
+            [...]
+        );
+    };
+
+    export default HouseCard;
+
+
+```
+
+Y agregando esa clase al archivo `css`.
+
+```css
+
+    [...]
+
+    .text-disp {
+        color: green;
+    }
+
+    .text-no-disp {
+        color: red;
+    }
+
+```
