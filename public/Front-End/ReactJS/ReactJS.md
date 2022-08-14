@@ -1,6 +1,6 @@
 # React JS
 
-[ReactJS](https://reactjs.org/) es una librería de JavaScript diseñada con el fin de crear interfaces de usuario dinámicas mucho mas rápidas, la cual fue creada por Facebook y es utilizada, mas allá de sus respectivas paginas web, en una gran variedad mas como puede ser Uber, Pinterest, Netflix entre otros.  
+[ReactJS](https://reactjs.org/) es una librería de JavaScript diseñada con el fin de crear interfaces de usuario dinámicas mucho mas rápidas, la cual fue creada por Facebook y es utilizada, mas allá de sus respectivas páginas web, en una gran variedad mas como puede ser Uber, Pinterest, Netflix entre otros.  
 React esta basado en componentes, lo que lo hace escalable y altamente reutilizable  
 
 ## NodeJS
@@ -223,7 +223,7 @@ Hecho esto tenemos nuestra base de React configurada, esto es todo lo que se cre
 
 ## Props
 
-Como vimos al principio, los componentes son reutilizables, los mismos pueden ser solo una maqueta base que cambia dependiendo el contenido, es decir, podemos crear un componente `Title` que sea un `h1` con cierto estilo, y a este lo podemos llamar en diferentes paginas de nuestra aplicación, solamente cambiando el texto que contiene dentro. Esto es posible gracias al uso dinámico de las `props`, los cuales son, como su nombre lo indican, propiedades que cambiamos cuando llamamos a ciertos componentes.  
+Como vimos al principio, los componentes son reutilizables, los mismos pueden ser solo una maqueta base que cambia dependiendo el contenido, es decir, podemos crear un componente `Title` que sea un `h1` con cierto estilo, y a este lo podemos llamar en diferentes páginas de nuestra aplicación, solamente cambiando el texto que contiene dentro. Esto es posible gracias al uso dinámico de las `props`, los cuales son, como su nombre lo indican, propiedades que cambiamos cuando llamamos a ciertos componentes.  
 Los props pueden ser dinámicos, y para entender el concepto completo vamos a hacer un ejemplo con la venta de una propiedad. Empezamos creando una carpeta llamada `Components` dentro de la carpeta `src`. Dentro de la misma creamos una carpeta llamada `HouseCard` y dentro el archivo `HouseCard.jsx` en la cual tendremos nuestro primer componente.
 
 ```jsx
@@ -287,7 +287,7 @@ Ahora podemos ir a nuestra `App.jsx` e importarlo para su uso.
 
 > En VSC el componente se importa automáticamente siempre que se empiece con `<` y se escriba la primer letra en mayúsculas
 
-Ahora podemos levantar nuestro servidor usando `npm run dev` en la consola y podremos observar que el componente se refleja en la pagina.  
+Ahora podemos levantar nuestro servidor usando `npm run dev` en la consola y podremos observar que el componente se refleja en la página.  
 Pero si queremos reutilizar el mismo con diferentes valores debemos hacer uso de las props de las mismas, estas son equivalentes a los parámetros en las funciones normales de JavaScript, las mismas se pasan de la siguiente forma.
 
 ```jsx
@@ -314,7 +314,7 @@ Las props se pasan como un componente general llamado `props`, el cual es un obj
             <p>${ precio }</p>
             <h3>Características</h3>
             <ul>
-                <li>Tamaño: { caracteristicas.tamaño }</li>         {/* Como le vamos a pasar un objeto, es necesario tomar las caracteristicas de los mismos */}
+                <li>Tamaño: { caracteristicas.tamaño }</li>         {/* Como le vamos a pasar un objeto, es necesario tomar las características de los mismos */}
                 <li>Habitaciones: { caracteristicas.habitaciones }</li>
                 <li>Mascotas: { caracteristicas.mascotas ? '✔' : '❌' }</li>       {/* Al ser JavaScript podemos tomar el ternario para generar diferentes respuestas */}
             </ul>
@@ -385,7 +385,10 @@ Gracias a React podemos reutilizar este componente las veces que sean necesarias
 
 ```
 
-Algo que nos falto pasar es la prop `funcionBoton`, al cual sera una funcion que crearemos en `App.jsx` para mostrar como se pasaria, aunque siempre es recomendable dejar la misma limpia y modularizar todo lo que se pueda.
+## EventHandlers
+
+En React podemos hacer uso de los [eventos](https://es.reactjs.org/docs/events.html), los mismos que reaccionan a ciertas acciones del usuario en la página, al igual que en JavaScript. La diferencia entre los eventos de JS y los de React es la forma en la que se escriben, empezando con `on` y camelCase en React (`onClick, onKeyDown, onBlur`).  
+Para ver un ejemplo de esto empezaremos creando prop que nos falto pasar, `funcionBoton`, al cual sera una función que crearemos en `App.jsx`, aunque siempre es recomendable dejar la misma limpia y modularizar todo lo que se pueda.
 
 ```jsx
 
@@ -405,7 +408,7 @@ Algo que nos falto pasar es la prop `funcionBoton`, al cual sera una funcion que
                     precio={2600000}
                     caracteristicas={{ tamaño: "1300m2", habitaciones: 7, mascotas: true }}
                     disponibilidad={true}
-                    funcionBoton={contacto}         // Le pasamos la funcion que creamos anteriormente
+                    funcionBoton={contacto}         // Le pasamos la función que creamos anteriormente
                 />
 
                 [...]
@@ -419,7 +422,7 @@ Algo que nos falto pasar es la prop `funcionBoton`, al cual sera una funcion que
 
 ```
 
-Y luego debemos ubicarla en nuestro componente para que se accione cada vez que se haga click en el mismo, haciendo uso del [evento](https://es.reactjs.org/docs/events.html) llamado `onClick`.
+Y luego debemos ubicarla en nuestro componente para que se accione cada vez que se haga click en el mismo, haciendo uso del evento llamado [`onClick`](https://reactjs.org/docs/events.html#mouse-events), el cual reaccionará cada vez que se haga un click en el elemento en cuestión.
 
 ```jsx
 
@@ -427,7 +430,7 @@ Y luego debemos ubicarla en nuestro componente para que se accione cada vez que 
         return (
             <div>
             [...]
-            <button onClick={ ()=>funcionBoton(nombre, precio) }>Contacto</button>      {/* Le pasamos las props que vamos a necesitar como parametros */}
+            <button onClick={ ()=>funcionBoton(nombre, precio) }>Contacto</button>      {/* Le pasamos las props que vamos a necesitar como parámetros */}
             <hr />
             </div>
         );
@@ -567,3 +570,340 @@ Y agregando esa clase al archivo `css`.
     }
 
 ```
+
+## Paquetes
+
+Ahora que empezamos a estilizar nuestra app podemos probar la instalación de un paquete de tercero gracias a `npm`. En este caso usaremos [`Sass`](https://sass-lang.com/), el cual es un pre-procesador de CSS que otorga más funcionalidades al mismo.  
+Para ello lo instalamos en el proyecto con el siguiente comando.
+
+```cmd
+
+    npm i sass
+
+```
+
+Ahora lo único que debemos hacer es cambiar la extension de nuestros archivos de `.css` a `.scss`, y en él podemos comenzar a trabajar con `Sass` sin ningún problema.
+
+> Al cambiar la extension a `.scss` habrá que cambiarlo en todos los archivos donde llamemos a los estilos
+
+Un ejemplo del cambio de sintaxis que tiene Sass es la posibilidad de anidar (nest) las diferentes clases para que no se repitan, ahorrando un poco mas de código. Para mostrar esto podemos ver como quedaría nuestro CSS implementando el nesting de Sass.
+
+```scss
+
+    .houseCard {
+        min-width: min-content;
+        width: 50%;
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        border: 2px solid black;
+        border-radius: 10px;
+        padding: 10%;
+        margin-bottom: 10px;
+        background-color: #0d0d0d;
+        color: white;
+
+        h1 {        // Directamente colocamos el h1 dentro, lo que equivale a ".class h1"
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        image {
+            height: 100px;
+            width: 100px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+    }
+
+    button {
+        background-color: #2e2e2e;
+        padding: 10px;
+        border: 2px solid white;
+        border-radius: 10px;
+        color: white;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: ease all .5s;
+        margin-top: 15px;
+
+        &:hover {       // El símbolo & (and) marca que se toma el elemento como base
+            scale: 1.1;
+            background-color: #3e3e3e;
+        }
+    }
+
+    .text-disp {
+        color: green;
+
+    }
+
+    .text-no-disp {
+        color: red;
+    }
+
+```
+
+Sass es solo un ejemplo de los paquetes que se pueden instalar, pero hay muchos mas [paquetes disponibles para usar](https://www.npmjs.com/).
+
+## Map de array
+
+En React podemos generar contenido de un componente en base a un array, cosa que usaremos bastante cuando se necesite pedir datos de una base de datos. De momento tendremos un ejemplo básico creando una array para tomarlo de base.  
+Empezamos creando una nueva carpeta llamada `FoxCard` en la que tendremos un archivo `.jsx` y un `.scss` con el mismo nombre. Dentro de nuestro `jsx` agregaremos el componente base (`rafce` en este caso) y crearemos un array llamado `foxArray`, el cual contendrá nuestros zorros.
+
+```jsx
+
+    import "./FoxCard.scss";
+
+    const FoxCard = () => {
+
+    const foxArray = [
+        {
+        foxName: "Glimpsy",
+        foxAge: 5,
+        },
+        {
+        foxName: "Dixie",
+        foxAge: 3,
+        },
+        {
+        foxName: "Jackie",
+        foxAge: 4,
+        },
+    ];
+    
+        return (
+            <div>
+                <h1>Fox Name</h1>
+                <h3>Edad: </h3>
+                <img src="" />
+            </div>
+        );
+    };
+
+```
+
+Para poder recorrer nuestro array debemos hacer uso del método `map`, el cual recorre cada elemento del array para generar nuestro código. El mismo, al ser código de JavaScript, se debe escribir entre llaves (`{}`).
+
+```jsx
+
+    import "./FoxCard.scss";
+
+    const FoxCard = () => {
+    const foxArray = [
+        {
+            foxName: "Glimpsy",
+            foxAge: 5,
+        },
+        {
+            foxName: "Dixie",
+            foxAge: 3,
+        },
+        {
+            foxName: "Jackie",
+            foxAge: 4,
+        },
+    ];
+
+    return (
+            <>
+                {foxArray.map((fox, i) => (         // Forma de escribir el map para generar el contenido
+                    <div key={i}>       {/* La key se tiene que colocar en el contenedor padre cada vez que se usa el map */}
+                        <h1>{fox.foxName}</h1>
+                        <h3>Edad: {fox.foxAge}</h3>
+                        <img src="" />
+                    </div>
+                ))}
+            </>
+        );
+    };
+
+    export default FoxCard;
+
+```
+
+> La key debe ser única, no debe repetirse en ningún componente o genera un error, es común usar un `id` si el objeto en particular lo tiene, sino se hace uso del index
+
+Si importamos el componente a nuestra `App.jsx` podemos ver como se genera en base a los objetos dentro de nuestro array.
+
+## Fetch
+
+Pero viendo esto podemos notar que nos hace falta la imagen, para esto podemos aprender algo muy importante de React y JavaScript que es el fetchAPI, y utilizarlo para traer una imagen desde una API publica.  
+Para hacer esto necesitamos hacer uso de la funcion `fetch()`, la cual es recibe una url como parámetro y devuelve una promesa. Para este ejemplo usaremos la API [RandomFox](https://randomfox.ca).
+
+```jsx
+
+    fetch("https://randomfox.ca/floof/")        // Le pasamos la URL como parámetro
+        .then((res) => res.json())      // Convertimos la respuesta a JSON
+        .then((res) => console.log(res))        // Mostramos la respuesta en consola
+        .catch((err) => console.error(err));        // Si hay un error, lo mostramos en consola
+
+```
+
+Si vemos la respuesta en la consola podremos ver que se nos devuelve un objeto con la imagen y el link, nosotros podemos pasar fácilmente esta imagen como `src` de nuestra etiqueta `img`, pero siendo que estamos trabajando con React es necesario hacer uso de los Hooks que nos provee React.
+
+## Hooks
+
+[Hooks](https://es.reactjs.org/docs/hooks-overview.html) se le llama a algunas funciones nativas de React que nos sirven para diferentes cosas, ya sea mantener variables, estados, contextos, entre otras. Estas se tienen que importar cada vez que necesitemos utilizarlas.
+Uno de los hooks que usaremos será `useEffect`, el cual maneja los efectos secundarios que se hacen LUEGO de la generación del componente. El mismo puede ser llamado de 3 formas dependiendo de las veces que queramos que se utilicen.
+
+```jsx
+    
+    import { useEffect } from "react";      // Importamos useEffect de React
+
+    useEffect(() => {       // Llamamos al useEffect
+        console.log("Hola")     // Aca va todo nuestro código
+    }, [])      // Indica que solo se llama una vez al generar el componente
+
+```
+
+> Al tener un array vacío (`[]`) solo se llama una vez y no vuelve a llamarse a menos que se recargue la página
+
+```jsx
+    
+    import { useEffect, useState } from "react";      // Importamos useEffect de React
+
+    const [data, setData] = useState("")        // Hook de estado que veremos mas adelante
+
+    useEffect(() => {       // Llamamos al useEffect
+        console.log("Hola")     // Aca va todo nuestro código
+    }, [data])      // Indica que esta atento a los cambios en data
+
+```
+
+> El mismo se vuelve a llamar cada vez que cambia el valor de lo que tenga dentro del array (en este caso el valor de `data`)
+
+```jsx
+    
+    import { useEffect } from "react";      // Importamos useEffect de React
+
+    useEffect(() => {       // Llamamos al useEffect
+        console.log("Hola")     // Aca va todo nuestro código
+    })      // Indica que se llama cada vez que cambia algo en la página
+
+```
+
+> Al no tener un array el mismo se llama cada vez que cambie algo en la página, lo cual puede ser peligroso si se esta llamando a una base de datos por un colapso de requests
+
+Para este caso usaremos `useEffect` para el fetch de la siguiente forma.
+
+```jsx
+
+    import { useEffect } from "react";
+    import "./FoxCard.scss";
+
+    const FoxCard = () => {
+
+    const foxArray = [
+        {
+            foxName: "Glimpsy",
+            foxAge: 5,
+        },
+        {
+            foxName: "Dixie",
+            foxAge: 3,
+        },
+        {
+            foxName: "Jackie",
+            foxAge: 4,
+        },
+    ];
+    
+    useEffect(() => {
+        fetch("https://randomfox.ca/floof/")
+        .then((res) => res.json())
+        .then((res) => console.log(res))
+        .catch((err) => console.error(err));
+    }, []);
+
+    return (
+            <>
+                {foxArray.map((fox, i) => (
+                    <div key={i}>
+                        <h1>{fox.foxName}</h1>
+                        <h3>Edad: {fox.foxAge}</h3>
+                        <img src="" />
+                    </div>
+                ))}
+            </>
+        );
+    };
+
+    export default FoxCard;
+
+```
+
+De momento, lo único que hace nuestro fetch es mostrar los datos por consola, pero lo que queremos hacer es poder usar la url que nos trae como src de nuestra imagen, para ello debemos guardarla en una variable. React tiene una forma particular de guardar las variables para su uso, esto es a traves del hook llamado [useState](https://es.reactjs.org/docs/hooks-overview.html#state-hook). Este es un hook que funciona como una variable normal, pudiendo cambiar su valor y usarla en nuestra página.  
+Lo primero que debemos hacer es importarla junto al useEffect, y luego hacer uso de su sintaxis.
+
+```jsx
+
+    import { useEffect, useState } from "react";
+    import "./FoxCard.scss";
+
+    const FoxCard = () => {
+
+        const [foxImage, setFoxImage] = useState("");       // Se llama primero al nombre de la variable, luego a la funcion que inicia con set y camelCase, y al final se declara el valor inicial
+
+        [...]
+
+    }
+
+```
+
+Teniendo la base del estado podemos guardar nuestra búsqueda en la misma haciendo uso de la funcion para cambiar el valor y enviar la variable al src de la imagen.
+
+```jsx
+
+    import { useEffect, useState } from "react";
+    import "./FoxCard.scss";
+
+    const FoxCard = () => {
+        const [foxImage, setFoxImage] = useState("");       // Lo iniciamos como un string vació
+
+        const foxArray = [
+            {
+                foxName: "Glimpsy",
+                foxAge: 5,
+            },
+            {
+                foxName: "Dixie",
+                foxAge: 3,
+            },
+            {
+                foxName: "Jackie",
+                foxAge: 4,
+            },
+        ];
+
+        useEffect(() => {
+            fetch("https://randomfox.ca/floof/")
+            .then((res) => res.json())
+            .then((res) => setFoxImage(res.image))      // Cambiamos el valor de la variable a la imagen
+            .catch((err) => console.error(err));
+        }, []);
+
+        return (
+            <>
+                {foxArray.map((fox, i) => (
+                    <div key={i}>
+                        <h1>{fox.foxName}</h1>
+                        <h3>Edad: {fox.foxAge}</h3>
+                        <img src={foxImage} />          {/* Usamos la variable para generar la imagen */}
+                    </div>
+                ))}
+            </>
+        );
+    };
+
+    export default FoxCard;
+
+```
+
+En este caso la imagen siempre sera la misma, ya que lo que hacemos es buscar una sola vez y guardar la imagen para reutilizarla las veces que sean necesarias, pero lo importante es ver el funcionamiento y la implementación de los hooks.
+Hay algunos hooks más, como pueden ser el [`useContext`](https://es.reactjs.org/docs/hooks-reference.html#usecontext), el cual nos sirve para guardar estados que se usen en toda la página, pero estos lo usaremos mas adelante en otros proyectos.
