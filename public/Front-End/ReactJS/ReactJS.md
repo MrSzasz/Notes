@@ -907,3 +907,7 @@ Teniendo la base del estado podemos guardar nuestra búsqueda en la misma hacien
 
 En este caso la imagen siempre sera la misma, ya que lo que hacemos es buscar una sola vez y guardar la imagen para reutilizarla las veces que sean necesarias, pero lo importante es ver el funcionamiento y la implementación de los hooks.
 Hay algunos hooks más, como pueden ser el [`useContext`](https://es.reactjs.org/docs/hooks-reference.html#usecontext), el cual nos sirve para guardar estados que se usen en toda la página, pero estos lo usaremos mas adelante en otros proyectos.
+
+## Proyecto simple con PokeAPI
+
+Ahora que tenemos nuestra base podemos armar un proyecto simple en el que pediremos datos a la API de Pokemon llamada [PokeAPI](https://pokeapi.co/).
