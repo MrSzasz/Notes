@@ -13,6 +13,8 @@ La misma se actualizará a medida que se agregue mas contenido.
 
 ## Front-End
 
+[jQuery](public/Front-End/JQuery/JQuery.md)
+
 [ReactJS](public/Front-End/ReactJS/ReactJS.md)
 
 [TypeScript](public/Front-End/TypeScript/TypeScript.md)
