@@ -144,3 +144,77 @@ Y ahora podemos seleccionarlo en nuestro js, agregando los eventos correspondien
     });
 
 ```
+
+## Input
+
+Podemos recuperar el valor de un input en base a los diferentes eventos de javaScript, pero para este caso no usaremos `.html()`, sino que haremos uso del método `.val()`. Para ello creamos un input básico en nuestro HTML con el id `jqInput` y un botón que sea de tipo submit, todo esto de un elemento `form`, luego los llamamos en nuestro archivo js.
+
+```js
+
+    $(document).ready(function () {
+
+        let inputOnHTML = $("#jqInput")         // Llamamos al input y lo guardamos en una variable
+        inputOnHTML.keyup((e) => {      // Indicamos que detecte cuando se ingresa una tecla
+            console.log(inputOnHTML.val());      // Imprimimos en consola el valor total del input
+        });
+          
+        $("button[type='submit']").click((e) => {       // Llamamos al botón aprovechando el tipo del botón
+            e.preventDefault();         // Indicamos que no se cumpla el submit normal
+            alert(inputOnHTML.val())        // Hacemos un alert del valor del input
+        })
+    });
+
+```
+
+## Animaciones base
+
+Podemos hacer uso de las animaciones base que tiene jQuery para ocultar y mostrar ciertos elementos, siendo estas las `slide` y los `toggle`. Para empezar crearemos un elemento que usaremos de base para modificar, además de los diferentes botones en el HTML.
+
+```HTML
+
+    <main>
+        <div class="buttons">
+            <button id="Hide">Hide</button>
+            <button id="Show">Show</button>
+            <button id="ToggleHS">ToggleHS</button>
+            <button id="FadeOut">FadeOut</button>
+            <button id="FadeIn">FadeIn</button>
+            <button id="ToggleF">ToggleF</button>
+            <button id="SlideUp">SlideUp</button>
+            <button id="SlideDown">SlideDown</button>
+            <button id="ToggleS">ToggleS</button>
+        </div>
+        <img src="https://i.kym-cdn.com/entries/icons/original/000/029/849/drax.jpg" alt="invisible">
+    </main>
+
+```
+
+Y llamamos a cada uno de los botones con sus respectivos id en js, usando los métodos necesarios.
+
+```js
+
+    $(document).ready(function () {
+
+        let image = $("img")
+
+        $("#Hide").click(() => image.hide())         // Oculta el elemento
+
+        $("#Show").click(() => image.show())        // Muestra el elemento
+
+        $("#ToggleHS").click(() => image.toggle())      // Varia entre mostrar y ocultar el elemento
+
+        $("#FadeIn").click(() => image.fadeIn())        // Muestra el elemento con un efecto de aparición
+
+        $("#FadeOut").click(() => image.fadeOut())      // Oculta el elemento con un efecto de desvanecimiento
+
+        $("#ToggleF").click(() => image.fadeToggle())       // Varia entre mostrar y ocultar el elemento con los efectos
+
+        $("#SlideUp").click(() => image.slideUp())       // Oculta el elemento subiéndolo
+
+        $("#SlideDown").click(() => image.slideDown())      // Muestra el elemento bajándolo
+
+        $("#ToggleS").click(() => image.slideToggle())      // Alterna entre los dos anteriores
+        
+    });
+
+```
