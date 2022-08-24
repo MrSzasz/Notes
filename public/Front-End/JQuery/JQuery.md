@@ -218,3 +218,46 @@ Y llamamos a cada uno de los botones con sus respectivos id en js, usando los m�
     });
 
 ```
+
+## Animate
+
+También es posible crear nuestras propias animaciones con el método `animate()`, pudiendo modificar un elemento a elección, para ello crearemos un elemento simple y dos botones, uno para una animación simple de un solo parámetro, y otra para multiples parámetros.
+
+```html
+
+    <main>
+        <div class="buttons">
+            <button id="big">++</button>
+            <button id="multiple">animado</button>
+        </div>
+        <img src="https://i.kym-cdn.com/entries/icons/original/000/029/849/drax.jpg" alt="invisible">
+    </main>
+
+```
+
+Y luego nos vamos a nuestro js para poder agregar las funciones a los botones.
+
+```js
+
+$(document).ready(function () {
+
+    let image = $("img")
+
+    $("#large").click(() => {
+        image.animate({         // Usamos el método "animate" para animar el elemento
+            width: "+=100px"        // Y pasamos lo que queremos cambiar como método
+        })
+    });
+
+    $("#multiple").click(() => {
+        image.animate({
+            "width": "-=20px",
+            "opacity": "-=.05"
+        }, 500,         // Podemos poner el tiempo que tardará en hacerse
+        () => {     // Podemos pasar un callback para generarse al terminar la animación
+            console.log("animación completa");
+        })
+    });
+});
+
+```
