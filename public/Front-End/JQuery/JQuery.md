@@ -261,3 +261,57 @@ $(document).ready(function () {
 });
 
 ```
+
+## AJAX
+
+Con jQuery podemos hacer pedidos AJAX usando el método `get()`, el cual nos trae los datos de un archivo o base de datos par poder mostrarlos en pantalla sin la necesidad de recargar la misma. Para mostrarlo crearemos un archivo llamado `data.json` con un array de datos.
+
+```json
+
+    [
+        {
+            "name": "joseph",
+            "surname": "joestar"
+        },
+        {
+            "name": "jotaro",
+            "surname": "kujo"
+        },
+        {
+            "name": "josuke",
+            "surname": "higashikata"
+        }
+    ]
+
+```
+
+Y en nuestro HTML agregaremos un botón para tomar los datos más un ul para poder mostrarlos de la siguiente forma.
+
+```HTML
+
+    <main>
+        <button id="getData">get data</button>
+        <ul id="data"></ul>
+    </main>
+
+```
+
+Por ultimo hacemos uso de nuestro js, en el cual llamaremos a los datos y luego los mostraremos en pantalla.
+
+```js
+
+    $("#getData").click(() => {
+        $.get("data.json", (data) => {      // Usamos el método para obtener los datos
+            $.each(data, function (i, item) {       // Creamos un forEach de jQuery en donde i es el index y item el elemento
+                $("#data").append(` 
+                <li>Nombre: ${item.name}<br> 
+                Apellido: ${item.surname}<br> 
+                Posición: N${i}</li><hr>`
+                );      // Hacemos un append para crear cada item en base a los datos
+            })
+        });
+    });
+
+```
+
+> También se le pueden pasar [diferentes parámetros](https://api.jquery.com/jQuery.get/) dependiendo de lo que necesitemos saber, como el estado de la petición
