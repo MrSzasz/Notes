@@ -80,7 +80,7 @@ El cambio que se hace al querer importarlos es el mismo, se debe aclarar todos l
 
 ```js
 
-    const {animals, names} = require("./animals")
+    const { animals, names } = require("./animals")
 
     animals.forEach(an => {
         console.log(an)     // 🦊, 🐱, 🐶, 🦅, 🐢
@@ -91,6 +91,20 @@ El cambio que se hace al querer importarlos es el mismo, se debe aclarar todos l
 ```
 
 > También es posible exportar solo un dato si es el único que se va a utilizar
+
+Por ultimo, otra forma de tomar los exports es enviarlos individualmente de la siguiente forma.
+
+```js
+
+    const animals = ["🦊", "🐱", "🐶", "🦅", "🐢"]
+    const names = ["fox", "cat", "dog", "eagle", "turtle"]
+
+    module.exports.animals = animals
+    module.exports.names = names
+
+```
+
+> Esta forma serviría para exportar ciertos datos individualmente, dejando algunos sin importar
 
 Node tiene incorporado unos cuantos módulos que se pueden utilizar con diferentes fines, es posible ver todos, leer su documentación en implementación [desde acá](https://nodejs.org/dist/latest-v16.x/docs/api/).  
 Además es [posible instalar diferentes módulos](https://www.npmjs.com/), que sean necesarios para correr la app que se esté creando, pero al momento de su ejecución en otros dispositivos serán necesarios instalarlos también.  
