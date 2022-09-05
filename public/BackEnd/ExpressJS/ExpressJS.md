@@ -117,3 +117,115 @@ Todas estas respuestas son en base a una página que existe, pero si queremos ma
     [...]
 
 ```
+
+## Body
+
+El cliente puede mandar distintos tipos de request a nuestro servidor, esto se hace mediante el `body` de nuestro request. Para poder obtener estos datos es necesario que se haga un parse antes, lo cual podemos hacer gracias a Express a traves uno de los middlewares disponibles de la siguiente manera.
+
+```js
+
+    const express = require('express');
+    const app = express();
+    const port = process.env.PORT || 5000;
+
+
+    app.use(express.json())         // Indicamos que tomará datos JSON
+    app.use(express.urlencoded({ extended:false }))         // Indicamos que tomará datos de form o URL básicos
+
+
+    app.post('/login', (req, res) => {      // Indicamos la URL de donde se tomara el request
+        console.log(req.body);          // Tomamos los datos del body y lo imprimimos en consola
+        res.send('all done!')        // Creamos una respuesta visual
+    })
+
+
+    app.listen(port);
+
+    console.log(`Server on port ${port}`);
+
+```
+
+> En este caso usaremos `.post` ya que el usuario enviará información al servidor, no pedirá
+
+Para hacer las pruebas necesarias sin crear un formulario en HTML podemos usar dos extensiones diferentes de VSC, una de ellas es [`RapidAPI`](https://marketplace.visualstudio.com/items?itemName=RapidAPI.vscode-rapidapi-client) o ['Thunder Client'](https://marketplace.visualstudio.com/items?itemName=rangav.vscode-thunder-client). Ambas tienen la misma base de funcionamiento, deberemos poner nuestro servidor ('http://localhost:5000/') con el método POST de envío y en el body del mismo debemos enviar los datos con formato JSON.
+
+```json
+
+    {
+        "name": "Jolyne",
+        "surname": "Cujoh"
+    }
+
+```
+
+Con los pasos que hicimos anteriormente, al enviar los datos deberemos verlos impreso en consola.
+
+## Params
+
+Así como el usuario puede pasar los datos por body del request, también puede pasarlos como parámetros en los datos de la URL. Esto se puede obtener gracias al método `.params` de la siguiente manera.
+
+```js
+
+    const express = require('express');
+    const app = express();
+    const port = process.env.PORT || 5000;
+
+
+    app.get('/login/:username', (req, res) => {         // El : indica que luego se tomará el parámetro indicado
+        console.log(req.params);        // Imprimimos el objeto en consola
+        res.send(`Bienvenido ${req.params.username}`);      // Usamos la propiedad "username" que creamos y mandamos en el parámetro
+    })
+
+
+    app.listen(port);
+
+    console.log(`Server on port ${port}`);
+
+```
+
+> El nombre del parámetro será el que nosotros declaremos en la URL, y el valor el que le pasamos
+
+Para probar esto deberemos ir a la ruta que indicamos, agregando el parámetro que querramos.  
+También es posible enviar mas de un parámetro, siempre y cuando lo indiquemos en la url.
+
+```js
+
+    [...]
+
+    app.get('/login/:name/:surname', (req, res) => {        // Indicamos la cantidad y nombre de los parámetros
+        console.log(req.params);
+        res.send(`Nombre: ${req.params.name}, Apellido: ${req.params.surname}`);
+    })
+
+    [...]
+
+```
+
+## Query
+
+Los datos no solo se pasan por parámetros en la URL, sino que se pueden pasar como `queries`, los cuales son variables que se crean para poder obtener desde el servidor con el método `.query`. La particularidad de éstas es que para enviarse se hacen luego del símbolo `?`, ademas de que se pueden enviar varias separadas con el símbolo `&`.  
+Para tomar las queries se hace de la siguiente manera.
+
+```js
+
+    const express = require('express');
+    const app = express();
+    const port = process.env.PORT || 5000;
+
+
+    app.get('/api', (req, res) => {         // Indicamos la URL
+        console.log(req.query);         // Tomamos los datos con el método "query" y los imprimimos
+        res.send(`Los datos se recibieron correctamente`);
+    })
+
+
+    app.listen(port);
+
+    console.log(`Server on port ${port}`);
+
+```
+
+> TODOS los valores enviados por URL son de tipo string
+
+Para que esto funcione debemos ingresar a la URL `http://localhost:5000/api?variable=valor`, la cual imprime en consola `{variable: "valor"}`.  
+Esto mismo se utiliza bastante en los motores de búsqueda para poder ingresar los valores necesarios, normalmente usando `?q=lo%20que%20se%20quiere%20buscar` siendo `%20` el valor que se le asigna a un espacio.
