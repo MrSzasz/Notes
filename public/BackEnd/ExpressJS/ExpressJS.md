@@ -68,7 +68,7 @@ Lo primero que podemos probar de Express son las rutas, es decir, las respuestas
 
 ```
 
-Esto podemos usarlo para crear varias respuesta dependiendo de las rutas, por ejemplo, crearemos una respuesta para la informacion y otra para el contacto de la siguiente forma.
+Esto podemos usarlo para crear varias respuesta dependiendo de las rutas, por ejemplo, crearemos una respuesta para la información y otra para el contacto de la siguiente forma.
 
 ```js
 
@@ -99,7 +99,7 @@ Todas estas respuestas son en base a una página que existe, pero si queremos ma
 
 ```js
 
-    [...]       // Resto del codigo 
+    [...]       // Resto del código 
 
     app.get('/contact', (req, res) => {
         res.send("CONTACT")
