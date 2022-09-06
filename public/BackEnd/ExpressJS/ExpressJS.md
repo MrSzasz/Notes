@@ -229,3 +229,58 @@ Para tomar las queries se hace de la siguiente manera.
 
 Para que esto funcione debemos ingresar a la URL `http://localhost:5000/api?variable=valor`, la cual imprime en consola `{variable: "valor"}`.  
 Esto mismo se utiliza bastante en los motores de búsqueda para poder ingresar los valores necesarios, normalmente usando `?q=lo%20que%20se%20quiere%20buscar` siendo `%20` el valor que se le asigna a un espacio.
+
+## Middlewares
+
+Los `middlewares` son funciones que, como su nombre lo indica, se encuentran en medio de las diferentes rutas, siendo las que interceptan los request antes de que lleguen a las rutas. Estos pueden tener diferentes usos, desde tomar los datos de las request hasta evitar que un usuario sin autorización ingrese en una pagina en concreto.  
+Los middlewares tienen una función especial llamada `next()`, la cual indica que puede seguir luego de lo que se hizo en la función. Para mostrar esto tendremos dos ejemplos, el primero que solo toma los datos y el segundo que comprueba las queries.
+
+```js
+
+    const express = require('express');
+    const app = express();
+    const port = process.env.PORT || 5000;
+
+    // Middleware de información
+
+    app.use((req, res, next) => {        // Llamamos al next para poder usarlo luego
+        let time = new Date();      // Tomamos la fecha del request
+        console.log(`${req.method} at ${time}`);        // Imprimimos todo en consola
+        next();         // Indicamos que siga con la petición
+    })
+
+    // Rutas básicas
+
+    app.get('/', function (req, res) {
+        res.send("home")
+    })
+
+    app.get("/login", (req, res) => {
+        res.send("login page")
+    })
+
+
+    // Middleware de autenticación
+
+    app.use((req, res, next) => {
+        if (req.query.mail === "userMail@example.com") {        // Comprobamos si se envió la query mail
+            console.log(`user = ${req.query.mail}`);
+            next();         // Si es la que indicamos, sigue
+        }
+        res.send("User not found!");        // Si no, se envía lo indicado como respuesta y no sigue a "/profile"
+    })
+
+    // Rutas privadas
+
+    app.use("/profile", (req, res) => {
+        res.send("profile page");
+    })
+
+
+    app.listen(port);
+
+    console.log(`Server on port ${port}`);
+
+```
+
+En este ejemplo el middleware de comprobación intercepta todas las request, si no cumplen con la condición nunca se podrá llegar a la siguiente ruta, es decir, si entramos en `/profile` nos dará error, en cambio, si entramos en `/profile?mail=userMail@example.com` nos muestra los datos de la ruta `/profile`.
