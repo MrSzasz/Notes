@@ -284,3 +284,35 @@ Los middlewares tienen una función especial llamada `next()`, la cual indica qu
 ```
 
 En este ejemplo el middleware de comprobación intercepta todas las request, si no cumplen con la condición nunca se podrá llegar a la siguiente ruta, es decir, si entramos en `/profile` nos dará error, en cambio, si entramos en `/profile?mail=userMail@example.com` nos muestra los datos de la ruta `/profile`.
+
+Ademas de esto también es posible usar métodos creados por la comunidad, para esto debemos buscarlos en [npm](https://www.npmjs.com/), a medida que necesitemos hacer algo en en particular en nuestro código.  
+Un ejemplo de esto es el middleware llamado [`Morgan`](https://www.npmjs.com/package/morgan), el cual intercepta los datos del usuario y los muestra por consola.  
+Para poder instalarlo deberemos hacer uso del comando que nos indica en su página.
+
+```cmd
+
+    npm i morgan
+
+```
+
+Hecho esto, debemos importarlo en nuestro código y usarlo como vimos anteriormente.
+
+```js
+
+    const express = require('express');
+    const app = express();
+    const port = process.env.PORT || 5000;
+    const morgan = require('morgan');       // Requerimos morgan
+
+
+    // Middleware de información
+
+    app.use(morgan("tiny"))         // Lo usamos antes como middleware, pasando las propiedades como indica su documentación
+
+    // Rutas básicas
+
+    [...]
+
+```
+
+## REST API
