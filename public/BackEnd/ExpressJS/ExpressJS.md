@@ -316,3 +316,166 @@ Hecho esto, debemos importarlo en nuestro código y usarlo como vimos anteriorme
 ```
 
 ## REST API
+
+REST API se llama al servidor que sirve como mediador entre el cliente y el servidor, el cual se comunica en base a las peticiones que el mismo cliente envía, y las respuesta que maneja el servidor con la base de datos. En este caso haremos una API simple que nos permita interactuar con una base de datos que contiene diferentes usuarios.  
+En este ejemplo usaremos el método [CRUD](https://codigofacilito.com/articulos/crud-backend) y un cliente de peticiones para probarlas. Empezaremos creando un nuevo proyecto, en el mismo iniciaremos npm e instalaremos los módulos que usaremos mas adelante.
+
+```cmd
+
+    npm init -y
+    npm i express morgan
+    npm i nodemon -D
+
+```
+
+Luego, crearemos los archivos necesarios, siendo estos `.gitignore` para incluir nuestra carpeta de `node_modules` y luego el archivo `server.js` para todo nuestro código.  
+Hecho esto configuraremos nuestro `package.json` para incluir los scripts necesarios.
+
+```json
+
+    "scripts": {
+        "dev": "nodemon server.js",
+        "start": "node server.js"
+    }
+
+```
+
+En nuestro archivo js agregaremos la base de Express, incluyendo `Morgan`.
+
+```js
+
+    const express = require('express');
+    const app = express();
+    const port = process.env.port || 5000;
+    const morgan = require('morgan');
+
+    const usersDB = [
+        {
+            name : "Johnny",
+            i: 1
+        }
+    ];       // Array que simula nuestra base de datos 
+
+    app.use(express.json());
+    app.use(express.urlencoded({extended: false}));
+    app.use(morgan('dev'));
+
+    app.listen(port, () => {
+        console.log('listening on port ' + port);
+    });
+
+```
+
+Empezaremos creando las respuestas base para las diferentes request.
+
+```js
+
+    [...]
+
+    app.get('/user', (req, res) => {        // Obtenemos todos los usuarios
+        res.json(usersDB)       // Enviamos los datos en formato JSON
+    })
+
+    app.get('/user/:id', (req, res) => {        // Obtenemos un usuario
+        res.json(usersDB)
+    })
+
+    app.post('/user', (req, res) => {       // Agregamos usuarios
+        res.json(usersDB)
+    })
+
+    app.put('/user/edit/:id', (req, res) => {       // Editamos un usuario
+        res.json(usersDB)
+    })
+
+    app.delete('/user/delete/:id', (req, res) => {      // Borramos un usuario
+        res.json(usersDB)
+    })
+
+    [...]
+
+```
+
+Para hacer uso de esta API debemos usar un gestor de peticiones como los nombrados anteriormente, para simular las respuestas de una API. Podemos probar esto haciendo una petición GET a la ruta `http://localhost:5000/user`, la cual nos devolverá el usuario que tenemos agregado.  
+
+### Agregar usuario
+
+Hecho esto, podemos agregar las siguientes rutas, empezando por agregar un nuevo usuario con el método POST, la misma tomará los datos que enviemos desde el body con formato JSON y lo usara para enviarlo dentro de nuestro array.
+
+```js
+
+    app.post('/user', (req, res) => {
+        let userData = req.body         // Tomamos los datos enviados por el body
+        let newUser = {
+            ...userData,        // Tomamos solo los datos de nombre
+            id: usersDB.length + 1      // Y le generamos un id en base a la longitud del array + 1
+        }
+        usersDB.push(newUser)       // Sumamos el nuevo usuario a nuestra base de datos
+        res.json(newUser)       // Respondemos con el usuario que se creó
+    })
+
+```
+
+> Para probar esto, debemos hacer una petición POST con el dato del usuario (`{ "name" : "DIO" }`) dentro del body en formato JSON
+
+### Buscar usuario
+
+Luego de esto podemos buscar un usuario por su id en la base de datos. Para esto usaremos el método `.find()` propio de JavaScript, quedándonos de la siguiente manera.
+
+```js
+
+    app.get('/user/:id', (req, res) => {        // Indicamos que se tiene que pasar un parámetro por URL
+        let findUserInDB = usersDB.find((user) => user.id === parseInt(req.params.id))      // Buscamos el usuario en base al id que nos pasaron como parámetro
+        findUserInDB 
+            ? res.json(findUserInDB)        // Si el usuario se encuentra se envía como respuesta JSON
+            : res.status(404)       // Si el usuario no se encuentra se envía un estado 404
+                .json({
+                    "message": "User not found"         // Y el mensaje de error
+                })
+    })
+
+```
+
+### Editar un usuario
+
+Basándonos en la idea de poder buscar un usuario por su id, podemos editar sus datos. Para ello usaremos la base de buscar el usuario y luego usaremos el método `.map()` para generar el nuevo array con los datos modificados.
+
+```js
+
+    app.put('/user/:id', (req, res) => {        // indicamos el método
+        let userData = req.body         // Tomamos los datos
+        let findUserInDB = usersDB.find((user) => user.id === parseInt(req.params.id))       // Lo buscamos en la base de datos
+        if (findUserInDB) {
+            usersDB = usersDB.map((userInMap) => userInMap.id === parseInt(req.params.id) ? {       // Hacemos un map por cada elemento en el array
+                ...userInMap,       // Tomamos los datos del usuario encontrado
+                ...userData         // Y agregamos/cambiamos los que nos envió el usuario
+            } : userInMap)          // Sino, lo dejamos como estaba
+            res.json(usersDB);
+        }
+        return res.status(404).json({
+            "message": "User not found"
+        })
+    })
+
+```
+
+### Eliminar usuario
+
+Por ultimo nos queda eliminar el usuario de la base de datos, lo cual haremos de la misma forma que el anterior pero esta vez usando el método `.splice()` y `.findIndex()` para buscar el index del usuario en cuestión.
+
+```js
+
+    app.delete('/user/:id', (req, res) => {
+        let findIndexUserInDB = usersDB.findIndex((user) => user.id === parseInt(req.params.id))        // Si lo encuentra retorna su índice
+        if (findIndexUserInDB !== -1) {         // Si no es "-1", es decir, si existe
+            usersDB.splice(findIndexUserInDB, 1)        // Elimina el usuario en base a su index
+            return res.json(usersDB);
+        }
+        res.status(404).json({
+            "message": "User not found"
+        })
+    })
+
+```
+
+Con esto hecho ya tendríamos armado nuestra primer APIrest simple pero funcional, sabiendo las bases de como funcionan las peticiones y las respuestas. En un ambiente real esta misma se debe linkear con una base de datos externa, la cual tiene sus propios métodos y funciones para poder modificarlas, pero la lógica es similar en ambos casos.
