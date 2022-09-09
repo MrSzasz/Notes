@@ -315,6 +315,239 @@ Hecho esto, debemos importarlo en nuestro código y usarlo como vimos anteriorme
 
 ```
 
+## Static
+
+Express tiene la posibilidad de mostrar archivos estáticos que se encuentren en el lado del Front-end, para ello se usa el middleware `static` y el modulo `path` para poder indicar la ruta que se esta utilizando. Para ello necesitamos crear una carpeta `public` con nuestro `index.html` y una hoja de estilos css (no es necesario, pero sirve para mostrar mejor el ejemplo).  
+Hecho esto, en nuestro archivo js configuraremos lo necesario para acceder a los archivos del Front.
+
+```js
+
+const express = require('express');
+const app = express();
+const port = process.env.port || 5000;
+const path = require('path');       // Requerimos el modulo path para tener la ruta principal
+
+
+app.use(express.static(         // Utilizamos el middleware
+    path.join(__dirname, 'public')      // Le pasamos join para concatenar la raíz con la carpeta public
+));
+
+
+app.listen(port, () => {
+    console.log('listening on port ' + port);
+});
+
+```
+
+> Normalmente static se utiliza luego de las rutas, ya que al ser un middleware intercepta las peticiones que hace el usuario y puede ocasionar fallos de lógica
+
+Con esta configuración hecha podemos visualizar todo lo que se escriba en el archivo `index.html`, pudiendo desarrollar el Front a gusto, funcionando todo tipo de archivo (HTML, CSS, Js, etcétera).
+
+## Router
+
+A medida que nuestra aplicación crezca vamos a ver que nuestro archivo principal se va a llenar de rutas, lo que no queda visualmente bien, ya que estará todo desordenado. Para ello podemos separar nuestras rutas en diferentes módulos con ayuda del paquete de Express llamado `Router`.  
+Para poder hacer uso del mismo primero crearemos una carpeta llamada `routes` en la que tendremos todas nuestras rutas. Dentro de esta crearemos el archivo llamado `home.js`, para crear nuestra primer ruta inicial de la siguiente manera.
+
+```js
+
+    const { Router } = require('express');      // Requerimos Router desde Express
+
+    const router = Router()         // Hacemos uso de Router para generar las respuestas
+
+    router.get('/', (req, res) => {         // Cambiamos app por router, y el resto es igual
+        res.send('Welcome!')
+    })
+
+    module.exports = router;        // Importamos el modulo para usarlo en el archivo principal
+
+```
+
+También podemos crear un archivo para los usuarios llamado `users.js`, indicando las diferentes rutas que se relacionen con los usuarios.
+
+```js
+
+    const { Router } = require("express")
+
+    const router = Router();
+
+    router.get('/register', (req, res) => {
+        res.send("User register")
+    })
+
+    router.get('/login', (req, res) => {
+        res.send("User login")
+    })
+
+    router.get('/users', (req, res) => {
+        res.send("Main page user")
+    })
+
+module.exports = router;
+
+```
+
+Hecho esto podemos importarlas en el archivo principal y utilizarlos para generar las rutas.
+
+```js
+
+    const express = require('express');
+    const app = express();
+    const port = process.env.port || 5000;
+
+    const RouterHome = require('./routes/home')         // Le asignamos un nombre a la ruta e importamos nuestros archivos
+    const RouterUsers = require('./routes/users')
+
+    app.use(RouterHome)         // Los utilizamos con el método "use" para generar las respuestas
+    app.use(RouterUsers)
+
+    app.listen(port, () => {
+        console.log('listening on port ' + port);
+    });
+
+```
+
+Gracias a esto nuestra aplicación queda mucho mas legible y ordenada, ademas de separar cada archivo con su respectivo funcionamiento.
+
+## Templates engines
+
+Desde el Back-end es posible generar contenido del gracias a los llamados `motores de plantillas`, que como su nombre lo indica son generadores de plantillas HTML que a su vez agregan mejores funcionalidades, como la posibilidad de generara contenido en base a los datos que enviemos. En este caso haremos uso del engine [`EJS`](https://ejs.co/), el cual instalaremos como lo indica [su documentación](https://ejs.co/#install).
+
+```cmd
+
+    npm install ejs
+
+```
+
+Luego de instalarlo debemos crear la carpeta en donde tendremos los archivos para el Front, llamada `views`, y dentro de la misma agregaremos nuestro archivo base que servirá como lienzo base para todo el Front, llamado `index.ejs`.
+
+```html
+
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Node EJS</title>
+    </head>
+
+    <body>
+        <h1>Welcome!</h1>
+    </body>
+
+    </html>
+
+```
+
+Por el momento solo tendremos la base normal de HTML, pero lo cambiaremos luego para ver lo que realmente puede ofrecer el engine.  
+Luego, en nuestro archivo js indicaremos las configuraciones necesarias para el funcionamiento del mismo de la siguiente manera.
+
+```js
+
+    const express = require('express');
+    const app = express();
+    const port = process.env.port || 5000;
+    const path = require('path')
+    require('ejs');         // Requerimos ejs
+
+
+    const RouterHome = require('./routes/home')
+    const RouterUsers = require('./routes/users')
+    
+    
+    app.set("view engine", "ejs");       // Indicamos que motor se usará
+    app.set('views', path.join(__dirname, 'views'))         // Indicamos en donde esta nuestra carpeta de vistas
+
+
+    app.use(RouterHome)
+    app.use(RouterUsers)
+
+
+    app.listen(port, () => {
+        console.log('listening on port ' + port);
+    });
+
+```
+
+Ahora ya es posible utilizar nuestro engine en las rutas, para ello usaremos el método `render()`, indicando que plantilla usaremos y a la vez, enviando los datos que generaremos en el HTML, que es una de las nuevas posibilidades que nos otorgan los engines.
+
+```js
+
+    const { Router } = require('express');
+
+    const router = Router()
+
+    router.get('/', (req, res) => {
+        let title = "Mensaje enviado con EJS"        // Creamos el dato que vamos a pasar como parámetro
+        res.render('index', { title })      // Usamos "render" indicando el archivo base y pasamos title como parámetro
+    })
+
+    module.exports = router;
+
+```
+
+Por ultimo, para que el dato se vea en el Front, debemos hacer uso del mismo en nuestro archivo `.ejs` como lo indica su documentación, con `<%=  %>`, quedándonos de la siguiente forma.
+
+```html
+
+    <body>
+        <h1><%= title %></h1>
+    </body>
+
+```
+
+Ahora podremos ver que la ruta `http://localhost:5000/` nos muestra el titulo que nosotros le pasamos, el cual podemos cambiar a gusto y se reflejará el cambio cada vez que recarguemos la página.  
+Pero esto a la larga también generará código repetido, pero en el lado del HTML, es por eso que podemos dividir nuestro código en forma de `partials (o componentes)`, para ello empezamos creando la carpeta `partials` dentro de la carpeta `views`, dentro de la misma crearemos dos archivos `.ejs` para los elementos que se repiten en todos los archivos, la parte del head y el final del HTML, siendo los mismos los archivos `top.ejs` y `bottom.ejs` respectivamente.
+
+```HTML
+
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Node EJS</title>
+    </head>
+
+    <body>
+
+```
+
+Y en el `bottom.ejs` lo que nos queda al final del HTML.
+
+```HTML
+
+    </body>
+
+    </html>
+
+```
+
+Para mostrar el funcionamiento del mismo crearemos un archivo de vista llamado `users.ejs` para mostrarlo en la ruta de los usuarios, en el cual importaremos los dos partials que creamos anteriormente de la siguiente forma.
+
+```HTML
+
+    <%- include('partials/top') %>      <!-- Usamos include y le pasamos como parámetro la ubicación de nuestro partial -->
+
+    <h1>Users</h1>
+
+    <%- include('partials/bottom') %>
+
+```
+
+Y por ultimo nos queda usar `render` para indicar que archivo se va a utilizar en la ruta `'/users'`, en nuestro archivo `users.js` dentro de `routes`.
+
+```js
+
+    router.get('/users', (req, res) => {
+        res.render("users")
+    })
+
+```
+
 ## REST API
 
 REST API se llama al servidor que sirve como mediador entre el cliente y el servidor, el cual se comunica en base a las peticiones que el mismo cliente envía, y las respuesta que maneja el servidor con la base de datos. En este caso haremos una API simple que nos permita interactuar con una base de datos que contiene diferentes usuarios.  
