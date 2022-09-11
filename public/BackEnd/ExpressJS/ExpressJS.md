@@ -548,6 +548,56 @@ Y por ultimo nos queda usar `render` para indicar que archivo se va a utilizar e
 
 ```
 
+Así como podemos pasar variables desde el back con EJS, también es posible ejecutar funcionalidades de JavaScript en el mismo, como poder recorrer arrays y generar código con ello. Para ello empezaremos usando el modulo [`Axios`](https://axios-http.com/docs/intro), el cual nos permite usar un Fetch como lo haríamos en el Front.  
+Primero instalaremos Axios con el comando que nos indica su pagina.
+
+```cmd
+
+    npm i axios
+
+```
+
+Hecho esto lo usaremos en nuestro js de usuarios para hacer un pedido a [`JSON Placeholder`](https://jsonplaceholder.typicode.com/) de la siguiente manera.
+
+```js
+
+    const { Router } = require("express")
+    const axios = require("axios")      // Importamos Axios para su uso
+
+    const router = Router();
+
+    router.get('/users', async (req, res) => {      // Creamos la función asíncrona ya que espera a una base de datos
+        let usersFromJSONPlaceholder = await axios.get('https://jsonplaceholder.typicode.com/users')        // Guardamos los datos en una variable
+        res.render("users", {
+            users: usersFromJSONPlaceholder.data        // Enviamos esos datos hacia el Front
+        })
+    })
+
+    module.exports = router;
+
+```
+
+Y en nuestro `users.ejs` creamos nuestro bucle forEach de EJS de la siguiente manera.
+
+```HTML
+
+    <%- include('partials/top') %>
+
+    <h1>Users</h1>
+    
+    <ul>
+
+        <% users.forEach(user => { %>       <!-- Por cada elemento en el array -->
+        <li>user: <%= user.username %><br> mail: <%= user.email %> </li>        <!-- Creamos el item en la lista -->
+        <hr>
+        <% }) %>
+
+    </ul>
+
+    <%- include('partials/bottom') %>
+
+```
+
 ## REST API
 
 REST API se llama al servidor que sirve como mediador entre el cliente y el servidor, el cual se comunica en base a las peticiones que el mismo cliente envía, y las respuesta que maneja el servidor con la base de datos. En este caso haremos una API simple que nos permita interactuar con una base de datos que contiene diferentes usuarios.  
