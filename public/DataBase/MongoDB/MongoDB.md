@@ -62,3 +62,48 @@ El primer dato que debemos agregar es nuestra URI, quedándonos de la siguiente 
 Con nuestra URI configurada debemos ver el mensaje que enviamos por consola, confirmando que la conexión fue exitosa.
 
 ## Schema
+
+Es momento de crear nuestro esquema de usuario, el cual nos servirá para definir que datos le pasaremos a nuestra base de datos. Para ello empezamos creando una carpeta llamada `models`, en la que agregaremos el archivo js llamado `User.js`, configurando la base de ejemplo para nuestros datos.
+
+```js
+
+    const mongoose = require('mongoose');
+    const { Schema } = mongoose;        // Importamos el esquema
+
+
+    const userSchema = new Schema({         // Creamos un nuevo esquema
+        name: String                    // Con el valor "name", de tipo "string"
+    });
+
+
+    module.exports = mongoose.model(         // Exportamos el esquema como modelo para usarlo en otro archivo
+        'User',                              // Con el nombre que lo usaremos luego
+        userSchema);                         // Y el esquema que tomaremos de referencia 
+
+```
+
+## (C)RUD - Create
+
+Con las configuraciones hechas podemos crear nuestro primer usuario, basándonos en el modelo que usamos en la [`sección de NodeJS`](../../BackEnd/NodeJS/NodeJS.md). Empezamos yendo a `/routes/users.js`, y en el post crearemos nuestro primer dato para guardar, usando el método `.save()` de Mongoose de la siguiente manera.
+
+```js
+
+    require('../database/db')       // Importamos la base de datos
+    const User = require("../models/User")      // Y el modelo que creamos
+
+    router.post('/users', async (req, res) => {         // Creamos la función asíncrona ya que estaremos pidiendo datos
+        try {                                       // Usamos un "try catch" 
+            const userToDB = new User({             // Creamos el nuevo usuario en base al modelo que armamos
+                ...req.body                     // Le pasamos los datos que enviamos por el body
+            })
+            await userToDB.save()               // Esperamos los datos y los guardamos en nuestra base de datos
+            res.json({message: 'success'})      // Creamos un mensaje que nos indica que todo salio bien
+
+        } catch (err) {
+            console.error(err);             // y enviamos un error si hay algo que salio mal
+        }
+    })
+
+```
+
+Con esto creamos nuestro primer paso para el CRUD, pudiendo crear un dato en nuestra base de datos.
