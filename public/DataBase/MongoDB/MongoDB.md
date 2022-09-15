@@ -92,18 +92,107 @@ Con las configuraciones hechas podemos crear nuestro primer usuario, basándonos
     const User = require("../models/User")      // Y el modelo que creamos
 
     router.post('/users', async (req, res) => {         // Creamos la función asíncrona ya que estaremos pidiendo datos
-        try {                                       // Usamos un "try catch" 
-            const userToDB = new User({             // Creamos el nuevo usuario en base al modelo que armamos
-                ...req.body                     // Le pasamos los datos que enviamos por el body
+        try {
+            let name = (req.body.name).toLowerCase()    // Tomamos el dato y lo transformamos en lowercase
+            const userToDB = new User({                 // Creamos el nuevo usuario en base al modelo que armamos
+                name                                    // Le pasamos los datos que enviamos por el body
             })
-            await userToDB.save()               // Esperamos los datos y los guardamos en nuestra base de datos
-            res.json({message: 'success'})      // Creamos un mensaje que nos indica que todo salio bien
-
+            await userToDB.save()                           // Esperamos los datos y los guardamos en nuestra base de datos
+            return res.json({ message: 'success' })        // Creamos un mensaje que nos indica que todo salio bien
         } catch (err) {
-            console.error(err);             // y enviamos un error si hay algo que salio mal
+            console.error(err);
         }
     })
 
 ```
 
 Con esto creamos nuestro primer paso para el CRUD, pudiendo crear un dato en nuestra base de datos.
+
+## C(R)UD - Read
+
+Ahora que tenemos un dato en nuestra base de datos podemos pasar a leerlo, haciendo peticiones para que nos devuelva todos los datos que contiene nuestra base de datos.
+
+```js
+
+    router.get('/users', async (req, res) => {
+        try {
+            let usersInDB = await User.find().lean()        // Buscamos todos los datos con el método ".find()"
+            return res.json(usersInDB)                  // Devolvemos los datos como respuesta 
+        } catch (err) {
+            console.error(err)
+        }
+    })
+
+```
+
+Con este método podemos recuperar todos los datos, pero si necesitamos solo un usuario es necesario pasar los parámetros para filtrar nuestra búsqueda. Esto lo hacemos con el método `.findOne()`.
+
+```js
+
+    router.get('/users/:name', async (req, res) => {        // Indicamos que le pasaremos un parámetro
+        try {
+            let name = (req.params.name).toLowerCase();         // Tomamos el parámetro y lo convertimos en lowercase
+            let oneUserInDB = await User.findOne({ name }).lean()       // Buscamos uno y le pasamos el nombre como parámetro
+            oneUserInDB ?                   // Comprobamos que exista el usuario
+                res.json(oneUserInDB) :     // Si existe lo mandamos como respuesta
+                res.status(404).json({          // Sino enviamos un status 404
+                    error: 'User not found'     // Y el mensaje
+                })
+        } catch (err) {
+            console.error(err)
+        }
+    })
+
+```
+
+Gracias a estos dos métodos podemos traer los datos desde nuestra base de datos.
+
+## CR(U)D - Update
+
+Lo siguiente es poder hacer un update de nuestros datos, para ello debemos buscar el usuario en la base de datos y editar el parámetro indicado. Esto lo podemos hacer gracias al método `.findOneAndUpdate()`, el que, como su nombre lo indica, busca un usuario en nuestra base de datos con el parámetro que le indiquemos y lo edita.
+
+```js
+
+    router.put('/users/:name', async (req, res) => {
+        try {
+            let data = (req.body.name).toLowerCase()            // Tomamos los datos que se enviaron por el body
+            let name = (req.params.name).toLowerCase()          // Y el nombre para buscarlo en la base de datos
+            await User.findOneAndUpdate({ name: name },         // Indicamos que se va a buscar el nombre con el dato name
+                                        { name: data })         // Y que lo modificaremos con el data que enviamos por el body
+                        .then(response => response !== null ?       // Luego comprobamos que se encuentre el usuario 
+                        res.json({
+                            "message": "done"               // Si se encuentra se envía un mensaje de confirmación
+                        }) : res.status(400).json({         // Si no se envía un 404 para indicar el error
+                            message: "user not found"       // Y el mensaje correspondiente
+                        }))
+        } catch (err) {
+            console.error(err)
+        }
+    })
+
+```
+
+## CRU(D) - Delete
+
+Por ultimo nos queda terminar con la función de eliminar un usuario, usando una función similar a la anterior llamada `.findOneAndDelete()`, basándose en los mismos conceptos de búsqueda.
+
+```js
+
+    router.delete('/users/:name', async (req, res) => {
+        try {
+            let name = (req.params.name).toLowerCase();         // Tomamos el nombre de los parámetros
+            await User.findOneAndDelete({ name })           // Usamos el método indicado, pasando el nombre como filtro de búsqueda
+                .then(response => response !== null ?       // Comprobamos que exista el usuario 
+                res.json({ 
+                    message: 'done'             // Si se encuentra se envía el mensaje de confirmación
+                }) : res.status(404).json({         // Si no se encuentra, se envía el status 404 de error
+                    message: 'user not found'       // Y el mensaje explicando el error
+                }))
+        } catch (err) {
+            console.error(err)
+        }
+    })
+
+```
+
+Hecho esto tendremos nuestro CRUD básico completo, el cual podemos probar desde un gestor de requests, pudiendo ver el avance también en nuestra base de datos de MongoDB.
