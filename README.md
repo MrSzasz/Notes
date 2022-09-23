@@ -19,6 +19,8 @@ La misma se actualizará a medida que se agregue mas contenido.
 
 [TypeScript](public/Front-End/TypeScript/TypeScript.md)
 
+[NextJS](public/Front-End/ReactJS/ReactJS.md)
+
 ## Back-End
 
 [NodeJS](public/BackEnd/NodeJS/NodeJS.md)
