@@ -2,12 +2,12 @@
 
 SQL (Structured Query Language / Lenguaje de consulta estructurado) es un tipo de lenguaje que permite la comunicación de un usuario a una base de datos mediante queries. Las bases de datos SQL son bases de datos estructuradas en forma de tablas, siendo conformadas por lineas verticales (Columnas) y lineas horizontales (Registros), las cuales se llenan con la información que guardemos en las mismas.  
 
-| id | name  | age | active |
-|:--:|:-----:|:---:|:------:|
-| 1  | jack  | 20  | true   |
-| 2  | lisa  | 25  | true   |
-| 3  | marie | 20  | false  |
-| 4  | harry | 26  | true   |
+| id | name  | age | mail              | active |
+|:--:|:-----:|:---:|:-----------------:|:------:|
+| 1  | jack  | 20  | jack@gmail.com    | true   |
+| 2  | lisa  | 25  | lisa@gmail.com    | true   |
+| 3  | marie | 20  | marie@hotmail.com | false  |
+| 4  | harry | 26  | harry@gmail.com   | true   |
 
 Las tablas se generan con los datos que nosotros le asignemos, pero a su vez siempre tendrán un `id` que se genera automáticamente, el cual es autoincremental (incrementa el valor dependiendo el ultimo id generado).  
 Estas tablas pueden compartir datos con otras tablas, ya que son `relacionales`, por ejemplo, podemos tener una tabla de usuarios que guarden productos en un cart, relacionando estos productos al id del usuario en particular.
@@ -84,6 +84,7 @@ Luego de seleccionarla podemos crear nuestra primer tabla, que tomaremos en base
         id int auto_increment,      -- El ID será número entero y se auto incrementará con cada nuevo dato
         name varchar(255),          -- El dato Name será un Varchar (string), con una longitud maxima de 255 caracteres
         age int,                -- La edad será un número entero
+        mail varchar(255),      -- El mail también será un Varchar (string)
         active BIT,             -- Al no poder usar Booleans, usaremos BIT, el cual toma el 0 como 'false' y el 1 como 'true'
         PRIMARY KEY (id)        -- Indicamos que nuestra Primary Key será el dato ID
     );
@@ -104,7 +105,7 @@ Ya tenemos nuestra primer tabla, ahora es momento de empezar a tener los datos d
 
 ```sql
 
-    INSERT INTO users (name, age, active) VALUES ('jack', 20, 1)
+    INSERT INTO users (name, age, mail, active) VALUES ('jack', 20, 'jack@gmail.com', 1)
 
 ```
 
@@ -114,7 +115,7 @@ Perfecto, ya tenemos nuestro primer usuario en nuestra tabla, pero no vamos a cr
 
 ```sql
 
-    INSERT INTO users (name, age, active) VALUES ('lisa', 25, 1), ('marie', 20, 0), ('harry', 26, 1);
+    INSERT INTO users (name, age, active) VALUES ('lisa', 25, 'lisa@gmail.com', 1), ('marie', 20, 'maire@hotmail.com' 0), ('harry', 26, 'harry@gmail.com' 1);
 
 ```
 
@@ -169,8 +170,7 @@ O tomar mas de un dato en particular para filtrar, por ejemplo, los usuarios act
 
 ```
 
-> Esto nos traerá los usuarios de Lisa y Harry, ya que ambos cumplen con las dos condiciones indicadas anteriormente
-
+Esto nos traerá los usuarios de Lisa y Harry, ya que ambos cumplen con las dos condiciones indicadas anteriormente.  
 Así como tenemos la condición `AND` para indicar que se deben cumplir ambas, también tenemos el `OR` para traernos todos los que cumplan una u otra condición.
 
 ```sql
@@ -179,7 +179,64 @@ Así como tenemos la condición `AND` para indicar que se deben cumplir ambas, t
 
 ```
 
-Esto nos traerá el dato de Marie, que aunque no cumple con ser mayor a 23, si cumple con el dato de estar inactiva.
+Esto nos traerá el dato de Marie, que aunque no cumple con ser mayor a 23, si cumple con el dato de estar inactiva.  
+Si necesitamos buscar datos entre dos edades podemos usar el comando `between`, pasando ambas edades a comparar.
+
+```sql
+
+    SELECT * FROM users WHERE age BETWEEN 19 AND 24;
+
+```
+
+Esto nos devuelve todos los usuarios entre ese rango de edad.  
+También podemos traernos todos los datos excluyendo solamente a uno, denegando la comparación de la siguiente manera.  
+
+```sql
+
+    SELECT * FROM users WHERE name != 'harry';
+
+```
+
+Con esto traeremos todos los usuarios exceptuando a Harry.  
+También podemos buscar entre los datos ciertas palabras, ya sea que contengan, inicien con o terminen con de la siguiente manera.
+
+```sql
+
+    SELECT * FROM users WHERE email LIKE '%gmail%';
+
+```
+
+> Para decir que debe empezar con se utiliza `gmail%`, y para terminar con se utiliza `%gmail`
+
+En este caso tendremos todos los que usuarios que estén registrados con gmail, dado que no importa lo que tenga antes o después de la palabra `gmail`.  
+Si queremos traernos los datos ordenados por edad podemos usar `order by` de la siguiente manera.
+
+```sql
+
+    SELECT * FROM users ORDER BY age ASC;
+
+```
+
+> Si queremos que sea de mayor a menor utilizamos `DESC`
+
+Esto nos ordenará todos los datos de menor a mayor basado en la edad.  
+Por ultimo podemos seleccionar unicamente el dato mayor o menor de la tabla, por ejemplo, en cuanto a edad.
+
+```sql
+
+    SELECT max(age) FROM users;
+
+```
+
+> También es posible traer el menor dato usando `min()`
+
+Y podemos darle un nombre/apodo usando `as`.
+
+```sql
+
+    SELECT max(age) as oldest FROM users;
+
+```
 
 ## CR(U)D - Update
 
