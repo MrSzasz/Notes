@@ -81,15 +81,17 @@ Luego de seleccionarla podemos crear nuestra primer tabla, que tomaremos en base
 ```sql
 
     create table users(
-        id int auto_increment,      -- El ID será número entero y se auto incrementará con cada nuevo dato
-        name varchar(255),          -- El dato Name será un Varchar (string), con una longitud maxima de 255 caracteres
-        age int,                -- La edad será un número entero
-        mail varchar(255),      -- El mail también será un Varchar (string)
-        active BIT,             -- Al no poder usar Booleans, usaremos BIT, el cual toma el 0 como 'false' y el 1 como 'true'
+        id int not null auto_increment,      -- El ID será número entero y se auto incrementará con cada nuevo dato
+        name not null varchar(255),          -- El dato Name será un Varchar (string), con una longitud maxima de 255 caracteres
+        age not null int,                -- La edad será un número entero
+        mail not null varchar(255),      -- El mail también será un Varchar (string)
+        active not null BIT,             -- Al no poder usar Booleans, usaremos BIT, el cual toma el 0 como 'false' y el 1 como 'true'
         PRIMARY KEY (id)        -- Indicamos que nuestra Primary Key será el dato ID
     );
 
 ```
+
+> `NOT NULL` indica que los datos no pueden estar vacíos/ser NULL
 
 Como podemos ver, los tipos de datos no son iguales que en JS, pero si cumplen la misma función, quedando el mismo de la siguiente manera.
 
@@ -143,7 +145,7 @@ Con este comando podemos ver como nos trae todos los datos que tiene nuestra tab
 
 > SELECT `<que vamos a seleccionar>` FROM `<tabla>` WHERE `<condición a cumplir>`
 
-De esta forma nos traemos el usuario que necesitamos en este momento, pero también podemos seleccionar que dato nos traemos, como puede ser por ejemplo, la edad.
+De esta forma nos traemos el usuario que necesitamos en este momento, pero también podemos seleccionar que dato nos traemos, como puede ser por ejemplo, la columna de edad.
 
 ```sql
 
@@ -152,6 +154,14 @@ De esta forma nos traemos el usuario que necesitamos en este momento, pero tambi
 ```
 
 Obteniendo de esta manera el dato `26`, que es la edad que pusimos en nuestra base de datos.  
+Sumado a esto podemos traernos dos columnas a la vez, e incluso ponerle un nombre en particular con el comando `as`.
+
+```sql
+
+    SELECT id, age AS edad FROM users;
+
+```
+
 También es posible traernos varios datos que cumplan con una misma condición, por ejemplo, los usuarios que estén activos en nuestra base de datos.
 
 ```sql
@@ -273,3 +283,77 @@ Ya eliminamos un dato de nuestra base de datos, así también podemos eliminar t
 ```
 
 Como todos los id cumplen con esa condición, serán eliminados. Hecho esto podemos volver a usar los mismos comandos anteriores para volver a generar los usuarios, y veremos como el id en vez de empezar en `1` empieza en `5`, ya que el ultimo que creamos tenia un id de `4`.
+
+## Join
+
+Uno de las funciones más importantes de SQL es la posibilidad de unir dos tablas referenciando datos entre ellas. Para ello debemos crear una nueva tabla en la que tomaremos el id de los usuarios como referencia de la siguiente manera.
+
+```sql
+
+    create table product (
+        id INT not null,
+        product_name varchar(50) not null,
+        created_by int not null,
+        brand varchar(50) not null,
+        category varchar(50) not null,
+        primary key(id),
+        foreign key(created_by) references users(id)        -- Indicamos que el valor "created_by" será una clave que tomaremos de la tabla a la que referenciamos
+    );
+
+```
+
+Pero en este caso tenemos un problema de sintaxis, ya que escribimos `product` en el nombre de la tabla en vez de `products`, para ello podemos usar `rename` y renombrar nuestra tabla de la siguiente manera.
+
+```slq
+
+    rename table product to products;
+
+```
+
+Ahora podemos usar `SELECT` para seleccionar nuestra tabla y ver que el nombre se cambió, pero no tiene datos, es por eso que los agregaremos antes de seguir.
+
+```sql
+
+    insert into products (product_name, created_by, brand, category) 
+    values 
+        ('phone', 5, 'samsung', 'phone'),
+        ('phone', 6, 'samsung', 'phone'),
+        ('earbuds', 6, 'samsung', 'earbuds'),
+        ('case', 6, 'samsung', 'accessories'),
+        ('charger', 7, 'google', 'accessories'),
+        ('phone', 7, 'google', 'phone'),
+        ('case', 8, 'xiaomi', 'accessories');
+
+```
+
+Teniendo ambas tablas creadas podemos empezar seleccionando el id y el nombre de los usuarios de la tabla de usuarios de la siguiente manera.
+
+```sql
+
+    select user_table.id, user_table.name from users as user_table;
+
+```
+
+En este caso hicimos uso de `as` para nombrar a la tabla de usuarios como `user_table`, seguido de esto podemos tomar los datos de la tabla de productos y unirlos usando `left join` de la siguiente manera.
+
+```sql
+
+    select user_table.id, user_table.name, product_list.product_name, product_list.brand from users as user_table left join products as product_list on user_table.id = product_list.created_by;
+
+```
+
+> select <`datos para las columnas`> from <`tabla`> as <`apodo de la tabla`> left join <`que tabla unimos`> as <`el apodo`> on <`dato de la foreign key a comparar`>;
+
+Explicando un poco la query tenemos seleccionados los datos de ambas tablas, a las cuales asignamos nombres para reconocerlos mejor, y utilizamos `left join` para que nos traiga TODOS los datos que tiene la primer tabla, aún cuando no estén linkeados a ningún dato de producto.  
+Su contraparte sería `right join` para que la tabla con más importancia sea la tabla de productos.  
+Por ultimo también podemos usar `inner join`, el cual solo trae los datos que coincidan en ambas tablas.
+
+## Cross join
+
+Por ultimo tenemos `cross join`, el cual toma todas las filas de una columna y las une con todas las filas de la otra, sin realizar una relación entre ellas. Hay que tener cuidado al usar esto ya que la respuesta puede ser muy larga dependiendo de la cantidad de filas que tengan nuestras columnas.
+
+```sql
+
+    select user_table.id, user_table.name, product_list.product_name, product_list.brand from users as user_table cross join products as product_list;
+
+```
