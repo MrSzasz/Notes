@@ -129,11 +129,19 @@ Para ver como vamos con nuestra base de datos podemos seleccionar todos nuestros
 
 ```sql
 
-    SELECT * FROM users
+    SELECT * FROM users;
 
 ```
 
 > SELECT `<que vamos a seleccionar>` FROM `<tabla>`
+
+Si tenemos datos duplicados podemos hacer uso `DISTINCT` para ignorar los mismos.
+
+```sql
+
+    SELECT DISTINCT * FROM users;
+
+```
 
 Con este comando podemos ver como nos trae todos los datos que tiene nuestra tabla. El siguiente paso es poder elegir que dato nos vamos a traer, por ejemplo, si solo queremos ver los datos que tiene Harry deberemos indicar su id como filtro de la consulta de la siguiente manera.
 
@@ -154,6 +162,14 @@ De esta forma nos traemos el usuario que necesitamos en este momento, pero tambi
 ```
 
 Obteniendo de esta manera el dato `26`, que es la edad que pusimos en nuestra base de datos.  
+Si necesitamos traernos datos basados en dos o mas ids podemos usar `IN` de la siguiente manera.
+
+```sql
+
+    SELECT age FROM users WHERE id IN (2,3);
+
+```
+
 Sumado a esto podemos traernos dos columnas a la vez, e incluso ponerle un nombre en particular con el comando `as`.
 
 ```sql
@@ -190,6 +206,15 @@ Así como tenemos la condición `AND` para indicar que se deben cumplir ambas, t
 ```
 
 Esto nos traerá el dato de Marie, que aunque no cumple con ser mayor a 23, si cumple con el dato de estar inactiva.  
+Si necesitamos traernos un dato cuando NO tenga una condición usamos `NOT`.
+
+```sql
+
+    SELECT * FROM users WHERE NOT id = 7;
+
+```
+
+Asi nos traemos todos los datos excepto el que tenga el id 7;
 Si necesitamos buscar datos entre dos edades podemos usar el comando `between`, pasando ambas edades a comparar.
 
 ```sql
@@ -230,7 +255,7 @@ Si queremos traernos los datos ordenados por edad podemos usar `order by` de la 
 > Si queremos que sea de mayor a menor utilizamos `DESC`
 
 Esto nos ordenará todos los datos de menor a mayor basado en la edad.  
-Por ultimo podemos seleccionar unicamente el dato mayor o menor de la tabla, por ejemplo, en cuanto a edad.
+Además podemos seleccionar unicamente el dato mayor o menor de la tabla, por ejemplo, en cuanto a edad.
 
 ```sql
 
@@ -247,6 +272,32 @@ Y podemos darle un nombre/apodo usando `as`.
     SELECT max(age) as oldest FROM users;
 
 ```
+
+> `as` nos servirá también más adelante para cambiar los nombres de las tablas
+
+Podemos traernos también la suma de ciertos valores, el average o la cantidad de veces que se existen los mismos haciendo uso de `count(), sum() o avg()`.
+
+```sql
+
+    SELECT count(email) FROM users WHERE email LIKE '%gmail%';          -- Cuenta la cantidad de emails que sean gmail
+
+    SELECT sum(id) FROM users WHERE id > 6;         -- Suma todos los id que haya mayores a 6
+
+    SELECT avg(id) From users;          -- Devuelve el average entre todos los id
+
+```
+
+Podemos buscar los datos que estén (o no) vacíos, usando `IS NULL` de la siguiente manera.
+
+```sql
+
+    SELECT * FROM users WHERE age IS NULL;
+
+```
+
+> Si usamos `NOT NULL` nos traería todos los datos que no estén vacíos
+
+En este caso no nos traería ningún dato, ya que ningún dato está vacío.
 
 ## CR(U)D - Update
 
