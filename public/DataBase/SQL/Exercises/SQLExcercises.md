@@ -4,16 +4,16 @@
 
 Los siguientes ejercicios están basados en el [curso de SQL de Web Dev Simplified](https://github.com/WebDevSimplified/Learn-SQL).
 
-### 1. Create a Songs Table
+### 1. Crear la tabla `Songs`
 
-This table should be called `songs` and have four properties with these exact names.
+Esta tabla debe llamarse `songs` y tiene las 4 siguientes propiedades.
 
-1. `id`: An integer that is the primary key, and auto increments.
-2. `name`: A string that cannot be null.
-3. `length`: A float that represents the length of the song in minutes that cannot be null.
-4. `album_id`: An integer that is a foreign key referencing the albums table that cannot be null.
+1. `id`: Un dato tipo INT que es PK y auto incremental que no debe ser null.
+2. `name`: Un string que no debe ser null.
+3. `length`: Un dato FLOAT que representa la duración de la canción en minutos y no puede ser null.
+4. `album_id`: Un INT que es FK para referenciar los álbumes de la tabla, el cual no puede ser null.
 
-After successfully creating the table copy the code from [data.sql](data.sql) into MySQL Workbench, and run it to populate all of the data for the rest of the exercises. If you do not encounter any errors, then your answer is most likely correct.
+Después de crear la tabla copiar [este código](https://github.com/WebDevSimplified/Learn-SQL/blob/master/data.sql) y iniciarlo para llenar las tablas con datos.
 
 ```sql
 
@@ -28,9 +28,9 @@ After successfully creating the table copy the code from [data.sql](data.sql) in
 
 ```
 
-### 2. Select only the Names of all the Bands
+### 2. Seleccionar solo los nombres de las bandas
 
-Change the name of the column the data returns to `Band Name`
+Cambiar el nombre de la columna para que el return sea `Band Name`.
 
 | Band Name         |
 |-------------------|
@@ -49,9 +49,9 @@ Change the name of the column the data returns to `Band Name`
 
 ```
 
-### 3. Select the Oldest Album
+### 3. Seleccionar le álbum mas antiguo
 
-Make sure to only return one result from this query, and that you are not returning any albums that do not have a release year.
+Solo devolver un resultado, y que el mismo no sea el album que no tiene fecha de lanzamiento.
 
 | id | name                   | release_year | band_id |
 |----|------------------------|--------------|---------|
@@ -66,11 +66,9 @@ Make sure to only return one result from this query, and that you are not return
 
 ```
 
-### 4. Get all Bands that have Albums
+### 4. Seleccionar todas las bandas que tengan álbumes (JOIN)
 
-There are multiple different ways to solve this problem, but they will all involve a join.
-
-Return the band name as `Band Name`.
+Devolver el nombre de la banda como `Band Name`.
 
 | Band Name         |
 |-------------------|
@@ -89,11 +87,9 @@ Return the band name as `Band Name`.
 
 ```
 
-### 5. Get all Bands that have No Albums
+### 5. Traer todas las bandas que no tienen álbumes
 
-This is very similar to #4 but will require more than just a join.
-
-Return the band name as `Band Name`.
+Devolver el nombre de la banda como `Band Name`.
 
 | Band Name     |
 |---------------|
@@ -115,11 +111,9 @@ Return the band name as `Band Name`.
 
 ```
 
-### 6. Get the Longest Album
+### 6. Traer el album más largo (SUM)
 
-This problem sounds a lot like #3 but the solution is quite a bit different. I would recommend looking up the SUM aggregate function.
-
-Return the album name as `Name`, the album release year as `Release Year`, and the album length as `Duration`.
+Devolver el nombre del album como `Name`, el año de lanzamiento como `Release Year`, y la duración como `Duration`.
 
 | Name           | Release Year | Duration          |
 |----------------|--------------|-------------------|
@@ -139,11 +133,11 @@ Return the album name as `Name`, the album release year as `Release Year`, and t
 
 ```
 
-### 7. Update the Release Year of the Album with no Release Year
+### 7. Actualizar el año de lanzamiento del album que no lo tiene
 
-Set the release year to 1986.
+Colocar el año de lanzamiento como 1986.
 
-You may run into an error if you try to update the release year by using `release_year IS NULL` in the WHERE statement of your UPDATE. This is because MySQL Workbench by default will not let you update a table that has a primary key without using the primary key in the UPDATE statement. This is a good thing since you almost never want to update rows without using the primary key, so to get around this error make sure to use the primary key of the row you want to update in the WHERE of the UPDATE statement.
+> Es necesario usar la PK para actualizar los datos, por el funcionamiento de MySQL Workbench
 
 ```sql
 
@@ -153,9 +147,9 @@ You may run into an error if you try to update the release year by using `releas
 
 ```
 
-### 8. Insert a record for your favorite Band and one of their Albums
+### 8. Insertar un album de tu banda favorita
 
-If you performed this correctly you should be able to now see that band and album in your tables.
+Al hacerlo correctamente debe verse el album y la banda del mismo.
 
 ```sql
 
@@ -170,9 +164,9 @@ If you performed this correctly you should be able to now see that band and albu
 
 ```
 
-### 9. Delete the Band and Album you added in #8
+### 9. Borrar la banda que se agregó en el punto anterior
 
-The order of how you delete the records is important since album has a foreign key to band.
+> El orden es importante, ya que posee una FK para asociar
 
 ```sql
 
@@ -185,9 +179,9 @@ The order of how you delete the records is important since album has a foreign k
 
 ```
 
-### 10. Get the Average Length of all Songs
+### 10. Obtener la duración promedio de todas las canciones
 
-Return the average length as `Average Song Duration`.
+Devolver la duración promedio como `Average Song Duration`.
 
 | Average Song Duration |
 |-----------------------|
@@ -200,9 +194,9 @@ Return the average length as `Average Song Duration`.
 
 ```
 
-### 11. Select the longest Song off each Album
+### 11. Seleccionar la canción mas larga de cada album
 
-Return the album name as `Album`, the album release year as `Release Year`, and the longest song length as `Duration`.
+Devolver el nombre del album como `Album`, el año de lanzamiento como `Release Year`, y la duración de la canción mas larga como `Duration`.
 
 | Album                       | Release Year | Duration |
 |-----------------------------|--------------|----------|
@@ -237,11 +231,9 @@ Return the album name as `Album`, the album release year as `Release Year`, and 
 
 ```
 
-### 12. Get the number of Songs for each Band
+### 12. Obtener la cantidad de canciones de cada banda (joins)
 
-This is one of the toughest question on the list. It will require you to chain together two joins instead of just one.
-
-Return the band name as `Band`, the number of songs as `Number of Songs`.
+Devolver el nombre de la banda como `Band`, y la cantidad de canciones como `Number of Songs`.
 
 | Band              | Number of Songs |
 |-------------------|-----------------|
