@@ -8,4 +8,10 @@ Para este caso usaremos Redux con [React](../ReactJS/ReactJS.md), para ello come
 
 > Para este proyecto vamos a usar [Tailwind](https://tailwindcss.com/)
 
-Luego de esto, empezaremos con la instalación de [Redux Toolkit](https://redux-toolkit.js.org/), el cual nos ayudará a configurar Redux en nuestro proyecto. Para ello abriremos la consola y usaremos el comando que nos proporciona la [documentación](https://redux-toolkit.js.org/tutorials/quick-start#install-redux-toolkit-and-react-redux)
+Luego de esto, empezaremos con la instalación de [Redux Toolkit](https://redux-toolkit.js.org/), el cual nos ayudará a configurar Redux en nuestro proyecto. Para ello abriremos la consola y usaremos el comando que nos proporciona la [documentación](https://redux-toolkit.js.org/tutorials/quick-start#install-redux-toolkit-and-react-redux).
+
+```npm
+
+    npm i @reduxjs/toolkit react-redux
+
+```
