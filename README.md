@@ -17,6 +17,8 @@ La misma se actualizará a medida que se agregue mas contenido.
 
 [ReactJS](public/Front-End/ReactJS/ReactJS.md)
 
+[Redux](public/Front-End/Redux/Redux.md)
+
 [TypeScript](public/Front-End/TypeScript/TypeScript.md)
 
 [NextJS](public/Front-End/ReactJS/ReactJS.md)
