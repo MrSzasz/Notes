@@ -330,3 +330,205 @@ Ahora podemos llamarlo en nuestra `App.jsx` y asignarlo al botón correspondient
     export default App;
 
 ```
+
+## Editar datos
+
+El proximo paso para completar nuestro CRUD con Redux será la posibilidad de editar nuestras películas, más allá de que luego no lo usemos en el producto final. Para ello crearemos nuestro reducer llamado `updateMovie` de la siguiente manera.
+
+```jsx
+
+    [ ... ]
+
+    export const favMovieListSlice = createSlice({
+
+        name: 'favMovieList',
+
+        initialState,
+
+        reducers: {
+            [ ... ]
+
+            updateMovie: (state, action) => {
+                const { id, name, desc } = action.payload                       // Hacemos un destructuring de los datos que enviaremos
+                const movieToUpdate = state.find(movie => movie.id === id)      // Buscamos por el ID la película
+                movieToUpdate.name = name                                       // Cambiamos los datos que existen por los que enviamos
+                movieToUpdate.desc = desc
+            },
+
+            [ ... ]
+        }
+    })
+
+
+    export const {
+        addMovie,
+        updateMovie,                // Lo exportamos para su uso luego
+        deleteMovie,
+    } = favMovieListSlice.actions
+    export default favMovieListSlice.reducer;
+
+```
+
+Luego de esto será necesario crear el componente `Edit.jsx` para poder pasar los datos, quedando el mismo de la siguiente manera.
+
+```jsx
+
+    import $ from "jquery";
+    import { useEffect, useState } from "react";
+    import { useDispatch, useSelector } from "react-redux";
+    import { Link, useNavigate, useParams } from "react-router-dom";
+    import { updateMovie } from "../../features/movies/favMovieListSlice";
+
+    const Edit = () => {
+        const [movieToEdit, setMovieToEdit] = useState({});         // Creamos el estado que guardará nuestra película
+        const { id } = useParams();                             // Tomamos el id que pasamos por parámetro
+        const dispatch = useDispatch();
+        const navigate = useNavigate();                                     // Usamos el useNavigate para poder redireccionar la página
+        const moviesArray = useSelector((state) => state.favMovieList);     // Nos traemos la película
+
+        const handleUpdate = (id, name, desc) => {              // Creamos la función para poder hacer el update
+            dispatch(updateMovie({ id, name, desc }));          // Le pasamos los datos para el update 
+            navigate("/");                                      // Y al final redirigimos al inicio
+        };
+
+        useEffect(() => {
+            setMovieToEdit(moviesArray.find((movie) => movie.id === id));           // Buscamos la película dentro del array
+        }, []);
+
+        return (
+            <div className="bg-zinc-900 text-white min-h-screen h-fit text-center flex flex-col gap-8 p-4">
+                <Link
+                    to={"/"}
+                    className="py-3 px-6 text-white bg-blue-600 rounded w-1/2 mx-auto border-2 border-black transition-all hover:scale-105"
+                    type="submit"
+                >
+                    ⬅ BACK
+                </Link>             {/* Creamos el link para volver al inicio */}
+                <form className="flex flex-col w-1/4 mx-auto text-black gap-4">
+                    <input
+                    className="rounded p-2"
+                    name="nameUpdate"
+                    type="text"
+                    id="movieNameUpdate"
+                    defaultValue={movieToEdit.name}         {/* Le pasamos el dato que obtuvimos como valor por defecto */}
+                    />
+                    <textarea
+                    className="rounded p-2"
+                    name="descUpdate"
+                    id="movieDescUpdate"
+                    cols="30"
+                    rows="5"
+                    defaultValue={movieToEdit.desc}
+                    ></textarea>
+                        <button
+                            onClick={() =>
+                                handleUpdate(
+                                    id,
+                                    $("#movieNameUpdate").val(),
+                                    $("#movieDescUpdate").val()
+                                )                   {/* Le pasamos los datos de los input como valores a cambiar */}
+                            }
+                            className="py-3 px-6 text-white bg-purple-600 rounded w-1/2 mx-auto border-2 border-black transition-all hover:scale-105">
+                            SAVE ➕
+                        </button>
+                </form>
+            </div>
+        );
+    };
+
+    export default Edit;
+
+```
+
+> Todo este componente se puede modularizar, pero para el resultado final se eliminará, por lo que no es completamente necesario
+
+Con esto hecho tenemos completado nuestro CRUD con Redux.
+
+## Mantener el estado
+
+Lo proximo que debemos hacer es mantener el estado, algo similar como lo que se hace con el `localstorage`, para ello usaremos un paquete llamado [redux-persist](https://github.com/rt2zz/redux-persist), instalando de la siguiente manera.
+
+```cmd
+
+    npm install redux-persist
+
+```
+
+`redux-persist` nos ayuda a la hora de crear un storage persistente, ya que no es posible usar localstorage dentro de redux. Para comenzar con la configuración debemos ir a nuestro `store.js`, el cual cambiaremos como nos indica la documentación, quedando de la siguiente manera
+
+```js
+
+    import {
+        combineReducers,
+        configureStore
+    } from '@reduxjs/toolkit'            // Importamos lo necesario de redux
+
+    import {
+        persistReducer,             // Importamos la función principal de redux-persist
+        FLUSH,
+        REHYDRATE,
+        PAUSE,
+        PERSIST,
+        PURGE,
+        REGISTER,                   // Así como ciertas configuraciones para evitar errores
+    } from 'redux-persist'
+
+    import storage from 'redux-persist/lib/storage'         // Y el storage
+
+    import favMovieListSlicer from '../features/movies/favMovieListSlice';
+
+    const persistConfig = {             // Creamos la función
+        key: 'moviesInStorage',         // Le pasamos el nombre de la key
+        storage,                        // Y el storage como parámetros
+    }
+
+    const reducer = combineReducers({           // Usamos el combineReducers y lo guardamos en una constante
+        favMovieList: favMovieListSlicer
+    })
+
+    const persistedReducer = persistReducer(persistConfig, reducer)         // Y paramos ambos como parámetros de la función
+
+    const store = configureStore({
+        reducer: persistedReducer,          // Le pasamos el persistedReducer que creamos como reducer
+        middleware: getDefaultMiddleware => getDefaultMiddleware({          // Y creamos el middleware que evita los errores
+            serializableCheck: {
+                ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],        // Pasando lo que pedimos desde redux-persist
+            },
+        }),
+    })
+
+    export default store;
+
+```
+
+Hecho esto podemos pasar a nuestro `main.jsx` y terminar de configurar lo necesario para que funcione de la siguiente manera.
+
+```jsx
+
+    import "./index.scss";
+    import React from "react";
+    import ReactDOM from "react-dom/client";
+    import App from "./App";
+    import { Provider } from "react-redux";
+    import store from "./app/store";
+    import { BrowserRouter } from "react-router-dom";
+    import { PersistGate } from "redux-persist/integration/react";      // Importamos PersistGate desde redux-persist para React
+    import { persistStore } from "redux-persist";           // Y la función persistStore
+
+    const persistor = persistStore(store)           // Utilizamos la función y le pasamos como parámetro el mismo store que utilizamos para el Provider
+
+    ReactDOM.createRoot(document.getElementById("root")).render(
+        <React.StrictMode>
+            <Provider store={store}>
+                <BrowserRouter>
+                    <PersistGate persistor={persistor}>  {/* Envolvemos nuestro componente principal con el PersistGate que importamos anteriormente, pasando el persistor como prop */}
+                        <App />
+                    </PersistGate>
+                </BrowserRouter>
+            </Provider>
+        </React.StrictMode>
+    );
+
+```
+
+Con esto configurado tenemos nuestro estado persistente.
