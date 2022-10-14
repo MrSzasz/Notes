@@ -532,3 +532,7 @@ Hecho esto podemos pasar a nuestro `main.jsx` y terminar de configurar lo necesa
 ```
 
 Con esto configurado tenemos nuestro estado persistente.
+
+## Final
+
+Con todo nuestro CRUD hecho podemos dar por finalizada la sección de Redux, el proyecto de las películas seguirá [aquí](Exercises/MoviesApp.md).
