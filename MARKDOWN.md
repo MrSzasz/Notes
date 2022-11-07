@@ -15,11 +15,9 @@ Los textos de heading se escriben con #, denotando la importancia del mismo en r
 CÓDIGO:
 
 ```md
-
-    # Heading {#title}
+# Heading {#title}
  
-    ## SubHeading
-
+## SubHeading
 ```
 
 SALIDA:
@@ -37,9 +35,7 @@ Los saltos entre lineas se realizan con la etiqueta `<br>` , la cual agrega una 
 CÓDIGO:
 
 ```html
-
-    Hola este <br> es el ejemplo.
-
+Hola este <br> es el ejemplo.
 ```
 
 SALIDA:
@@ -57,12 +53,10 @@ Hay diferentes estilos de texto que se pueden aplicar para darle un énfasis a l
 CÓDIGO:
 
 ```md
-
-    ** texto en negrita **
-    * texto en cursiva *
-    *** texto en cursiva y negrita ***
-    ~~ texto tachado ~~
-
+** texto en negrita **
+* texto en cursiva *
+*** texto en cursiva y negrita ***
+~~ texto tachado ~~
 ```
 
 SALIDA:
@@ -81,9 +75,7 @@ Se pueden agregar bloques de texto para citar una fuente o agregar un elemento c
 CÓDIGO:
 
 ```md
-
-    > Esto es un bloque de texto
-
+> Esto es un bloque de texto
 ```
 
 SALIDA:
@@ -98,10 +90,8 @@ Las listas ordenadas tienen que respetar el orden sintáctico en el que se escri
 CÓDIGO:
 
 ```md
-
-    1. primero
-    2. segundo
-
+1. primero
+2. segundo
 ```
 
 SALIDA:
@@ -116,10 +106,8 @@ En cambio las listas desordenadas pueden tener diferentes puntos, independientem
 CÓDIGO:
 
 ```md
-
-    - MarkDown 
-    - List 
-
+- MarkDown 
+- List 
 ```
 
 SALIDA:
@@ -132,10 +120,8 @@ Es posible agregar listas de tareas a la misma, con marcas en las que estén com
 CÓDIGO:
 
 ```md
-
 - [x] Hecho
 - [ ] Por hacer
-
 ```
 
 SALIDA:
@@ -154,10 +140,10 @@ Son utilizados para denotar bloques especiales de CÓDIGO, los mismos se marcan 
 CÓDIGO:
 
 ```json
-    {
-        "lenguaje":"markdown",
-        "archivo":"readme.md"
-    }
+{
+    "lenguaje":"markdown",
+    "archivo":"readme.md"
+}
 ```
 
 SALIDA:
@@ -180,11 +166,9 @@ Es posible agregar imágenes o links externos al documento, citándolos o llaman
 CÓDIGO:
 
 ```md
+![petit](link)
 
-    ![petit](link)
-    
-    Documentación oficial de [MarkDown](link)
-
+Documentación oficial de [MarkDown](link)
 ```
 
 SALIDA:
@@ -212,11 +196,9 @@ Las tablas se pueden utilizar para marcar el contenido del texto en una forma or
 CÓDIGO:
 
 ```md
-
-    | Syntax      | Ejemplo     |
-    | ----------- | ----------- |
-    | CÓDIGO      | Ejemplo     |
-
+| Syntax      | Ejemplo     |
+| ----------- | ----------- |
+| CÓDIGO      | Ejemplo     |
 ```
 
 SALIDA:
@@ -236,10 +218,8 @@ Se pueden agregar referencias con un numero sobre el texto para ir a cierto punt
 CÓDIGO:
 
 ```md
-
-    Este es mi texto, y este[^1] mi referencia.
-    [^1]: Automáticamente te dirige aca
-
+Este es mi texto, y este[^1] mi referencia.
+[^1]: Automáticamente te dirige aca
 ```
 
 SALIDA:
@@ -257,10 +237,8 @@ Es posible agregar definiciones, marcando el nombre del mismo visualmente.
 CÓDIGO:
 
 ```md
-
-    Nombre
-     : Definición del mismo
-
+Nombre
+ : Definición del mismo
 ```
 
 SALIDA:
@@ -277,9 +255,7 @@ Se pueden destacar palabras para remarcar visualmente su importancia
 CÓDIGO:
 
 ```md
-
-    Estas palabras ==son muy importantes==
-
+Estas palabras ==son muy importantes==
 ```
 
 SALIDA:
@@ -295,9 +271,7 @@ Es posible agregar números por sobre o debajo de la altura normal del texto
 CÓDIGO:
 
 ```md
-
-    El numero UNO^1^ es superior al numero DOS~2~
-
+El numero UNO^1^ es superior al numero DOS~2~
 ```
 
 SALIDA:
@@ -313,9 +287,7 @@ Es posible agregar CÓDIGO HTML para agregar elementos propios de este lenguaje,
 CÓDIGO:
 
 ```html
-
-    <em> Hola en cursiva y en <span style="color:purple">VIOLETA</span> </em>
-
+<em> Hola en cursiva y en <span style="color:purple">VIOLETA</span> </em>
 ```
 
 SALIDA:

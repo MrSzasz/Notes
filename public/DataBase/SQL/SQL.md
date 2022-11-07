@@ -57,9 +57,7 @@ Con esto hecho tendremos MySQL configurado en nuestra PC, por lo que podremos co
 Con todo esto podemos empezar creando nuestra primer base de datos. Para ello debemos hacer uso del comando `create database` y el nombre de la base de datos, quedando de la siguiente manera.
 
 ```sql
-
-    create database users_test_db;
-
+create database users_test_db;
 ```
 
 > Para que el comando funcione debemos dar click en el rayo que tenemos arriba, o usar `CTRL + enter`.
@@ -69,9 +67,7 @@ Con todo esto podemos empezar creando nuestra primer base de datos. Para ello de
 Con nuestra base de datos creada podemos empezar a armar nuestra primer tabla, para ello debemos empezar seleccionando nuestra base de datos con el siguiente comando.
 
 ```sql
-
-    use users_test_db;
-
+use users_test_db;
 ```
 
 > Siempre que escribimos una linea en SQL debe terminar con un punto y coma (;)
@@ -79,16 +75,14 @@ Con nuestra base de datos creada podemos empezar a armar nuestra primer tabla, p
 Luego de seleccionarla podemos crear nuestra primer tabla, que tomaremos en base a la que mostramos anteriormente, quedando el comando de la siguiente manera.
 
 ```sql
-
-    create table users(
-        id int not null auto_increment,      -- El ID será número entero y se auto incrementará con cada nuevo dato
-        name not null varchar(255),          -- El dato Name será un Varchar (string), con una longitud maxima de 255 caracteres
-        age not null int,                -- La edad será un número entero
-        mail not null varchar(255),      -- El mail también será un Varchar (string)
-        active not null BIT,             -- Al no poder usar Booleans, usaremos BIT, el cual toma el 0 como 'false' y el 1 como 'true'
-        PRIMARY KEY (id)        -- Indicamos que nuestra Primary Key será el dato ID
-    );
-
+create table users(
+    id int not null auto_increment,      -- El ID será número entero y se auto incrementará con cada nuevo dato
+    name not null varchar(255),          -- El dato Name será un Varchar (string), con una longitud maxima de 255 caracteres
+    age not null int,                -- La edad será un número entero
+    mail not null varchar(255),      -- El mail también será un Varchar (string)
+    active not null BIT,             -- Al no poder usar Booleans, usaremos BIT, el cual toma el 0 como 'false' y el 1 como 'true'
+    PRIMARY KEY (id)        -- Indicamos que nuestra Primary Key será el dato ID
+);
 ```
 
 > `NOT NULL` indica que los datos no pueden estar vacíos/ser NULL
@@ -106,9 +100,7 @@ Como podemos ver, los tipos de datos no son iguales que en JS, pero si cumplen l
 Ya tenemos nuestra primer tabla, ahora es momento de empezar a tener los datos dentro de la misma. Para ello empezamos usando el comando `INSERT` de la siguiente manera.
 
 ```sql
-
-    INSERT INTO users (name, age, mail, active) VALUES ('jack', 20, 'jack@gmail.com', 1)
-
+INSERT INTO users (name, age, mail, active) VALUES ('jack', 20, 'jack@gmail.com', 1)
 ```
 
 > INSERT INTO `<nombre de la tabla>` (`<datos a insertar>`) VALUES (`<valores a insertar>`)
@@ -116,9 +108,7 @@ Ya tenemos nuestra primer tabla, ahora es momento de empezar a tener los datos d
 Perfecto, ya tenemos nuestro primer usuario en nuestra tabla, pero no vamos a crear uno por uno cada usuario, es por eso que agregaremos los próximos 3 en un solo comando de la siguiente manera.
 
 ```sql
-
-    INSERT INTO users (name, age, active) VALUES ('lisa', 25, 'lisa@gmail.com', 1), ('marie', 20, 'maire@hotmail.com' 0), ('harry', 26, 'harry@gmail.com' 1);
-
+INSERT INTO users (name, age, active) VALUES ('lisa', 25, 'lisa@gmail.com', 1), ('marie', 20, 'maire@hotmail.com' 0), ('harry', 26,'harry@gmail.com' 1);
 ```
 
 Ya tenemos nuestros 4 usuarios de ejemplo en nuestra base de datos creados correctamente, es tiempo de poder traerlos de la base de datos.
@@ -128,9 +118,7 @@ Ya tenemos nuestros 4 usuarios de ejemplo en nuestra base de datos creados corre
 Para ver como vamos con nuestra base de datos podemos seleccionar todos nuestros datos y mostrarlos, para ello hacemos uso del comando `SELECT` de la siguiente manera.
 
 ```sql
-
-    SELECT * FROM users;
-
+SELECT * FROM users;
 ```
 
 > SELECT `<que vamos a seleccionar>` FROM `<tabla>`
@@ -138,17 +126,13 @@ Para ver como vamos con nuestra base de datos podemos seleccionar todos nuestros
 Si tenemos datos duplicados podemos hacer uso `DISTINCT` para ignorar los mismos.
 
 ```sql
-
-    SELECT DISTINCT * FROM users;
-
+SELECT DISTINCT * FROM users;
 ```
 
 Con este comando podemos ver como nos trae todos los datos que tiene nuestra tabla. El siguiente paso es poder elegir que dato nos vamos a traer, por ejemplo, si solo queremos ver los datos que tiene Harry deberemos indicar su id como filtro de la consulta de la siguiente manera.
 
 ```sql
-
-    SELECT * FROM users WHERE id = 4;
-
+SELECT * FROM users WHERE id = 4;
 ```
 
 > SELECT `<que vamos a seleccionar>` FROM `<tabla>` WHERE `<condición a cumplir>`
@@ -156,34 +140,26 @@ Con este comando podemos ver como nos trae todos los datos que tiene nuestra tab
 De esta forma nos traemos el usuario que necesitamos en este momento, pero también podemos seleccionar que dato nos traemos, como puede ser por ejemplo, la columna de edad.
 
 ```sql
-
-    SELECT age FROM users WHERE id = 4;
-
+SELECT age FROM users WHERE id = 4;
 ```
 
 Obteniendo de esta manera el dato `26`, que es la edad que pusimos en nuestra base de datos.  
 Si necesitamos traernos datos basados en dos o mas ids podemos usar `IN` de la siguiente manera.
 
 ```sql
-
-    SELECT age FROM users WHERE id IN (2,3);
-
+SELECT age FROM users WHERE id IN (2,3);
 ```
 
 Sumado a esto podemos traernos dos columnas a la vez, e incluso ponerle un nombre en particular con el comando `as`.
 
 ```sql
-
-    SELECT id, age AS edad FROM users;
-
+SELECT id, age AS edad FROM users;
 ```
 
 También es posible traernos varios datos que cumplan con una misma condición, por ejemplo, los usuarios que estén activos en nuestra base de datos.
 
 ```sql
-
-    SELECT * FROM users WHERE active = 1;
-
+SELECT * FROM users WHERE active = 1;
 ```
 
 > Hay que recordar que en este caso los activos (true) se representan con el numero `1`
@@ -191,54 +167,42 @@ También es posible traernos varios datos que cumplan con una misma condición, 
 O tomar mas de un dato en particular para filtrar, por ejemplo, los usuarios activos mayores a 21 años.
 
 ```sql
-
-    SELECT * FROM users WHERE active = 1 AND age > 21;
-
+SELECT * FROM users WHERE active = 1 AND age > 21;
 ```
 
 Esto nos traerá los usuarios de Lisa y Harry, ya que ambos cumplen con las dos condiciones indicadas anteriormente.  
 Así como tenemos la condición `AND` para indicar que se deben cumplir ambas, también tenemos el `OR` para traernos todos los que cumplan una u otra condición.
 
 ```sql
-
-    SELECT * FROM users WHERE active = 0 OR age > 23;
-
+SELECT * FROM users WHERE active = 0 OR age > 23;
 ```
 
 Esto nos traerá el dato de Marie, que aunque no cumple con ser mayor a 23, si cumple con el dato de estar inactiva.  
 Si necesitamos traernos un dato cuando NO tenga una condición usamos `NOT`.
 
 ```sql
-
-    SELECT * FROM users WHERE NOT id = 7;
-
+SELECT * FROM users WHERE NOT id = 7;
 ```
 
 Asi nos traemos todos los datos excepto el que tenga el id 7;
 Si necesitamos buscar datos entre dos edades podemos usar el comando `between`, pasando ambas edades a comparar.
 
 ```sql
-
-    SELECT * FROM users WHERE age BETWEEN 19 AND 24;
-
+SELECT * FROM users WHERE age BETWEEN 19 AND 24;
 ```
 
 Esto nos devuelve todos los usuarios entre ese rango de edad.  
 También podemos traernos todos los datos excluyendo solamente a uno, denegando la comparación de la siguiente manera.  
 
 ```sql
-
-    SELECT * FROM users WHERE name != 'harry';
-
+SELECT * FROM users WHERE name != 'harry';
 ```
 
 Con esto traeremos todos los usuarios exceptuando a Harry.  
 También podemos buscar entre los datos ciertas palabras, ya sea que contengan, inicien con o terminen con de la siguiente manera.
 
 ```sql
-
-    SELECT * FROM users WHERE email LIKE '%gmail%';
-
+SELECT * FROM users WHERE email LIKE '%gmail%';
 ```
 
 > Para decir que debe empezar con se utiliza `gmail%`, y para terminar con se utiliza `%gmail`
@@ -247,9 +211,7 @@ En este caso tendremos todos los que usuarios que estén registrados con gmail, 
 Si queremos traernos los datos ordenados por edad podemos usar `order by` de la siguiente manera.
 
 ```sql
-
-    SELECT * FROM users ORDER BY age ASC;
-
+SELECT * FROM users ORDER BY age ASC;
 ```
 
 > Si queremos que sea de mayor a menor utilizamos `DESC`
@@ -258,9 +220,7 @@ Esto nos ordenará todos los datos de menor a mayor basado en la edad.
 Además podemos seleccionar unicamente el dato mayor o menor de la tabla, por ejemplo, en cuanto a edad.
 
 ```sql
-
-    SELECT max(age) FROM users;
-
+SELECT max(age) FROM users;
 ```
 
 > También es posible traer el menor dato usando `min()`
@@ -268,9 +228,7 @@ Además podemos seleccionar unicamente el dato mayor o menor de la tabla, por ej
 Y podemos darle un nombre/apodo usando `as`.
 
 ```sql
-
-    SELECT max(age) as oldest FROM users;
-
+SELECT max(age) as oldest FROM users;
 ```
 
 > `as` nos servirá también más adelante para cambiar los nombres de las tablas
@@ -278,21 +236,17 @@ Y podemos darle un nombre/apodo usando `as`.
 Podemos traernos también la suma de ciertos valores, el average o la cantidad de veces que se existen los mismos haciendo uso de `count(), sum() o avg()`.
 
 ```sql
+SELECT count(email) FROM users WHERE email LIKE '%gmail%';          -- Cuenta la cantidad de emails que sean gmail
 
-    SELECT count(email) FROM users WHERE email LIKE '%gmail%';          -- Cuenta la cantidad de emails que sean gmail
+SELECT sum(id) FROM users WHERE id > 6;         -- Suma todos los id que haya mayores a 6
 
-    SELECT sum(id) FROM users WHERE id > 6;         -- Suma todos los id que haya mayores a 6
-
-    SELECT avg(id) From users;          -- Devuelve el average entre todos los id
-
+SELECT avg(id) From users;          -- Devuelve el average entre todos los id
 ```
 
 Podemos buscar los datos que estén (o no) vacíos, usando `IS NULL` de la siguiente manera.
 
 ```sql
-
-    SELECT * FROM users WHERE age IS NULL;
-
+SELECT * FROM users WHERE age IS NULL;
 ```
 
 > Si usamos `NOT NULL` nos traería todos los datos que no estén vacíos
@@ -304,9 +258,7 @@ En este caso no nos traería ningún dato, ya que ningún dato está vacío.
 Es momento de actualizar los datos de nuestra base de datos, en este caso, podemos indicar que Marie ya vuelve a ser activa, es por eso que debemos cambiar el dato de `active` de 0 a 1, esto lo hacemos con el comando `UPDATE`, siempre usando el `id` en el `WHERE` para no tener errores, quedando de la siguiente manera.
 
 ```sql
-
-    UPDATE users SET `active` = 1 WHERE id = 3;
-
+UPDATE users SET `active` = 1 WHERE id = 3;
 ```
 
 > UPDATE `<tabla>` SET `<columna que vamos a modificar>` = `<valor>` WHERE `<condición>`
@@ -318,9 +270,7 @@ Con esto tenemos a todos nuestro usuarios activos.
 Para terminar de tener nuestro CRUD es necesario saber como eliminar datos, para ello debemos utilizar el comando `DELETE`, también usando el id para seleccionar el dato en particular, quedando de la siguiente manera.
 
 ```sql
-
-    DELETE from users where id = 2;
-
+ DELETE from users where id = 2;
 ```
 
 > DELETE from `<tabla>` where `<condición>`
@@ -328,9 +278,7 @@ Para terminar de tener nuestro CRUD es necesario saber como eliminar datos, para
 Ya eliminamos un dato de nuestra base de datos, así también podemos eliminar todos los otros datos con una simple comprobación.
 
 ```sql
-
-    DELETE from users where id < 6;
-
+DELETE from users where id < 6;
 ```
 
 Como todos los id cumplen con esa condición, serán eliminados. Hecho esto podemos volver a usar los mismos comandos anteriores para volver a generar los usuarios, y veremos como el id en vez de empezar en `1` empieza en `5`, ya que el ultimo que creamos tenia un id de `4`.
@@ -340,57 +288,47 @@ Como todos los id cumplen con esa condición, serán eliminados. Hecho esto pode
 Uno de las funciones más importantes de SQL es la posibilidad de unir dos tablas referenciando datos entre ellas. Para ello debemos crear una nueva tabla en la que tomaremos el id de los usuarios como referencia de la siguiente manera.
 
 ```sql
-
-    create table product (
-        id INT not null,
-        product_name varchar(50) not null,
-        created_by int not null,
-        brand varchar(50) not null,
-        category varchar(50) not null,
-        primary key(id),
-        foreign key(created_by) references users(id)        -- Indicamos que el valor "created_by" será una clave que tomaremos de la tabla a la que referenciamos
-    );
-
+create table product (
+    id INT not null,
+    product_name varchar(50) not null,
+    created_by int not null,
+    brand varchar(50) not null,
+    category varchar(50) not null,
+    primary key(id),
+    foreign key(created_by) references users(id)        -- Indicamos que el valor "created_by" será una clave que tomaremos de la tabla a la que referenciamos
+);
 ```
 
 Pero en este caso tenemos un problema de sintaxis, ya que escribimos `product` en el nombre de la tabla en vez de `products`, para ello podemos usar `rename` y renombrar nuestra tabla de la siguiente manera.
 
 ```slq
-
-    rename table product to products;
-
+rename table product to products;
 ```
 
 Ahora podemos usar `SELECT` para seleccionar nuestra tabla y ver que el nombre se cambió, pero no tiene datos, es por eso que los agregaremos antes de seguir.
 
 ```sql
-
-    insert into products (product_name, created_by, brand, category) 
-    values 
-        ('phone', 5, 'samsung', 'phone'),
-        ('phone', 6, 'samsung', 'phone'),
-        ('earbuds', 6, 'samsung', 'earbuds'),
-        ('case', 6, 'samsung', 'accessories'),
-        ('charger', 7, 'google', 'accessories'),
-        ('phone', 7, 'google', 'phone'),
-        ('case', 8, 'xiaomi', 'accessories');
-
+insert into products (product_name, created_by, brand, category) 
+values 
+    ('phone', 5, 'samsung', 'phone'),
+    ('phone', 6, 'samsung', 'phone'),
+    ('earbuds', 6, 'samsung', 'earbuds'),
+    ('case', 6, 'samsung', 'accessories'),
+    ('charger', 7, 'google', 'accessories'),
+    ('phone', 7, 'google', 'phone'),
+    ('case', 8, 'xiaomi', 'accessories');
 ```
 
 Teniendo ambas tablas creadas podemos empezar seleccionando el id y el nombre de los usuarios de la tabla de usuarios de la siguiente manera.
 
 ```sql
-
-    select user_table.id, user_table.name from users as user_table;
-
+select user_table.id, user_table.name from users as user_table;
 ```
 
 En este caso hicimos uso de `as` para nombrar a la tabla de usuarios como `user_table`, seguido de esto podemos tomar los datos de la tabla de productos y unirlos usando `left join` de la siguiente manera.
 
 ```sql
-
-    select user_table.id, user_table.name, product_list.product_name, product_list.brand from users as user_table left join products as product_list on user_table.id = product_list.created_by;
-
+select user_table.id, user_table.name, product_list.product_name, product_list.brand from users as user_table left join products as product_list on user_table.id = product_list.created_by;
 ```
 
 > select <`datos para las columnas`> from <`tabla`> as <`apodo de la tabla`> left join <`que tabla unimos`> as <`el apodo`> on <`dato de la foreign key a comparar`>;
@@ -404,7 +342,5 @@ Por ultimo también podemos usar `inner join`, el cual solo trae los datos que c
 Por ultimo tenemos `cross join`, el cual toma todas las filas de una columna y las une con todas las filas de la otra, sin realizar una relación entre ellas. Hay que tener cuidado al usar esto ya que la respuesta puede ser muy larga dependiendo de la cantidad de filas que tengan nuestras columnas.
 
 ```sql
-
-    select user_table.id, user_table.name, product_list.product_name, product_list.brand from users as user_table cross join products as product_list;
-
+select user_table.id, user_table.name, product_list.product_name, product_list.brand from users as user_table cross join products as product_list;
 ```

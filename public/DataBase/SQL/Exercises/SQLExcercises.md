@@ -16,16 +16,14 @@ Esta tabla debe llamarse `songs` y tiene las 4 siguientes propiedades.
 Después de crear la tabla copiar [este código](https://github.com/WebDevSimplified/Learn-SQL/blob/master/data.sql) y iniciarlo para llenar las tablas con datos.
 
 ```sql
-
-    create table songs(
-        id int auto_increment not null,
-        name varchar(255) not null,
-        length float not null,
-        album_id int not null,
-        primary key(id),
-        foreign key(album_id) references albums(id)
-    );
-
+create table songs(
+    id int auto_increment not null,
+    name varchar(255) not null,
+    length float not null,
+    album_id int not null,
+    primary key(id),
+    foreign key(album_id) references albums(id)
+);
 ```
 
 ### 2. Seleccionar solo los nombres de las bandas
@@ -43,10 +41,8 @@ Cambiar el nombre de la columna para que el return sea `Band Name`.
 | Dream Theater     |
 
 ```sql
-
-    SELECT bands.name AS 'Band Name'
-    FROM bands;
-
+SELECT bands.name AS 'Band Name'
+FROM bands;
 ```
 
 ### 3. Seleccionar le álbum mas antiguo
@@ -58,12 +54,10 @@ Solo devolver un resultado, y que el mismo no sea el album que no tiene fecha de
 | 5  | ...And Justice for All | 1988         | 2       |
 
 ```sql
-
-    SELECT * FROM albums
-    WHERE release_year IS NOT NULL
-    ORDER BY release_year
-    LIMIT 1;
-
+SELECT * FROM albums
+WHERE release_year IS NOT NULL
+ORDER BY release_year
+LIMIT 1;
 ```
 
 ### 4. Seleccionar todas las bandas que tengan álbumes (JOIN)
@@ -80,11 +74,9 @@ Devolver el nombre de la banda como `Band Name`.
 | Van Canto         |
 
 ```sql
-
-    SELECT DISTINCT bands.name AS 'Band Name'
-    FROM bands 
-    JOIN albums ON bands.id = albums.band_id;
-
+SELECT DISTINCT bands.name AS 'Band Name'
+FROM bands 
+JOIN albums ON bands.id = albums.band_id;
 ```
 
 ### 5. Traer todas las bandas que no tienen álbumes
@@ -96,19 +88,16 @@ Devolver el nombre de la banda como `Band Name`.
 | Dream Theater |
 
 ```sql
-
-    SELECT bands.name AS 'Band Name'
-    FROM bands
-    LEFT JOIN albums ON bands.id = albums.band_id
-    WHERE albums.name IS NULL;
-
-    -- wds
-    SELECT bands.name AS 'Band Name'
-    FROM bands LEFT JOIN albums 
-    ON bands.id = albums.band_id
-    GROUP BY albums.band_id
-    HAVING COUNT(albums.id) = 0;
-
+SELECT bands.name AS 'Band Name'
+FROM bands
+LEFT JOIN albums ON bands.id = albums.band_id
+WHERE albums.name IS NULL;
+-- wds
+SELECT bands.name AS 'Band Name'
+FROM bands LEFT JOIN albums 
+ON bands.id = albums.band_id
+GROUP BY albums.band_id
+HAVING COUNT(albums.id) = 0;
 ```
 
 ### 6. Traer el album más largo (SUM)
@@ -120,17 +109,15 @@ Devolver el nombre del album como `Name`, el año de lanzamiento como `Release Y
 | Death Magnetic | 2008         | 74.76666593551636 |
 
 ```sql
-
-    SELECT 
-        albums.name AS 'Name',
-        albums.release_year AS 'Release Year',
-        SUM(songs.length) AS 'Duration'
-    FROM albums
-    JOIN songs ON albums.id = songs.album_id
-    GROUP BY songs.albums_id
-    ORDER BY Duration DESC
-    LIMIT 1;
-
+SELECT 
+    albums.name AS 'Name',
+    albums.release_year AS 'Release Year',
+    SUM(songs.length) AS 'Duration'
+FROM albums
+JOIN songs ON albums.id = songs.album_id
+GROUP BY songs.albums_id
+ORDER BY Duration DESC
+LIMIT 1;
 ```
 
 ### 7. Actualizar el año de lanzamiento del album que no lo tiene
@@ -140,11 +127,9 @@ Colocar el año de lanzamiento como 1986.
 > Es necesario usar la PK para actualizar los datos, por el funcionamiento de MySQL Workbench
 
 ```sql
-
-    UPDATE albums 
-    SET release_year = 1986
-    WHERE id = 4;
-
+UPDATE albums 
+SET release_year = 1986
+WHERE id = 4;
 ```
 
 ### 8. Insertar un album de tu banda favorita
@@ -152,16 +137,14 @@ Colocar el año de lanzamiento como 1986.
 Al hacerlo correctamente debe verse el album y la banda del mismo.
 
 ```sql
-
-    insert into bands (name) values('System of a Down');
-    insert into albums (name, release_year, band_id) 
-        values
-            ('System of a Down', 1998, 8),
-            ('Toxicity', 2001, 8),
-            ('Steal this album!', 2022, 8),
-            ('Mezmerize', 2005, 8),
-            ('Hypnotize', 2005, 8);
-
+insert into bands (name) values('System of a Down');
+insert into albums (name, release_year, band_id) 
+    values
+        ('System of a Down', 1998, 8),
+        ('Toxicity', 2001, 8),
+        ('Steal this album!', 2022, 8),
+        ('Mezmerize', 2005, 8),
+        ('Hypnotize', 2005, 8);
 ```
 
 ### 9. Borrar la banda que se agregó en el punto anterior
@@ -169,14 +152,12 @@ Al hacerlo correctamente debe verse el album y la banda del mismo.
 > El orden es importante, ya que posee una FK para asociar
 
 ```sql
+SELECT * FROM bands;-- bad_id = 8
 
-    SELECT * FROM bands;-- bad_id = 8
-
-    DELETE FROM albums 
-    WHERE band_id = 8;
-    DELETE FROM bands 
-    WHERE id = 8;
-
+DELETE FROM albums 
+WHERE band_id = 8;
+DELETE FROM bands 
+WHERE id = 8;
 ```
 
 ### 10. Obtener la duración promedio de todas las canciones
@@ -188,10 +169,8 @@ Devolver la duración promedio como `Average Song Duration`.
 | 5.352472513259112     |
 
 ```sql
-
-    SELECT AVG(length) AS 'Average Song Duration'
-    FROM songs;
-
+SELECT AVG(length) AS 'Average Song Duration'
+FROM songs;
 ```
 
 ### 11. Seleccionar la canción mas larga de cada album
@@ -220,15 +199,13 @@ Devolver el nombre del album como `Album`, el año de lanzamiento como `Release 
 | Tribe of Force              | 2010         | 8.38333  |
 
 ```sql
-
-    SELECT 
-        albums.name AS 'Album',
-        albums.release_year AS 'Release Year',
-        MAX(songs.length) AS 'Duration'
-    FROM albums
-    JOIN songs ON albums.id = songs.album_id
-    GROUP BY songs.album_id;
-
+SELECT 
+    albums.name AS 'Album',
+    albums.release_year AS 'Release Year',
+    MAX(songs.length) AS 'Duration'
+FROM albums
+JOIN songs ON albums.id = songs.album_id
+GROUP BY songs.album_id;
 ```
 
 ### 12. Obtener la cantidad de canciones de cada banda (joins)
@@ -245,23 +222,21 @@ Devolver el nombre de la banda como `Band`, y la cantidad de canciones como `Num
 | Van Canto         | 32              |
 
 ```sql
+-- me
+SELECT 
+    bands.name AS 'Band',
+    COUNT(songs.album_id) 'Number of Songs'
+FROM bands
+JOIN albums ON bands.id = albums.band_id
+JOIN songs ON albums.id = songs.album_id
+GROUP BY bands.id;
 
-    -- me
-    SELECT 
-        bands.name AS 'Band',
-        COUNT(songs.album_id) 'Number of Songs'
-    FROM bands
-    JOIN albums ON bands.id = albums.band_id
-    JOIN songs ON albums.id = songs.album_id
-    GROUP BY bands.id;
-
-    -- wds
-    SELECT
-        bands.name AS 'Band',
-        COUNT(songs.id) AS 'Number of Songs'
-    FROM bands
-    JOIN albums ON bands.id = albums.band_id
-    JOIN songs ON albums.id = songs.album_id
-    GROUP BY albums.band_id;
-
+-- wds
+SELECT
+    bands.name AS 'Band',
+    COUNT(songs.id) AS 'Number of Songs'
+FROM bands
+JOIN albums ON bands.id = albums.band_id
+JOIN songs ON albums.id = songs.album_id
+GROUP BY albums.band_id;
 ```

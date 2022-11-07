@@ -13,6 +13,8 @@ La misma se actualizará a medida que se agregue mas contenido.
 
 ## Front-End
 
+[Sass](public/Front-End/Sass/Sass.md)
+
 [jQuery](public/Front-End/JQuery/JQuery.md)
 
 [ReactJS](public/Front-End/ReactJS/ReactJS.md)
@@ -21,7 +23,7 @@ La misma se actualizará a medida que se agregue mas contenido.
 
 [TypeScript](public/Front-End/TypeScript/TypeScript.md)
 
-[NextJS](public/Front-End/ReactJS/ReactJS.md)
+[NextJS](public/Front-End/NextJS/NextJS.md)
 
 ## Back-End
 
