@@ -1,6 +1,6 @@
 # TypeScript
 
-[TypeScript](https://github.com/microsoft/TypeScript) es un lenguaje de tipado estático basado en JavaScript, el cual se utiliza mayormente para denotar los tipos de cada valor para evitar errores.
+[TypeScript](https://github.com/microsoft/TypeScript) es un lenguaje de tipado estático basado en JavaScript, el cual se utiliza mayormente para denotar los tipos de cada valor para evitar errores. Se dice que TypeScript es un superset de Javascript, dado que al final el código escrito en el archivo `.ts` se compila a un archivo normal `.js`, independientemente de si este termina funcionando o no.
 
 ## Instalación
 
@@ -20,12 +20,12 @@ npm i -g
 Luego de instalarlo, el siguiente paso es instalar TypeScript, en la misma consola pegar el siguiente comando.
 
 ```cmd
-npm -g typescript
+npm i typescript -g
 ```
 
-> Para instalarlo globalmente o sin `-g` para instalarlo solamente para el proyecto en el que se va a utilizar.
+> El flag `-g` indica que el mismo se instalará globalmente, si queremos instalarlo en un solo proyecto deberemos abrir la consola en el mismo e instalarlo sin esta flag.
 
-En teoría debería haberse instalado TS, pero siempre es mejor asegurarse escribiendo `tsc` en la misma consola, debería aparecer una lista de comandos el mismo compilador.
+En teoría debería haberse instalado TS, pero siempre es mejor asegurarse escribiendo `tsc -v` en la misma consola, el cual debería mostrar la version instalada del mismo.
 
 ## Compilador de JS/TS
 
@@ -70,7 +70,6 @@ Al agregar el tipo de la variable se evitan los futuros problemas al pasar valor
 Luego de esto, se debe compilar el archivo, el cual se hace escribiendo `tsc` en la consola, si no hay errores lo compilara sin problemas, y el resultado debería ser el siguiente.
 
 ```js
-
 "use strict";
 function addNumbers(x, y) {
     return x + y;
@@ -107,12 +106,12 @@ Como los arrays normales, los `enum` comienzan en 0, pero es posible empezar la 
 
 ```ts
 enum StatusCodes {
-OK = 200,
-BadRequest = 400,
-Unauthorized, //401
-PaymentRequired, //402
-Forbidden, //403
-NotFound //404
+    OK = 200,
+    BadRequest = 400,
+    Unauthorized, //401
+    PaymentRequired, //402
+    Forbidden, //403
+    NotFound //404
 }
 
 console.log(statusCode.NotFound);
