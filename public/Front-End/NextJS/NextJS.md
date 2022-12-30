@@ -371,3 +371,11 @@ const Home = () => {
 
 export default Home;
 ```
+
+## GetStaticProps
+
+<!-- trae datos estáticos y los pinta como html, pero no se pueden cambiar a menos que se haga un deploy de nuevo -->
+
+## GetServerSideProps
+
+<!-- trae datos dinámicos y cambia cada vez que el usuario entra en la pag -->
