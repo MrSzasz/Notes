@@ -379,3 +379,7 @@ export default Home;
 ## GetServerSideProps
 
 <!-- trae datos dinámicos y cambia cada vez que el usuario entra en la pag -->
+
+## GSSP para rutas dinámicas
+
+<!-- Usar server side props para pedir los datos usando los params -->
