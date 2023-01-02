@@ -374,12 +374,182 @@ export default Home;
 
 ## GetStaticProps
 
-<!-- trae datos estáticos y los pinta como html, pero no se pueden cambiar a menos que se haga un deploy de nuevo -->
+Uno de los beneficios de poder hacer sitios estáticos con Next es la posibilidad de pedir datos a una API o base de datos en el momento en el que se hacen los archivos estáticos, para esto es posible usar `getStaticProps`.  
+Esta función genera un pedido a la API durante la compilación de nuestra app, tomando los datos y guardando los datos en formato HTML. Los beneficios que tiene esto es la velocidad del mismo a la hora de generar la vista para el cliente, ya que al tener los datos pre cargados solo tienen que mostrarse, pero esto solo funciona con datos fijos o con cambios mínimos en un largo periodo de tiempo, ya que los mismos no se vuelven a pedir a menos que se vuelva a generar la aplicación estática.  
+Para esto tomaremos un ejemplo simple de pedido de datos estáticos a una api de ejemplo.
+
+```jsx
+export default function Home({ dataFromDB }) {      // Pasamos los datos que vienen desde GSP como props
+  return (
+    [...]
+  );
+}
+
+export async function getStaticProps() {        // Pedimos los datos al final de nuestro código
+  try {                                                                         // Envolvemos todo en un try catch
+    const data = await fetch("https://jsonplaceholder.typicode.com/users");     // Hacemos el pedido a la API
+    const dataFromDB = await data.json();           // Y formateamos la respuesta
+
+    return {
+      props: {          // Hacemos un return de la respuesta como prop para poder usarla en el componente
+        dataFromDB,
+      },
+    };
+  } catch (err) {
+    console.log(err);
+  }
+}
+```
+
+Con esto hecho podemos tener nuestros datos preparados en el momento de la compilación de nuestra app.
 
 ## GetServerSideProps
 
-<!-- trae datos dinámicos y cambia cada vez que el usuario entra en la pag -->
+Así como tenemos el pedido de datos estáticos en el momento que se genera la app, también tenemos una forma de pedir los datos en el momento en el que el usuario entra en la misma, a esto se lo llama `getServerSideProps`, ya que los datos se piden desde el servidor. Como su nombre lo dice, la diferencia radica en que el mismo se pide en el momento, pudiendo ver los cambios que se hayan hecho en la base de datos o en la API desde el momento en el que se generó la app, por lo que es mejor para base de datos con actualizaciones constantes o en tiempos mas cortos.  
+El mismo solo se diferencia en algunas cosas muy puntuales, pero la base es la misma que GSP.
 
-## GSSP para rutas dinámicas
+```jsx
+export default function Home({ dataFromDB }) {      // Pasamos los datos que vienen desde GSSP como props
+  return (
+    [...]
+  );
+}
 
-<!-- Usar server side props para pedir los datos usando los params -->
+export async function getServerSideProps(context) {        // Pedimos los datos al final de nuestro código
+  try {                                                                         // Envolvemos todo en un try catch
+    const data = await fetch("https://jsonplaceholder.typicode.com/users");     // Hacemos el pedido a la API
+    const dataFromDB = await data.json();           // Y formateamos la respuesta
+
+    return {
+      props: {          // Hacemos un return de la respuesta como prop para poder usarla en el componente
+        dataFromDB,
+      },
+    };
+  } catch (err) {
+    console.log(err);
+  }
+}
+```
+
+## Páginas dinámicas
+
+Es posible crear páginas dinámicas en Next, para ello solo es necesario utilizar corchetes ([]) a la hora de crear un nuevo archivo, dentro de los mismos colocaremos lo que vaya a ser dinámico, por ejemplo, si queremos hacer una página que contendrá información sobre uno de los usuarios que pedimos a la API podemos crear el archivo `[user].jsx` en el cual crearemos nuestra página de la siguiente manera.
+
+```jsx
+import Link from "next/link";
+import Layout from "../components/Layout/Layout";
+
+const UserPage = () => {      // Hay que exportar el componente como tal, es por eso que no usamos _user_ en este caso en particular
+  return (
+    <Layout>
+      <div>
+       <h2>nombre</h2>
+       <small>email</small>
+        <Link href={`http://localhost:3000/`}>
+          Go back
+        </Link>
+      </div>
+    </Layout>
+  );
+};
+
+export default UserPage;
+```
+
+Lo que tenemos hecho ahora solamente es la base de nuestra ruta dinámica, pero sin los datos, para ello hay dos formas de pedir los datos dependiendo de que tipo de pedido se haga, estático o del lado del servidor.  
+Para hacer un pedido de datos estáticos se utiliza la función `getStaticPaths()` de la siguiente manera.
+
+```jsx
+import Link from "next/link";
+import Layout from "../components/Layout/Layout";
+
+const UserPage = ({ userData }) => {        // Los datos que pedimos con GSP
+  return (
+    <Layout>
+      <div>
+       <h2>{userData.name}</h2>
+       <small>{userData.email}</small>
+        <Link href={`http://localhost:3000/`}>
+          Go back
+        </Link>
+      </div>
+    </Layout>
+  );
+};
+
+export function getStaticPaths(){
+    try{
+        const res = await fetch("https://jsonplaceholder.typicode.com/users");     // Hacemos el pedido a la API
+        const dataFromApi = await res.json();
+        const paths = dataFromApi.map((data)=>({
+            params: {user: `${user.id}`}            // Tomamos el ID para generar las rutas dinámicas
+        }))
+
+        return{
+            paths,          // Devolvemos el path con todas las rutas
+            fallback: true      // Y generamos una página 404 cuando no exista la ruta
+        }
+    } catch (err){
+        console.error(err)
+    }
+}
+
+export async function getStaticProps({ params }) {        // Pedimos los datos en base a los params generados anteriormente
+  try {
+    const data = await fetch(`https://jsonplaceholder.typicode.com/users/${params.user}`);     // Hacemos el pedido a la API en base al param
+    const userData = await data.json();
+
+    return {
+      props: {
+        userData,
+      },
+    };
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+export default UserPage;
+```
+
+Esto nos genera las rutas dinámicas y se piden los datos en base a los parámetros que se envíen por la URL, aunque solamente funciona cuando se genera datos de forma estática, si queremos hacerlo en forma dinámica con SSR se debe hacer de la siguiente manera.  
+
+```jsx
+import Link from "next/link";
+import Layout from "../components/Layout/Layout";
+
+const UserPage = ({ userData }) => {        // Los datos que pedimos con GSP
+  return (
+    <Layout>
+      <div>
+       <h2>{userData.name}</h2>
+       <small>{userData.email}</small>
+        <Link href={`http://localhost:3000/`}>
+          Go back
+        </Link>
+      </div>
+    </Layout>
+  );
+};
+
+export async function getServerSideProps(context) {
+  try {
+    const { params } = context;         // Tomamos los parámetros que se envían por URL
+    const { user } = params;        // Y hacemos destructuring del user
+
+    const data = await fetch(`https://jsonplaceholder.typicode.com/users/${user}`);     // Hacemos el pedido a la API en base al context
+    const userData = await data.json();
+
+    return {
+      props: {
+        userData,       // Enviamos los datos como lo hacemos normalmente
+        user,
+      },
+    };
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+export default UserPage;
+```
