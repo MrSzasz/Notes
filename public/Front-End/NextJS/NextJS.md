@@ -553,3 +553,21 @@ export async function getServerSideProps(context) {
 
 export default UserPage;
 ```
+
+## Generar página estática
+
+Si nuestro objetivo final es generar una página estática para subirla a un servidor necesitamos indicarlo en el archivo `package.json` como lo indica la documentación oficial. Para ello debemos crear el método `export`, el cual generará todos nuestros archivos estáticos en una carpeta `out`, la cual podremos subir normalmente.  
+El script debería quedarnos de la siguiente manera.
+
+```json
+  "scripts": {
+    // [...]
+    "export": "next build && next export"
+  },
+```
+
+Con esto configurado solo será necesario iniciar el script escribiendo `npm run export` en nuestra consola, pudiendo ver como se genera la carpeta `out` al finalizar.
+
+## Deploy a Vercel
+
+Si la página no será estática lo mejor será hacer nuestro deploy directamente en Vercel, ya que al ser desarrollado por ellos la implantación es mucho mejor que con otros servidores. En el mismo es posible linkear directamente nuestra cuenta de Github y elegir el repo que necesitemos hacer el deploy directamente.
