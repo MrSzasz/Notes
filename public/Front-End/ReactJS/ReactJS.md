@@ -1,5 +1,8 @@
 # React JS
 
+[ReactJS](https://reactjs.org/) es una librería de JavaScript diseñada con el fin de crear interfaces de usuario dinámicas mucho mas rápidas, la cual fue creada por Facebook y es utilizada, mas allá de sus respectivas páginas web, en una gran variedad mas como puede ser Uber, Pinterest, Netflix entre otros.  
+React esta basado en componentes, lo que lo hace escalable y altamente reutilizable  
+
 ## Guía de Temas
 
 1. [NodeJS](#nodejs)
@@ -20,9 +23,6 @@
     - [Hooks](#hooks)
 
 ---
-
-[ReactJS](https://reactjs.org/) es una librería de JavaScript diseñada con el fin de crear interfaces de usuario dinámicas mucho mas rápidas, la cual fue creada por Facebook y es utilizada, mas allá de sus respectivas páginas web, en una gran variedad mas como puede ser Uber, Pinterest, Netflix entre otros.  
-React esta basado en componentes, lo que lo hace escalable y altamente reutilizable  
 
 ## NodeJS
 
