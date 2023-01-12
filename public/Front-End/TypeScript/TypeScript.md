@@ -2,6 +2,23 @@
 
 [TypeScript](https://github.com/microsoft/TypeScript) es un lenguaje de tipado estático basado en JavaScript, el cual se utiliza mayormente para denotar los tipos de cada valor para evitar errores. Se dice que TypeScript es un superset de Javascript, dado que al final el código escrito en el archivo `.ts` se compila a un archivo normal `.js`, independientemente de si este termina funcionando o no.
 
+## Guía de temas
+
+1. [Instalación](#instalación)
+2. [Compilación](#compilador-de-jsts)
+3. Código de TypeScript
+    - [Post compilación](#coding)
+    - [Tipos](#tipos)
+    - [Interfaces](#interfaces)
+    - [Intersecciones](#intersecciones)
+    - [Literales](#literales)
+    - [Array y tuples](#arrays)
+    - [Datos de solo lectura](#readonly)
+    - [Funciones y void](#funciones)
+    - [Clases y su privacidad](#clases)
+    - [Tipos genéricos](#generic-types)
+    - [Selección de datos](#selección-de-datos)
+
 ## Instalación
 
 Typescript necesita ser instalado para su utilización, a su vez se necesita `npm` para gestionar el paquete.
@@ -237,6 +254,7 @@ También es posible crear interfaces que requieran funciones con ciertos nombres
 ```ts
 interface IFly {
     fly(): void;
+    // fly: () => void      // Es otra forma de declarar las funciones
 }
 
 let action: IFly = {
@@ -246,6 +264,14 @@ let action: IFly = {
 };
 
 action.fly();
+```
+
+Sumado a esto es posible editar las interfaces simplemente volviendo a declarar una interface con el mismo nombre de la siguiente manera
+
+```ts
+interface IFly {
+    species: string
+}
 ```
 
 Las interfaces pueden juntarse para no repetir las mismas propiedades si una ya las tiene, dando asi un mejor flow a la hora de escribir el código. Esto es posible hacerlo con la palabra reservada `extends`, extendiendo todas las propiedades anteriormente nombradas.
@@ -275,7 +301,9 @@ let person1: IFirstAppearance = {
 };
 ```
 
-Las interfaces pueden hacer el uso de la intersección, sumando dos tipos de interfaces para crear una nueva variable.
+## Intersecciones
+
+Las interfaces pueden hacer el uso de la intersección, el mismo es el método utilizado para combinar dos tipos de interfaces, dando como resultado una nueva de la siguiente manera.
 
 ```ts
  interface Employee {
@@ -317,6 +345,8 @@ let newManager: ManagementEmployee = {
 
 > El resultado sigue siendo el mismo, pero el nuevo `type` puede ser utilizado en mas lugares sin la necesidad de repetir la intersección, lo cual se explicará a continuación
 
+## Literales
+
 Habrá momentos en los que sea necesario asignar un valor especifico de una lista de valores, esto es posible gracias a la definición de tipos literales.  
 Los tipos literales brindan la posibilidad de que se declare un error si se pasa un valor que no este anteriormente declarado aunque el mismo sea sintácticamente valido.
 
@@ -330,6 +360,8 @@ myResult = "failure"; // ERROR
 ```
 
 > También es posible pasar valores `boolean` y `number` como tipos literales
+
+## Arrays
 
 Como todos los otros datos, los arrays también tienen que declarar los tipos que contendrán, evitando que se agreguen tipos indeseados.
 
@@ -362,6 +394,8 @@ const [primerNombre, primerApellido, edadActual] = persona;
 
 console.log(primerApellido) // "CROFT", el valor dado por el destructuring
 ```
+
+## ReadOnly
 
 Es posible declarar arrays que sean solo para lectura, es decir, que no se puedan modificar. Esto se logra gracias a la palabra reservada `readonly`.
 
@@ -401,6 +435,8 @@ namesAndAge.SerasVictoria = 19;
 namesAndAge.IntegraFairbrookWingatesHellsing = 22 
 ```
 
+## Funciones
+
 Las funciones en `ts` también pueden tener los tipos de entrada y salida marcados, su sintaxis base es la misma que en `js`, solo que se le agrega que tipo de dato vamos a pasar como parámetro (dentro de los paréntesis) y que tipo de dato retornara (luego de los paréntesis), esto también aplica para las funciones anónimas y las arrow functions.
 
 ```ts
@@ -433,6 +469,8 @@ function sayMyName(name : string) : void {
 
 sayMyName("heisenberg");
 ```
+
+## Clases
 
 Algo muy característico de la OOP son las clases, estas mismas pueden ser utilizadas en `ts`, pero su implementación cambia ligeramente, ya que ademas de que se tienen que declarar los tipos de las propiedades, también se tiene que declarar el tipo de dato que se utilizará en los métodos.
 
@@ -505,7 +543,7 @@ console.log(first.isWorker()); // Es un empleado modelo
 
 > Es posible agregar `readonly` para evitar la reasignación de datos (`private readonly conName: string`)
 
-En las clases es posible incluir una (o más, separadas con coma `,`) `interface` con la palabra reservada `implements`.
+En las clases es posible incluir interfaces con la palabra reservada `implements`.
 
 ```ts
 interface ICharacter {
@@ -563,6 +601,8 @@ let black = new Cat("feline", "Black");
 console.log(black.makeNoise()); // meow
 ```
 
+## Generic types
+
 Hay veces que necesitamos crear funciones o interfaces bases pero sin tener del todo claro que tipo de datos vamos a usar desde un principio, para eso se utilizan los `generic types`, los cuales sirven para crear tipos que se declararan en su uso y pueden reutilizarse.
 
 ```ts
@@ -608,6 +648,8 @@ const person3 : savedData<number> = {  // ERROR, number no es un tipo que se hay
     data: 0
 }
 ```
+
+## Selección de datos
 
 Hay veces que necesitamos pasar solamente algunos datos de una interface, sin que todos sean obligatorios, para ello podemos usar la palabra reservada `Partial`, el cual evita que sean obligatorios.
 
