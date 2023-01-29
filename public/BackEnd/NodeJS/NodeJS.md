@@ -8,9 +8,16 @@
 2. [Express](#express)
 3. [Configuración de entorno](#configuración-del-entorno)
     - [Nodemon](#nodemon)
-4. Código de Node
+4. Código básico de Node
     - [Primeros pasos](#coding)
     - [Métodos](#métodos)
+    - [Static Pages](#static-pages)
+    - [Middlewares](#middlewares)
+    - [Rutas](#declaración-de-rutas)
+5. Obtención de datos
+    - [Params](#datos-desde-params)
+    - [Query](#datos-desde-query)
+    - [Body](#datos-desde-body)
 
 ---
 
@@ -142,7 +149,7 @@ Hecho esto podemos ingresar en nuestro localhost y ver como nos devuelve el arch
 
 ## Middlewares
 
-Anteriormente vimos que, aunque no indicamos que se use un método GET de nuestra página principal podemos mostrar el archivo estático con el uso de `.use`, esto es conocido como `middleware`, un middleware es un metodo que intercepta los pedidos que se envian por nuestras páginas y poder manipularlos de diferentes maneras, ya sea simplemente generar un log en consola hasta hacer comprobaciones de los datos. Para ver su funcionamiento crearemos un middleware simple que nos ayude a ver los métodos que se utilizaron, además de la hora a la que se enviaron los mismos.
+Anteriormente vimos que, aunque no indicamos que se use un método GET de nuestra página principal podemos mostrar el archivo estático con el uso de `.use`, esto es conocido como `middleware`, un middleware es un método que intercepta los pedidos que se envían por nuestras páginas y poder manipularlos de diferentes maneras, ya sea simplemente generar un log en consola hasta hacer comprobaciones de los datos. Para ver su funcionamiento crearemos un middleware simple que nos ayude a ver los métodos que se utilizaron, además de la hora a la que se enviaron los mismos.
 
 ```js
 const express = require('express');
@@ -173,6 +180,158 @@ app.listen(3000, () => {
 ```
 
 Como no indicamos puntualmente en donde se utilizará este middleware, el mismo funcionará para todos los métodos que estén debajo del mismo, indicando en consola el método utilizado y la hora local del pedido.
+
+## Declaración de rutas
+
+Pudimos ver que los middlewares funcionan antes de todas las rutas, para probar esto podemos crear diferentes rutas, cada una ocn su respectiva respuesta. Para este ejemplo nos olvidaremos del archivo estático y crearemos una ruta principal, una ruta de información y una ruta de contacto de la siguiente manera.
+
+```js
+const express = require('express');
+const app = express();
+const path = require('path');
+
+
+// Middleware de información
+
+app.use((req, res, next) => {
+    console.log(`${req.method}, at ${new Date().toString()}`)
+    next();
+})
+
+
+// Rutas
+
+app.get("/", (req, res) => {
+    res.json({
+        "text": "hello world!"
+    })
+})
+
+app.get("/info", (req, res) => {
+    res.send("general info")
+})
+
+app.get("/contact", (req, res) => {
+    res.send("contact page")
+})
+
+
+// Puertos
+
+app.listen(3000, () => {
+    console.log('listening on port 3000');
+})
+```
+
+Al ir a cualquiera de estas páginas podemos ver como se imprime en consola todos los métodos utilizados y la hora a la que se hizo la petición, pudiendo ver el accionar del middleware.  
+Hasta ahora solo vimos como mostrar respuestas a páginas declaradas, pero si se quisiera entrar en una página que no esté declarada solo tendríamos un error genérico, pero esto podemos modificarlo para mostrar una página personalizada cuando no se encuentre la ruta en particular, al final de las rutas, quedando de la siguiente manera.
+
+```js
+// [...]        (Resto del código)
+
+app.get("/contact", (req, res) => {
+    res.send("contact page")
+})
+
+app.use((req, res) => {             // Lo indicamos al final de cada ruta
+    res.status(404)         // Enviamos un status 404 para el navegador
+        .send("Error 404!, no se encontró la página solicitada")        // Y lo que queremos enviar como respuesta
+})
+
+
+// Puertos
+
+app.listen(3000, () => {
+    console.log('listening on port 3000');
+})
+```
+
+## Datos desde Params
+
+Algo muy importante del lado del servidor es la posibilidad de recibir datos desde la misma URL, a esto se lo llama tomar los datos por `params`, pudiendo definir los parámetros que se tomarán desde que creamos la ruta. Por ejemplo, si queremos ingresar a los datos de un user podemos utilizar `/user/:username`, siendo `:username` el parámetro que cambiará cuando el usuario lo indique, creando la ruta de la siguiente manera.
+
+```js
+//  [...]
+
+// Archivos estáticos
+
+app.use(express.static(
+    path.join(__dirname, 'views')
+))
+
+
+// Rutas
+
+app.get("/users/:username", (req, res) => {             // Indicamos donde se tomará el parámetro
+    console.log({"username": req.params.username})      // Hacemos un log del username
+    res.send(`Bienvenido ${req.params.username}`)       // Y lo devolvemos como respuesta
+})
+
+app.get("/contact", (req, res) => {
+    res.send("contact page")
+})
+
+//  [...]
+```
+
+Para ver un ejemplo de esto podemos ir a `https://localhost:3000/users/moon` y ver como se toma el username `moon` para la respuesta.
+
+> Es posible tomar más de un dato desde los params, indicandolo al momento de crear la ruta.
+
+## Datos desde Query
+
+Así como podemos tomar los datos desde los parámetros, también podemos pedir datos como `queries`, las queries son datos que se envían luego de la llamada a la ruta, los cuales se indican con un signo de interrogación (`?`), indicando el nombre de la variable y el valor, pudiendo indicar más de una variable con el uso del símbolo `&`. La ruta no necesita pedir los datos puntualmente como se hizo con los params, pero si se pueden pedir los mismos al momento de crear la ruta de la siguiente manera.
+
+```js
+//  [...]
+
+app.get("/user", (req, res) => {
+    console.log({ "username": req.query.username, "id": req.query.id })     // Utilizamos los mismos datos que antes, pero tomaos desde la query
+    res.send(`Bienvenido ${req.query.username}`)
+})
+
+//  [...]
+```
+
+Para comprobar que esto funciona debemos ir a la ruta `https://localhost:300/user?username=moon&id=pfar1835`, y ver como esto se imprime en pantalla
+
+## Datos desde Body
+
+Pro ultimo tenemos una forma más "privada" (pero no completamente segura) para enviar los datos, ya que si se comparte el dispositivo se puede ver que queda en el historial el link con los datos. Para evitar esto podemos hacer uso del body del request, pero los datos necesitan pasar por un middleware que nos provee Express antes de poder obtenerlos, por lo que el código nos quedará de la siguiente forma.
+
+```js
+//  [...]
+
+
+// Middlewares
+
+app.use(express.urlencoded({        // Indicamos el middleware al inicio del código
+    extended: false
+}))
+
+//  [...]
+
+app.post("/user", (req, res) => {       // Creamos la respuesta al método POST del servidor
+    console.log(req.body)               // Tomamos los datos enviados por el usuario
+    res.json({
+        'user': req.body.usernamePost       // Y generamos la respuesta
+    })
+})
+
+//  [...]
+```
+
+A diferencia de las queries o los params, para probar esto será necesario hacer uso de un gestor de peticiones como puede ser [Thunder Client](https://marketplace.visualstudio.com/items?itemName=rangav.vscode-thunder-client) en Visual Studio Code, y enviando los datos como formulario, pero también es posible hacerlo a traves de un formulario en el lado del cliente. Para ello lo primero que haremos será agregar un formulario simple a nuestro `index.html` de la siguiente manera.
+
+```html
+<form action="/user" method="post">         <!-- Indicamos la ruta y el método que utilizaremos -->
+    <input type="text" id="usernamePost" name="usernamePost">       <!-- E indicamos en el name el nombre de la variable que escribimos cuando pedimos desde el body en el lado del servidor -->
+    <input type="text" id="idPost" name="idPost">
+    <button type="submit">Enviar</button>
+</form>
+```
+
+Si indicamos los datos en el formulario y lo enviamos podemos ver en consola como se toman los datos, y como nos redirige a la página en cuestión.
 
 ## Referencias
 
