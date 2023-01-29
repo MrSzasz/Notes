@@ -10,6 +10,7 @@
     - [Nodemon](#nodemon)
 4. Código de Node
     - [Primeros pasos](#coding)
+    - [Métodos](#métodos)
 
 ---
 
@@ -85,4 +86,95 @@ app.listen(3000, () => {        // Con ello creamos nuestro servidor en el puert
 })
 ```
 
-Para probar el mismo debemos ingresar `npm run dev` en la consola, luego de ello debemos dirigirnos a `https://localhost:3000/` y ver como se imprime el texto que ingresamos anteriormente en consola.
+Para probar el mismo debemos ingresar `npm run dev` en la consola, luego de ello debemos dirigirnos a `https://localhost:3000/` y ver como se imprime el texto que indicamos anteriormente.
+
+## Métodos
+
+Con el servidor iniciado podemos crear nuestras primeras respuestas a los métodos más utilizados `GET, POST, PUT, DELETE`, siendo el primero que utilizaremos el GET. Para ello debemos indicar que usaremos el mismo desde `app` de la siguiente manera.
+
+```js
+const express = require('express');
+const app = express();
+
+app.get("/", (req, res) => {        // Escuchamos el método GET de la página principal
+    res.send("hello world!")        // Y le indicamos que le devolveremos
+})
+
+app.listen(3000, () => {
+    console.log('listening on port 3000');
+})
+```
+
+De momento esto nos devolverá el string `hello world!` en pantalla cuando ingresemos en `https://localhost:3000`, pero no es lo único que podemos devolver, también es posible devolver un json como respuesta de la siguiente manera.
+
+```js
+const express = require('express');
+const app = express();
+
+app.get("/", (req, res) => {
+    res.json({"text" : "hello world!"})
+})
+
+app.listen(3000, () => {
+    console.log('listening on port 3000');
+})
+```
+
+## Static pages
+
+Como podemos ver, hay diferentes tipos de respuesta que podemos dar, pero estas son unicamente strings sin formato siquiera, pero esto puede cambiar si enviamos un archivo estático desde el back como página principal, un archivo HTML con su respectivo CSS. Para esto debemos crear una carpeta llamada `views` y dentro de la misma el archivo `index.html`. Aquí podemos crear nuestro HTML como querramos, pero para este ejemplo rápido usaremos un template que nos ofrece [w3School en su página web]("https://www.w3schools.com/w3css/tryit.asp?filename=tryw3css_templates_coming_soon&stacked=h"). Luego, debemos indicar que enviaremos el archivo `index.html` como middleware (explicado luego de este punto) de la siguiente manera.
+
+```js
+const express = require('express');
+const app = express();
+const path = require('path');       // Requerimos path para buscar el archivo
+
+app.use(express.static(         // Creamos el middleware con `use` y luego usamos static
+    path.join(__dirname, 'views')       // Y le indicamos donde está nuestro archivo principal
+))
+
+app.listen(3000, () => {
+    console.log('listening on port 3000');
+})
+```
+
+Hecho esto podemos ingresar en nuestro localhost y ver como nos devuelve el archivo con sus respectivos estilos.
+
+## Middlewares
+
+Anteriormente vimos que, aunque no indicamos que se use un método GET de nuestra página principal podemos mostrar el archivo estático con el uso de `.use`, esto es conocido como `middleware`, un middleware es un metodo que intercepta los pedidos que se envian por nuestras páginas y poder manipularlos de diferentes maneras, ya sea simplemente generar un log en consola hasta hacer comprobaciones de los datos. Para ver su funcionamiento crearemos un middleware simple que nos ayude a ver los métodos que se utilizaron, además de la hora a la que se enviaron los mismos.
+
+```js
+const express = require('express');
+const app = express();
+const path = require('path');
+
+
+// Middleware de información
+
+app.use((req, res, next) => {                   // Los middlewares SIEMPRE van antes que cualquier ruta
+    console.log(`${req.method}, at ${new Date().toString()}`)       // Creamos la función del mismo
+    next();         // E indicamos que siga con la ruta
+})
+
+
+// Archivos estáticos
+
+app.use(express.static(
+    path.join(__dirname, 'views')
+))
+
+
+// Puertos
+
+app.listen(3000, () => {
+    console.log('listening on port 3000');
+})
+```
+
+Como no indicamos puntualmente en donde se utilizará este middleware, el mismo funcionará para todos los métodos que estén debajo del mismo, indicando en consola el método utilizado y la hora local del pedido.
+
+## Referencias
+
+[FreeCodeCamp](https://www.freecodecamp.org/learn/back-end-development-and-apis/)
+[W3school](https://www.w3schools.com/nodejs/default.asp)
