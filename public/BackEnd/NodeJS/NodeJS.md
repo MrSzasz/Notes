@@ -18,6 +18,8 @@
     - [Params](#datos-desde-params)
     - [Query](#datos-desde-query)
     - [Body](#datos-desde-body)
+6. Base de datos con Mongoose
+    - [Introducción a Mongoose](#mongoose)
 
 ---
 
@@ -332,6 +334,15 @@ A diferencia de las queries o los params, para probar esto será necesario hacer
 ```
 
 Si indicamos los datos en el formulario y lo enviamos podemos ver en consola como se toman los datos, y como nos redirige a la página en cuestión.
+
+## Mongoose
+
+Para terminar nuestro mini proyecto con Express vamos a incluir MongoDB en el mismo con la ayuda de Mongoose. [MongoDB](https://www.mongodb.com/) es una de las bases de datos relacionales más utilizadas en la actualidad, usaremos la misma junto a [Mongoose](https://mongoosejs.com/), la cual es una librería ODM (Object Data Modeling) que nos facilita el uso y conexión de MongoDB con nuestro back-end, dándonos una serie de funciones puntuales para crear nuestro CRUD.  
+Para comenzar a usar Mongoose debemos instalarlo en nuestro proyecto como lo indica su [documentación](https://mongoosejs.com/docs/index.html).
+
+```cmd
+npm i mongoose
+```
 
 ## Referencias
 
