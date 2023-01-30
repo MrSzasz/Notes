@@ -510,13 +510,13 @@ app.use(express.static(
 
 // Rutas
 
-app.post("/user", async (req, res) => {         // Usamos el mismo post que configuramos anteriormente
+app.post("/user", (req, res) => {         // Usamos el mismo post que configuramos anteriormente
     try {   
         const user = new userModel({            // Creamos el user con sus respectivos datos
             username: req.body.usernamePost,
             id: req.body.idPost
         })
-        await user.save((err) => {          // Lo guardamos en la base de datos
+        user.save((err) => {          // Lo guardamos en la base de datos
             if (err) console.error(err)     // Y comprobamos que no haya errores
         })
         res.json({
@@ -537,9 +537,9 @@ Esta forma funciona siempre y cuando querramos guardar solo un dato, pero si ten
 ```js
 //  [...]
 
-app.post("/user", async (req, res) => {
+app.post("/user", (req, res) => {
     try {
-        await userModel.create([{       // Usamos create y le pasamos un array de datos para subir
+        userModel.create([{       // Usamos create y le pasamos un array de datos para subir
             username: "John",
             id: 1234
         }, {
@@ -587,7 +587,79 @@ app.post("/user", (req, res) => {
 //  [...]
 ```
 
+En este caso, `.find()` nos devuelve un array de coincidencias, es por eso que en el caso de querer traer solamente un dato de la base de datos utilizamos `.findOne()` de la siguiente manera.
+
+```js
+//  [...]
+
+app.post("/user", (req, res) => {
+    try {
+        userModel.findOne(({                       // Usamos find para buscar en la base de datos
+            username: req.body.usernamePost     // Y le pasamos el dato a comparar
+        }), (err, doc) => {
+            if (err) console.error(err);
+            console.log(doc);               // Imprimimos el dato en consola
+            res.json({
+                user: doc.username      // Y devolvemos el resultado
+            })
+        })
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+//  [...]
+```
+
+Sumado a esto, si queremos ser más puntuales con la búsqueda de un dato podemos hacerlo a través del ID que se genera automáticamente cuando creamos un dato. Para esto usaremos el método `.findById()`, siendo este es el más usado para traer solo un dato, quedando la llamada de la siguiente manera.
+
+```js
+//  [...]
+
+app.post("/user", (req, res) => {
+    try {
+        userModel.findById("63d81bc4495a547b6a89e287"), (err, doc) => {         // Le pasamos el _id generado por MongoDB
+            if (err) console.error(err);
+            console.log(doc);               // Imprimimos el dato en consola
+            res.json({
+                user: doc.username      // Y devolvemos el resultado
+            })
+        }
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+//  [...]
+```
+
 ## CR(U)D - Update
+
+Ademas de crear los datos también podemos modificarlos en la base de datos. Para ello haremos uso del método `.findOneAndUpdate()`, el mismo nos pedirá los datos a cambiar en el momento que lo llamemos, quedando el mismo de la siguiente manera.
+
+```js
+//  [...]
+
+app.post("/user", (req, res) => {
+    try {
+        userModel.findOneAndUpdate({ username: req.body.usernamePost },         // Pasamos la condición como primer parámetro
+        { id: 55905 },      // Como 2do parámetro pasamos lo que queremos editar
+        { new: true },      // Y si queremos que nos devuelva el documento editado pasamos { new : true}
+        (err, updatedDoc) => {
+            if (err) console.error(err);
+            res.send({
+                updatedDoc
+            })
+        })
+    } catch (error) {
+        console.log(error)
+    }
+})
+        
+//  [...]
+```
+
+Como lo vimos anteriormente, también podemos buscar por ID y editarlo, cambiando el método `.findOneAndUpdate()` por el método `.findByIdAndUpdate()`, y pasando el Id como primer parámetro.
 
 ## CRU(D) - Delete
 
