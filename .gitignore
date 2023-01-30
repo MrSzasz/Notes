@@ -23,6 +23,7 @@ to-do-list.txt
 *.njsproj
 *.sln
 *.sw?
+.env
 
 # Backups
 

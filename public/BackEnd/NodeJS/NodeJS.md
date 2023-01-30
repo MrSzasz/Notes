@@ -20,6 +20,13 @@
     - [Body](#datos-desde-body)
 6. Base de datos con Mongoose
     - [Introducción a Mongoose](#mongoose)
+    - [Conectar base de datos](#conectar-mongo)
+7. CRUD de datos en MongoDB con Mongoose
+    - [¿Que es CRUD?](#crud--clae)
+    - [(C)RUD - Create](#crud---create)
+    - [C(R)UD - Read](#crud---read)
+    - [CR(U)D - Update](#crud---update)
+    - [CRU(D) - Delete](#crud---delete)
 
 ---
 
@@ -328,7 +335,7 @@ A diferencia de las queries o los params, para probar esto será necesario hacer
 ```html
 <form action="/user" method="post">         <!-- Indicamos la ruta y el método que utilizaremos -->
     <input type="text" id="usernamePost" name="usernamePost">       <!-- E indicamos en el name el nombre de la variable que escribimos cuando pedimos desde el body en el lado del servidor -->
-    <input type="text" id="idPost" name="idPost">
+    <input type="number" id="idPost" name="idPost">
     <button type="submit">Enviar</button>
 </form>
 ```
@@ -343,6 +350,246 @@ Para comenzar a usar Mongoose debemos instalarlo en nuestro proyecto como lo ind
 ```cmd
 npm i mongoose
 ```
+
+## Conectar Mongo
+
+Lo primero que debemos hacer será crearnos una cuenta en MongoDB y una base de datos, para ello podemos seguir el [tutorial de FreeCodeCamp](https://www.freecodecamp.org/news/get-started-with-mongodb-atlas/), hecho esto será necesario agregar nuestra URI de MongoDB a un archivo `.env` para que la misma quede oculta. Para ello comenzamos creando el archivo `.env` a nivel de la raíz de nuestro proyecto, luego de esto debemos crear un archivo llamado `.gitignore`, el cual tomará las reglas de que archivo ignorar a la hora de subir un repositorio a GitHub. Normalmente este mismo se compone de las siguientes lineas.
+
+```gitignore
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+to-do-list.txt
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.env
+```
+
+Ya con nuestro .env creado y el .gitignore configurado podemos guardar nuestra URI como variable privada de la siguiente manera.
+
+```env
+MONGO_URI="mongodb+srv://<username>:<password>@<cluster-name>.prx1c.mongodb.net/<db-name>?retryWrites=true&w=majority"
+```
+
+> La URI la podemos encontrar en el apartado de `connect` de nuestro cluster en MongoDB
+
+También será necesario instalar un paquete de NPM para poder leer los datos de nuestro .env llamado `dotenv`, usando el comando que nos indica su [página](https://www.npmjs.com/package/dotenv).
+
+```cmd
+npm i dotenv
+```
+
+Con esto instalado podemos conectar nuestro Cluster al proyecto de la siguiente manera.
+
+```js
+const express = require('express');
+const app = express();
+const path = require('path');
+const mongoose = require('mongoose');       // Importamos Mongoose
+require("dotenv").config()          // Y dotenv para manejar nuestras variables privadas
+
+
+// MongoDB
+
+mongoose.set('strictQuery', false);         // Suprimimos el warning (ver. < Mongoose v7)
+
+mongoose.connect(process.env.MONGO_URI, {       // Usamos .connect de Mongoose y le indicamos nuestra URI
+    useNewUrlParser: true,
+    useUnifiedTopology: true                    // Junto a sus configuraciones
+})
+
+
+// Middlewares
+
+app.use(express.urlencoded({
+    extended: false
+}))
+
+
+// Archivos estáticos
+
+app.use(express.static(
+    path.join(__dirname, 'views')
+))
+
+
+// Rutas
+
+app.use((req, res) => {
+    res.status(404)
+        .send("Error 404!, no se encontró la página solicitada")
+})
+
+
+// Puertos
+
+app.listen(3000, () => {
+    console.log('listening on port 3000');
+})
+```
+
+## CRUD / CLAE
+
+CRUD son las siglas para Create (Crear), Read (Leer), Update (Actualizar) y Delete (Eliminar), las 4 operaciones básicas que se realizan en una base de datos para trabajar con los datos almacenados. En este caso haremos uso del mismo para crear una base de datos que guarde usuarios, la cual podremos modificar a medida que lo necesitemos. Para empezar a utilizar el CRUD debemos crear nuestros usuarios, es decir, empezar con Create de CRUD.
+
+## (C)RUD - Create
+
+Para empezar a crear y subir los datos debemos crear una carpeta para guardar los Schemes. Los Schemes son los bloques que contendrá un modelo para enviarse a la base de datos, siendo similar a las `Interfaces` de TypeScript. Para comenzar con ello debemos crear una carpeta llamada `models`, y dentro de la misma un archivo llamado `user.js`. En este crearemos nuestro modelo de usuario a crear de la siguiente manera.
+
+```js
+const mongoose = require('mongoose')        // Requerimos mongoose para pedir sus métodos
+
+let userSchema = new mongoose.Schema({      // Creamos un nuevo esquema con el nombre que indicamos
+    username: {                             // Creamos el dato que contendrá el mismo
+        type: String,                       // Indicamos el tipo de dato que será
+        required: true,                     // Indicamos que sera obligatorio
+        unique: true                        // Y que no se podrá repetir
+    },
+    id: {
+        type: Number,
+        required: true,
+        unique: true
+    },
+})
+
+module.exports = mongoose.model('User', userSchema)     // A final exportamos el modelo para poder usarlo en otra parte del proyecto
+```
+
+Teniendo nuestro primer modelo de usuario hecho podemos volver al archivo principal en donde lo llamaremos y haremos uso del método POST para pasarle los datos desde el formulario y subirlo a nuestra base de datos, quedando de la siguiente manera.
+
+```js
+const express = require('express');
+const app = express();
+const path = require('path');
+const mongoose = require('mongoose');
+require("dotenv").config()
+const userModel = require("./models/user")      // Importamos el modelo que usaremos luego
+
+// MongoDB
+
+mongoose.set('strictQuery', false);
+
+mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+
+
+// Middlewares
+
+app.use(express.urlencoded({
+    extended: false
+}))
+
+
+// Archivos estáticos
+
+app.use(express.static(
+    path.join(__dirname, 'views')
+))
+
+
+// Rutas
+
+app.post("/user", async (req, res) => {         // Usamos el mismo post que configuramos anteriormente
+    try {   
+        const user = new userModel({            // Creamos el user con sus respectivos datos
+            username: req.body.usernamePost,
+            id: req.body.idPost
+        })
+        await user.save((err) => {          // Lo guardamos en la base de datos
+            if (err) console.error(err)     // Y comprobamos que no haya errores
+        })
+        res.json({
+            username: req.body.usernamePost,
+            id: req.body.idPost,
+            status: "saved on db"
+        })
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+//  [...]
+```
+
+Esta forma funciona siempre y cuando querramos guardar solo un dato, pero si tenemos un array de datos será necesario usar el método `.create()` de la siguiente manera.
+
+```js
+//  [...]
+
+app.post("/user", async (req, res) => {
+    try {
+        await userModel.create([{       // Usamos create y le pasamos un array de datos para subir
+            username: "John",
+            id: 1234
+        }, {
+            username: "Johnny",
+            id: 123456
+        }], (err) => {
+            if (err) console.error(err)
+        })
+        res.json({
+            username: req.body.usernamePost,
+            id: req.body.idPost,
+            status: "saved on db"
+        })
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+//  [...]
+```
+
+## C(R)UD - Read
+
+Ya tenemos configuradas dos formas de subir (create) datos a nuestra base de datos, ahora es momento de poner en practica la lectura (read) de la base de datos, pidiendo los mismos que subimos anteriormente. Para ello haremos uso del método `.find()` de la siguiente manera.
+
+```js
+//  [...]
+
+app.post("/user", (req, res) => {
+    try {
+        userModel.find(({                       // Usamos find para buscar en la base de datos
+            username: req.body.usernamePost     // Y le pasamos el dato a comparar
+        }), (err, docs) => {
+            if (err) console.error(err);
+            console.log(docs);               // Imprimimos los datos en consola
+            res.json({
+                user: docs[0].username      // Y devolvemos el primer resultado
+            })
+        })
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+//  [...]
+```
+
+## CR(U)D - Update
+
+## CRU(D) - Delete
 
 ## Referencias
 
