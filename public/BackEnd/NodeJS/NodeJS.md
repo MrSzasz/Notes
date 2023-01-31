@@ -711,9 +711,237 @@ app.post("/user", (req, res) => {
 //  [...]
 ```
 
+## MVC
+
+Por ultimo podemos explicar el patrón `MVC (model - view - controller / modelo - vista - controlador)`, el cual es un patrón de arquitectura que separa y organiza las funcionalidades de nuestro proyecto en 3 diferentes secciones, `Models`, el cual se encarga de los modelos de las bases de datos, como lo vimos cuando configuramos nuestro [CRUD](#crud---create), `Views`, el cual se encarga de todas las vistas que tendremos en nuestro front, es decir, todo lo que el usuario recibe e interactúa, esto también lo vimos cuando creamos nuestro HTML para enviarlo como [página estática](#static-pages), y por ultimo los `Controllers`, el cual se encarga de controlar las respuestas de nuestras rutas, como lo vimos desde el principio de nuestro proyecto.  
+Gracias a este patrón tenemos un mejor control de todo, pudiendo ver claramente la división entre las rutas y sus funciones, facilitándonos algún cambio a futuro.
+
+## Routes
+
+Es momento de crear nuestras rutas, para ello necesitaremos crear la carpeta `routes` a nivel de la raíz, y dentro de la misma creamos el archivo `userRoutes.js`, a la cual enviaremos todas nuestras rutas anteriormente creadas de la siguiente manera.
+
+```js
+const express = require('express');             // Importamos Express
+const router = express.Router()                 // Y el router de Express
+const userModel = require("../models/user")     // De momento importamos el modelo para comprobar que funciona
+
+router.get("/", (req, res) => {                 // Cambiamos app por router y "/users" por raíz
+    userModel.find((err, docs) => {
+        if (err) return console.error(err)
+        res.send(docs)
+    })
+})
+
+router.post("/", (req, res) => {
+    try {
+        const user = new userModel({
+            username: req.body.usernamePost,
+            id: req.body.idPost
+        })
+        user.save((err) => {
+            if (err) console.error(err)
+        })
+        res.json({
+            username: req.body.usernamePost,
+            id: req.body.idPost,
+            status: "saved on db"
+        })
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+router.put("/user", (req, res) => {
+    try {
+        userModel.findOneAndUpdate({
+            username: req.body.usernamePost
+        }, {
+            id: 55905
+        }, {
+            new: true
+        }, (err, data) => {
+            if (err) console.error(err);
+            res.send({
+                data
+            })
+        })
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+
+router.delete("/", (req, res) => {
+    try {
+        userModel.remove(({
+            age: 20
+        }), (err, data) => {
+            if (err) console.error(err);
+            res.send({
+                data
+            })
+        })
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+module.exports = router;            // Y al final exportamos las rutas
+```
+
+> Es posible crear un middleware que solo afecte a la ruta en cuestión, creándola dentro de este archivo mismo archivo.
+
+Con esto hecho ya separamos las rutas principales de `"/users"`, ahora debemos importarlas en nuestro `index.js` de la siguiente manera.
+
+```js
+const express = require('express');
+const app = express();
+const path = require('path');
+const mongoose = require('mongoose');
+require("dotenv").config()
+
+const userRoutes = require("./routes/userRoutes")       // Importamos las rutas
+
+
+//  [...]
+
+
+// Rutas
+
+app.use("/users", userRoutes)       // Y le indicamos que ruta tomará como base, pasando las rutas como 2do parámetro
+
+app.use((req, res) => {
+    res.status(404)
+        .send("Error 404!, no se encontró la página solicitada")
+})
+
+
+//  [...]
+```
+
+## Controllers
+
+Lo ultimo que nos queda por separar serían los controladores, para los cuales debemos crear una carpeta a nivel raíz llamado `controllers`, y dentro de la misma crearemos el archivo `userControllers.js`, dentro del cual colocaremos nuestros controladores de la siguiente manera.
+
+```js
+const userModel = require("../models/user")         // Importamos los modelos
+
+module.exports = {                      // Creamos el objeto a importar
+
+
+    // Create users
+
+    users_createNewUser: (req, res) => {            // Y creamos cada controlador que usaremos en las rutas
+        try {
+            const user = new userModel({
+                username: req.body.usernamePost,
+                id: req.body.idPost
+            })
+            user.save((err) => {
+                if (err) console.error(err)
+            })
+            res.json({
+                username: req.body.usernamePost,
+                id: req.body.idPost,
+                status: "saved on db"
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    },
+
+
+    // Read users
+
+    users_getAllUsers: (req, res) => {
+        userModel.find((err, docs) => {
+            if (err) return console.error(err)
+            res.send(docs)
+        })
+    },
+
+
+    // Update users
+
+    users_updateOneUser: (req, res) => {
+        try {
+            userModel.findOneAndUpdate({
+                username: req.body.usernamePost
+            }, {
+                id: 55905
+            }, {
+                new: true
+            }, (err, data) => {
+                if (err) console.error(err);
+                res.send({
+                    data
+                })
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    },
+
+
+    // Delete users
+
+    users_deleteManyUsersByData: (req, res) => {
+        try {
+            userModel.remove(({
+                age: 20
+            }), (err, data) => {
+                if (err) console.error(err);
+                res.send({
+                    data
+                })
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+}
+```
+
+Con este cambio será necesario también cambiar las rutas para poder importar los controladores, por lo que nuestras rutas quedarán de la siguiente manera.
+
+```js
+const express = require('express');
+const {
+    users_createNewUser,
+    users_getAllUsers,
+    users_updateOneUser,
+    users_deleteManyUsersByData
+} = require('../controllers/userControllers');      // Importamos lo que necesitemos desde los controladores
+const router = express.Router()
+
+
+// Create users
+
+router.post("/", users_createNewUser)               // Y cambiamos las rutas para que tomen los controladores
+
+
+// Read users
+
+router.get("/", users_getAllUsers)
+
+
+// Update users
+
+router.put("/user", users_updateOneUser)
+
+
+// Delete users
+
+router.delete("/", users_deleteManyUsersByData)
+
+
+module.exports = router;
+```
+
 ## Cierre
 
-Con todo esto hecho vimos desde como se inicia un proyecto con Node y Express hasta como configurar una base de datos para usar su CRUD, pero a la vez abrimos varias posibilidades para realizar diferentes proyectos, desde un gestor de usuarios simples hasta un e-commerce completo.
+Con todo esto hecho vimos desde como se inicia un proyecto con Node y Express hasta como configurar una base de datos para usar su CRUD con su respectivo MVC, pero a la vez abrimos varias posibilidades para realizar diferentes proyectos, desde un gestor de usuarios simples hasta un e-commerce completo.
 
 ## Referencias
 
