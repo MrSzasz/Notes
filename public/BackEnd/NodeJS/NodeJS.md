@@ -27,6 +27,7 @@
     - [C(R)UD - Read](#crud---read)
     - [CR(U)D - Update](#crud---update)
     - [CRU(D) - Delete](#crud---delete)
+8. [Final](#cierre)
 
 ---
 
@@ -633,6 +634,8 @@ app.post("/user", (req, res) => {
 //  [...]
 ```
 
+> Hay que tener en cuenta que todos los métodos de `.findById()` en si toman la base de `.findOne({_id: id})`
+
 ## CR(U)D - Update
 
 Ademas de crear los datos también podemos modificarlos en la base de datos. Para ello haremos uso del método `.findOneAndUpdate()`, el mismo nos pedirá los datos a cambiar en el momento que lo llamemos, quedando el mismo de la siguiente manera.
@@ -662,6 +665,55 @@ app.post("/user", (req, res) => {
 Como lo vimos anteriormente, también podemos buscar por ID y editarlo, cambiando el método `.findOneAndUpdate()` por el método `.findByIdAndUpdate()`, y pasando el Id como primer parámetro.
 
 ## CRU(D) - Delete
+
+Por ultimo nos queda la función de eliminar nuestros datos de la base de datos. Para ello seguiremos la misma base que teníamos hasta el momento, pero para ello usaremos `.findByIdAndDelete()`, la cual recibe el ID del dato para buscarlo.
+
+```js
+//  [...]
+
+app.post("/user", (req, res) => {
+    try {
+        userModel.findByIdAndDelete(id, (err, data) => {        // Le pasamos el id del dato
+            if (err) console.error(err);
+            res.send({
+                data,                   // Imprimimos el dato eliminado
+                msg: "deleted!"
+            })
+        })
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+//  [...]
+```
+
+También es posible eliminar varios datos a la vez, utilizando `.remove()` y pasando el dato que comparten estos datos.
+
+```js
+//  [...]
+
+app.post("/user", (req, res) => {
+    try {
+        userModel.remove(({
+            age: 20             // Indicamos que dato comparten todos los que eliminaremos
+        }), (err) => {
+            if (err) console.error(err);
+            res.send({
+                msg: "datos eliminados"
+            })
+        })
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+//  [...]
+```
+
+## Cierre
+
+Con todo esto hecho vimos desde como se inicia un proyecto con Node y Express hasta como configurar una base de datos para usar su CRUD, pero a la vez abrimos varias posibilidades para realizar diferentes proyectos, desde un gestor de usuarios simples hasta un e-commerce completo.
 
 ## Referencias
 
