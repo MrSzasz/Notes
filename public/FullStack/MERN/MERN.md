@@ -40,10 +40,10 @@ Con esto hecho podemos abrir el proyecto en VSC o el editor de preferencia.
 Nuestro proximo paso será instalar los paquetes necesarios para el funcionamiento, empezando con el front. Para ello abrimos la consola en el proyecto y nos dirigimos a la carpeta del cliente (`cd /client`), y dentro de esta instalaremos los siguiente paquetes.
 
 ```cmd
-npm i sass react-router-dom @mui/material @emotion/react @emotion/styled
+npm i sass wouter @mui/material @emotion/react @emotion/styled @fontsource/roboto @mui/icons-material
 ```
 
-> Con esto instalamos [Sass](../../Front-End/Sass/Sass.md) para los estilos, React-router-dom para las rutas de React, y MaterialUI.
+> Con esto instalamos [Sass](../../Front-End/Sass/Sass.md) para los estilos, Wouter para manejar las rutas, y MaterialUI con sus iconos y fuente.
 
 Luego será necesario ir a nuestro back para instalar los otros paquetes, podemos hacerlo desde la consola abierta o abrir otra para la carpeta server. Dentro de la misma instalaremos los siguientes paquetes.  
 
@@ -71,5 +71,31 @@ Con Nodemon instalado debemos agregar dos scripts importante para el funcionamie
 ```
 
 También es posible cambiar los datos automáticos que nos generó el npm init, por ejemplo el nombre del proyecto, descripción o el autor.
+
+## Front
+
+Para el front lo primero que debemos hacer es configurar MaterialUI, para ello nos dirigiremos al archivo `main.tsx`, en este debemos importar las fuentes de la misma, y el normalizador de css de la siguiente manera.
+
+```tsx
+import React from "react";
+import ReactDOM from "react-dom/client";
+import '@fontsource/roboto/300.css';        // Importamos las fuentes
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+import App from "./App";
+import { CssBaseline } from "@mui/material";        // Y el baseline de CSS
+
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+  <React.StrictMode>
+    <CssBaseline/>      // El cual colocamos antes de nuestra App
+    <App />
+  </React.StrictMode>
+);
+```
+
+Con esto configurado podemos empezar a crear nuestros componentes, uno para nuestro inicio (`Home.tsx`), un componente para el formulario (`Login.tsx`), y uno para el dashboard (`Dashboard.tsx`), todos dentro de la carpeta `components` y su respectiva carpeta contenedora (`src/components/Home/Home.tsx`).
+
+## Back
 
 ## Cierre
