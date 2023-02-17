@@ -14,6 +14,9 @@ Para iniciar este proyecto es necesario tener conocimientos en [ReactJS](../../F
 1. [Configuración del proyecto](#configuración-del-proyecto)
     - [Paquetes](#instalación-de-paquetes)
     - [Scripts](#configuración-de-packagejson)
+2. Front-end
+    - [Material UI](#material-ui)
+    - [Rutas](#routes)
 . [Final](#cierre)
 
 ---
@@ -72,7 +75,7 @@ Con Nodemon instalado debemos agregar dos scripts importante para el funcionamie
 
 También es posible cambiar los datos automáticos que nos generó el npm init, por ejemplo el nombre del proyecto, descripción o el autor.
 
-## Front
+## Material UI
 
 Para el front lo primero que debemos hacer es configurar MaterialUI, para ello nos dirigiremos al archivo `main.tsx`, en este debemos importar las fuentes de la misma, y el normalizador de css de la siguiente manera.
 
@@ -94,7 +97,67 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
 );
 ```
 
-Con esto configurado podemos empezar a crear nuestros componentes, uno para nuestro inicio (`Home.tsx`), un componente para el formulario (`Login.tsx`), y uno para el dashboard (`Dashboard.tsx`), todos dentro de la carpeta `components` y su respectiva carpeta contenedora (`src/components/Home/Home.tsx`).
+## Routes
+
+Es momento de crear nuestas páginas y componentes, pudiendo dividir y ordenar mucho mejor todos los archivos que necesitaremos luego. El directorio desde `src` deberia quedarnos de la siguiente manera.
+
+```three
+src
+├── components
+│   ├── Form
+│   │     ├── Form.tsx
+│   │
+│   ├── Navbar
+│         ├── Navbar.tsx
+│   
+|
+├── pages
+    ├── Dashboard
+    │     ├── Dashboard.tsx
+    │
+    ├── Profile
+    │     ├── Profile.tsx
+    │
+    ├── Home
+          ├── Home.tsx
+```
+
+Separamos las páginas de los componentes para poder tener un mejor orden de todos los archivos que crearemos, a diferencia de Next, en donde si necesitamos dividir las páginas en sus respectivas carpetas.
+
+## Home
+
+Para empezar debemos crear el inicio de nuestra página, en esta misma crearemos un login simple con opcion de registro y de usar el mismo como invitado, para ello empezaremos modificando el archivo `Home.tsx` de la siguiente manera
+
+```tsx
+import Grid from "@mui/material/Grid";            // Importamos el componente Grid
+import Form from "../../components/Form/Form";    // Y el componente del formulario
+
+const Home = () => {
+  return (
+    <Grid container height={"100svh"}>        // Creamos el grid que contendrá todo nuestro componente
+      <Grid
+        item          // Y el item dentro del grid
+        sx={{
+          display: { xs: "none", sm: "none", md: "block" },             // Que será visible solo en pantallas md
+          backgroundImage: "url('https://picsum.photos/1280/720')",     // Y tendrá la imagen de fondo
+          backgroundPosition: "center",
+          backgroundSize: "cover",
+        }}
+        md={7}          // Y en tamaño mediano tomará 7 columnas
+      />
+      <Grid 
+        item xs={12} 
+        md={5}
+      >
+        <Form />      // Llamamos al form
+      </Grid>
+    </Grid>
+  );
+};
+
+export default Home;
+
+```
 
 ## Back
 
