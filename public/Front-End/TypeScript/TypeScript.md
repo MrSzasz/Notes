@@ -229,17 +229,17 @@ Otra forma de unir tipos es la `intersección` (`&`), la cual en vez de elegir e
 ## Interfaces
 
 Las `interfaces` son un tipo de estructura que definen las características que va a tener un objeto, siendo similar a las clases, pero con datos obligatorios.
-Las interfaces se declaran con la palabra reservada `interface` y el nombre (que comúnmente comienza con una `I`).
+Las interfaces se declaran con la palabra reservada `interface` y el nombre.
 
 ```ts
-interface ICharacter {
+interface Character {
     name: string; // OBLIGATORIO
     surname: string; // OBLIGATORIO
     age: number; // OBLIGATORIO
     country?: string; // OPCIONAL
 }
 
-let person1 : ICharacter ={
+let person1 : Character ={
     name: "Jotaro", 
     surname: "Kujo",
     status: "active", // ERROR, no se reconoce porque no esta en la interface
@@ -252,12 +252,12 @@ let person1 : ICharacter ={
 También es posible crear interfaces que requieran funciones con ciertos nombres predefinidos.
 
 ```ts
-interface IFly {
+interface Fly {
     fly(): void;
     // fly: () => void      // Es otra forma de declarar las funciones
 }
 
-let action: IFly = {
+let action: Fly = {
     fly: function () {
         console.log("I believe I can fly");
     },
@@ -269,7 +269,7 @@ action.fly();
 Sumado a esto es posible editar las interfaces simplemente volviendo a declarar una interface con el mismo nombre de la siguiente manera
 
 ```ts
-interface IFly {
+interface Fly {
     species: string
 }
 ```
@@ -277,20 +277,20 @@ interface IFly {
 Las interfaces pueden juntarse para no repetir las mismas propiedades si una ya las tiene, dando asi un mejor flow a la hora de escribir el código. Esto es posible hacerlo con la palabra reservada `extends`, extendiendo todas las propiedades anteriormente nombradas.
 
 ```ts
-interface ICharacter {
+interface Character {
     name: string; // OBLIGATORIO
     surname: string; // OBLIGATORIO
     age: number; // OBLIGATORIO
     country?: string; // OPCIONAL
 }
 
-interface IFirstAppearance extends ICharacter {
+interface FirstAppearance extends Character {
     chapter: string;
     publisher: string;
     year: number;
 }
 
-let person1: IFirstAppearance = {
+let person1: FirstAppearance = {
     name: "Jotaro",
     surname: "Kujo",
     age: 40,
@@ -546,14 +546,14 @@ console.log(first.isWorker()); // Es un empleado modelo
 En las clases es posible incluir interfaces con la palabra reservada `implements`.
 
 ```ts
-interface ICharacter {
+interface Character {
     name: string;
     surname: string;
     age: number;
     country?: string;
 }
 
-class Person implements ICharacter{
+class Person implements Character{
     name: string;
     surname: string;
     age: number; 

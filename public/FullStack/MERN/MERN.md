@@ -43,7 +43,7 @@ Con esto hecho podemos abrir el proyecto en VSC o el editor de preferencia.
 Nuestro proximo paso será instalar los paquetes necesarios para el funcionamiento, empezando con el front. Para ello abrimos la consola en el proyecto y nos dirigimos a la carpeta del cliente (`cd /client`), y dentro de esta instalaremos los siguiente paquetes.
 
 ```cmd
-npm i sass wouter
+npm i sass wouter react-icons
 ```
 
 > Con esto instalamos [Sass](../../Front-End/Sass/Sass.md) para los estilos y Wouter para manejar las rutas.
@@ -144,7 +144,109 @@ Separamos las páginas de los componentes para poder tener un mejor orden de tod
 
 ## Home
 
-Para empezar debemos crear el inicio de nuestra página, en esta misma crearemos un login simple con opcion de registro y de usar el mismo como invitado, para ello empezaremos modificando el archivo `Home.tsx` de la siguiente manera
+Para empezar debemos crear el inicio de nuestra página, en esta misma crearemos un login simple con opcion de registro y de usar el mismo como invitado, para ello empezaremos modificando el archivo `Home.tsx` de la siguiente manera.
+
+```tsx
+import Form from "../../components/Form/Form";    // Importamos el componente que utilizaremos
+
+const Home = () => {
+  return (
+    <div className="relative grid grid-cols-1 md:grid-cols-3 w-full h-screen">
+      <div className="relative hidden md:block col-start-1 col-end-3">
+        <img
+          className="h-full object-cover object-center"
+          src="https://picsum.photos/1920/1280"
+        />
+        <div className="absolute h-full w-full  backdrop-blur-sm inset-0 grid place-content-center">
+          <div className="absolute w-full h-full bg-black opacity-75 -z-10"></div>
+          <h1 className="text-5xl">TITLE OF THE PAGE</h1>
+          <p>
+            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ad, ipsum!
+          </p>
+        </div>
+      </div>
+      <div className="col-start-3">
+        <Form />      // Y lo llamamos
+      </div>
+    </div>
+  );
+};
+
+export default Home;
+```
+
+Es un Home simple con un estilo basico para no dejar pasar la oportunidad de utilizar Tailwind.
+
+## Form
+
+Con el Home maquetado podemos centrarnos en las bases del formulario de inicio de sesión. Para ello modificaremos el archivo `Form.tsx` que creamos anteriormente, quedando el mismo de la siguiente manera.
+
+```tsx
+const Form = () => {
+  return (
+    <>
+      <form className="p-8 grid place-content-center items-center h-full">
+        <h1 className="text-center pb-4"> Sign in</h1>
+        <div className="relative z-0 w-full mb-6 group">
+          <input
+            type="email"
+            name="loginEmail"
+            id="loginEmail"
+            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+            placeholder=" "
+            required
+          />
+          <label
+            htmlFor="floating_email"
+            className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+          >
+            Email address
+          </label>
+        </div>
+        <div className="relative z-0 w-full mb-6 group">
+          <input
+            type="password"
+            name="floating_password"
+            id="floating_password"
+            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+            placeholder=" "
+            required
+          />
+          <label
+            htmlFor="floating_password"
+            className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+          >
+            Password
+          </label>
+        </div>
+        <button
+          type="submit"
+          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        >
+          Login
+        </button>
+      </form>
+      <div>
+        <h2>No account?</h2>
+        <button
+          type="submit"
+          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        >
+          Enter without account
+        </button>
+        <button
+          type="submit"
+          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        >
+          Register
+        </button>
+      </div>
+    </>
+  );
+};
+
+export default Form;
+```
 
 ## Back
 
