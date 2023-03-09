@@ -220,6 +220,10 @@ src
 ├── index.js
 ```
 
+## Front / Client
+
+Como indicamos anteriormente, el front de nuestro proyecto estará hecho en React con TypeScript, el mismo se encargará de todo lo que el usuario ve e interactua, desde los formularios para la creación de trabjaos hasta las animaciones de la misma. Para ello debemos crear todos los componentes y págnas que necesitaremos, además de las funciones que usaremos para conectarnos con el back-end de nuestro proyecto.
+
 ## Home
 
 Para empezar debemos crear el inicio de nuestra página, en esta misma crearemos un login simple con opción de registro y de usar el mismo como invitado, para ello empezaremos modificando el archivo `Home.tsx` de la siguiente manera.
