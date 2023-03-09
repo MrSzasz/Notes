@@ -222,7 +222,7 @@ src
 
 ## Front / Client
 
-Como indicamos anteriormente, el front de nuestro proyecto estará hecho en React con TypeScript, el mismo se encargará de todo lo que el usuario ve e interactua, desde los formularios para la creación de trabjaos hasta las animaciones de la misma. Para ello debemos crear todos los componentes y págnas que necesitaremos, además de las funciones que usaremos para conectarnos con el back-end de nuestro proyecto.
+Como indicamos anteriormente, el front de nuestro proyecto estará hecho en React con TypeScript, el mismo se encargará de todo lo que el usuario ve e interactúa, desde los formularios para la creación de trabajos hasta las animaciones de la misma. Para ello debemos crear todos los componentes y páginas que necesitaremos, además de las funciones que usaremos para conectarnos con el back-end de nuestro proyecto.
 
 ## Home
 
@@ -508,7 +508,7 @@ Con esto hecho podemos pasar a utilizar estas interfaces en otros lados de nuest
 
 ## Helpers
 
-Tambien podemos ver en el Form que hacemos uso de los helpers, los cuales son las funciones que nos ayudan con el manejo de datos entre el front-end y el back-end, para ello utilizamos Axios, creando el codigo en el archivo `requests.ts` de la siguiente manera.
+También podemos ver en el Form que hacemos uso de los helpers, los cuales son las funciones que nos ayudan con el manejo de datos entre el front-end y el back-end, para ello utilizamos Axios, creando el código en el archivo `requests.ts` de la siguiente manera.
 
 ```ts
 import axios from "axios";                // Importamos Axios
@@ -702,7 +702,7 @@ export const axios_USERS_deleteData = async (
 
 ## Error Handlers
 
-Como vimos en el archivo anterior, hacemos uso de los handlers de errores, es por eso que debemos crear codigo del mismo en el archivo llamado `errors.ts` dentro de la carpeta de helpers, el cual nos quedará de la siguiente manera.
+Como vimos en el archivo anterior, hacemos uso de los handlers de errores, es por eso que debemos crear código del mismo en el archivo llamado `errors.ts` dentro de la carpeta de helpers, el cual nos quedará de la siguiente manera.
 
 ```tsx
 import toast from "react-hot-toast";     // Importamos el toast
@@ -741,8 +741,8 @@ export const handleUnexpectedRequestErrors = (err: {}) => {
 
 ## Form Errors handler
 
-Además de manejar los errores de las request tambien tenemos un componente que maneja los errores del formulario, este es el componente llamado `FormErrors`, este mismo se encuentra en la carpeta del mismo nombre.  
-Creamos este componente para poder reutilizarlo las veces que sea necesario, para ello debemos crear el codifo del mismo, el cual quedará de la siguiente manera.
+Además de manejar los errores de las request también tenemos un componente que maneja los errores del formulario, este es el componente llamado `FormErrors`, este mismo se encuentra en la carpeta del mismo nombre.  
+Creamos este componente para poder reutilizarlo las veces que sea necesario, para ello debemos crear el código del mismo, el cual quedará de la siguiente manera.
 
 ```tsx
 type PropsType_FormErrors = {     // Creamos el type para los props de nuestro componente
@@ -758,7 +758,7 @@ export default FormErrors;
 
 ## Dashboard
 
-Hecho esto podemos empezar con los componentes que ayudarán a los usuarios a interactiar con la base de datos y manejar sus trabajos. Esto se hará mediante la página llamada `Dashboard`, en la cual crearemos la base para todo nuestro proyecto, quedando la misma de la siguiente manera.
+Hecho esto podemos empezar con los componentes que ayudarán a los usuarios a interactuar con la base de datos y manejar sus trabajos. Esto se hará mediante la página llamada `Dashboard`, en la cual crearemos la base para todo nuestro proyecto, quedando la misma de la siguiente manera.
 
 ```tsx
 import { useState, useEffect } from "react";
@@ -797,13 +797,13 @@ const Dashboard = () => {
   const [jobsFromDB, setJobsFromDB] = useState<Array<JobInterface>>([]);    // Creamos el hook para guardar los trabajos
   const [jobForDetails, setJobForDetails] = useState<JobInterface>();       // Creamos el hook para guardar el trabajo para los detalles
   const [profileInfo, setProfileInfo] = useState<UserDataInterface>();      // Creamos el hook con los datos del usuario
-  const [searchQuery, setSearchQuery] = useState("");                       // Creamos el hook con los datos para la busqueda de trabajos
+  const [searchQuery, setSearchQuery] = useState("");                       // Creamos el hook con los datos para la búsqueda de trabajos
   const [location, setLocation] = useLocation();
-  const [jobsContainer] = useAutoAnimate();           // Creamos el hook para generar la animación automatica
+  const [jobsContainer] = useAutoAnimate();           // Creamos el hook para generar la animación automática
 
   !JSON.parse(localStorage.getItem("auth")!) && setLocation("/");     // Comprobamos que tenga autorización
 
-  const confirmDelete = (jobID: string, closeModal?: boolean) => {    // Creamos el toast para confirmar la eliminación del trabaho
+  const confirmDelete = (jobID: string, closeModal?: boolean) => {    // Creamos el toast para confirmar la eliminación del trabajo
     toast(
       () => (
         <span className="flex flex-col gap-3">
@@ -829,7 +829,7 @@ const Dashboard = () => {
         </span>
       ),
       {
-        duration: 99999999,           // Indicamos la duración para que no se elimine rapidamente
+        duration: 99999999,           // Indicamos la duración para que no se elimine rápidamente
         id: "confirmDeleteJobToast",
         style: {
           backgroundColor: "#1f2937",
@@ -996,7 +996,7 @@ const Dashboard = () => {
           id="search"
           placeholder="Search..."
           className="block py-2.5 px-0 text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 w-full"
-          onChange={(e) => setSearchQuery(e.target.value)}      // Indicamos que guarde cada vez que se tipee algo
+          onChange={(e) => setSearchQuery(e.target.value)}      // Indicamos que guarde cada vez que se escriba algo
         />
         <span className="absolute right-2 bottom-4">
           <FiSearch />
@@ -1009,7 +1009,7 @@ const Dashboard = () => {
         >
           {jobsFromDB &&
             jobsFromDB
-              .filter((job) => {                            // Filtramos los array dependiendo de la busqueda
+              .filter((job) => {                            // Filtramos los array dependiendo de la búsqueda
                 return searchQuery.toLowerCase() === ""
                   ? job
                   : job.title.toLowerCase().includes(searchQuery);
@@ -1071,7 +1071,7 @@ export default Dashboard;
 
 ## Job Card
 
-La card que generaremos como vista previa para cada uno de los trabajos es una card simple qur generaremos gracias al map del array en el dashboard. El codigo de la misma es el siguiente.
+La card que generaremos como vista previa para cada uno de los trabajos es una card simple qur generaremos gracias al map del array en el dashboard. El código de la misma es el siguiente.
 
 ```tsx
 import { AiOutlineArrowRight } from "react-icons/ai";
@@ -1093,7 +1093,7 @@ const JobCard = ({
   deleteJobFunction,
 }: PropsType_JobCard) => {
 
-  const TEXT_COLORS_VARIANTS: statusColorsVariants = {      // Creamos el diccionario para las vaariantes en los colores
+  const TEXT_COLORS_VARIANTS: statusColorsVariants = {      // Creamos el diccionario para las variantes en los colores
     success: "success-text-style",
     rejected: "rejected-text-style",
     processing: "processing-text-style",
@@ -1101,7 +1101,7 @@ const JobCard = ({
     later: "later-text-style",
   };
 
-  const BORDER_COLORS_VARIANTS: statusColorsVariants = {    // Creamos el diccionario para las vaariantes en los bordes
+  const BORDER_COLORS_VARIANTS: statusColorsVariants = {    // Creamos el diccionario para las variantes en los bordes
     success: "hover:border-success",
     rejected: "hover:border-rejected",
     processing: "hover:border-processing",
@@ -1158,7 +1158,7 @@ const JobCard = ({
         <div className="flex w-full justify-between flex-wrap">
           <button
             onClick={() => {
-              functionModal(true, job.id);      // Creamos el boton para abrir los detalles del trabajo
+              functionModal(true, job.id);      // Creamos el botón para abrir los detalles del trabajo
             }}
             className="flex w-fit items-center gap-2 hover:gap-3 px-3 py-2 text-sm font-medium text-center text-white transition-all rounded-lg hover:bg-blue-800 focus:ring-4 bg-blue-900 focus:ring-blue-800"
           >
@@ -1166,7 +1166,7 @@ const JobCard = ({
             <AiOutlineArrowRight />
           </button>
           <button
-            onClick={() => deleteJobFunction(job.id)}     // Creamos el boton para eliminar el trabajo
+            onClick={() => deleteJobFunction(job.id)}     // Creamos el botón para eliminar el trabajo
             className="flex w-fit items-center gap-2 hover:gap-3 px-3 py-2 text-sm font-medium text-center text-white transition-all rounded-lg hover:bg-red-800 focus:ring-4 bg-red-900 focus:ring-red-800"
           >
             Delete <HiOutlineTrash />
@@ -1217,7 +1217,7 @@ export default Navbar;
 
 ## Profile
 
-Ahora que tenemos una forma de abrir la pestaña del usuario debemos crearla. Esta nos mostrará los datos del usuario y nos permitirá cerrar sesión o eliminar los datos del mismo. El codigo del mismo será el siguiente.
+Ahora que tenemos una forma de abrir la pestaña del usuario debemos crearla. Esta nos mostrará los datos del usuario y nos permitirá cerrar sesión o eliminar los datos del mismo. El código del mismo será el siguiente.
 
 ```tsx
 import { useState } from "react";
@@ -1249,14 +1249,14 @@ const Profile = ({ controlUserTab, userInfo, userType }: PropsType_Profile) => {
     setDeleteAccountModal((current) => !current);
   };
 
-  const handleLogOut = () => {      // Creamos la funcion para el logout
+  const handleLogOut = () => {      // Creamos la función para el logout
     localStorage.setItem("token", JSON.stringify(null));
     localStorage.setItem("auth", JSON.stringify(false));
 
     setLocation("/");
   };
 
-  const handleDeleteRequest = () => {        // Creamos la funcion para eliminar al usuario
+  const handleDeleteRequest = () => {        // Creamos la función para eliminar al usuario
     try {
       axios_USERS_deleteData(userInfo._id, "users");
       handleLogOut();
@@ -1306,7 +1306,7 @@ const Profile = ({ controlUserTab, userInfo, userType }: PropsType_Profile) => {
           <div className="h-40 w-40 grid place-content-center bg-gray-900 rounded-full z-10 mb-4">
             <div className="relative h-32 w-32 bg-black rounded-full border-2 border-gray-900 grid place-content-center">
               <div className="h-min w-min inset-0 place-content-center text-7xl uppercase">
-                <span>{userType === "guest" ? "G" : userInfo.email[0]}</span>             // Mostramos el primer caracter
+                <span>{userType === "guest" ? "G" : userInfo.email[0]}</span>             // Mostramos el primer carácter
               </div>
             </div>
           </div>
@@ -1325,7 +1325,7 @@ const Profile = ({ controlUserTab, userInfo, userType }: PropsType_Profile) => {
         </button>
         {userType !== "guest" && (
           <small
-            onClick={controlDeleteModal}        // Y la opcion de eliminar cuenta solamente si el usuario tiene una
+            onClick={controlDeleteModal}        // Y la opción de eliminar cuenta solamente si el usuario tiene una
             className="text-red-800 underline cursor-pointer absolute bottom-4 m-auto w-fit"
           >
             Delete account
@@ -1334,7 +1334,7 @@ const Profile = ({ controlUserTab, userInfo, userType }: PropsType_Profile) => {
       </div>
       <AnimatePresence>
         {deleteAccountModal ? (
-          <PopUpModal modalControls={controlDeleteModal}>         // Creamos el modal para la confirmacion de la eliminacion del usuario
+          <PopUpModal modalControls={controlDeleteModal}>         // Creamos el modal para la confirmación de la eliminación del usuario
             <div className="flex flex-col">
               <div>
                 <h3 className="text-3xl underline mb-4">Delete account</h3>
@@ -1394,7 +1394,7 @@ export default Profile;
 
 ## Modal
 
-Vimos que la confirmación del usuario se muestra dentro del componente `PopUpModal`, el cual es el modal que tambien se utiliza para mostrar los datos del trabajo, por lo que será necesario crearlo. Esto lo haremos en el archivo del mismo nombre, quedando de la siguirente manera.
+Vimos que la confirmación del usuario se muestra dentro del componente `PopUpModal`, el cual es el modal que también se utiliza para mostrar los datos del trabajo, por lo que será necesario crearlo. Esto lo haremos en el archivo del mismo nombre, quedando de la siguiente manera.
 
 ```tsx
 import { IoCloseSharp } from "react-icons/io5";
@@ -1417,7 +1417,7 @@ const PopUpModal = ({ children, modalControls }: PropsType_PopUpModal) => {
       key="popUpModal"
     >
       <div
-        onClick={modalControls}     // Creamos el div que estará por detras del modal y que cerrrará el mismo cuando se haga click
+        onClick={modalControls}     // Creamos el div que estará por detrás del modal y que cerrará el mismo cuando se haga click
         className="absolute inset-0 w-full h-full bg-black opacity-75 -z-10"
       />
       <motion.div
@@ -1448,7 +1448,7 @@ export default PopUpModal;
 
 ## Job Details
 
-Este modal tambien nos ayudará mostrando los detalles del trabajo, es por eso que debemos crearlo. El archivo del detalle no solo mostrará los deltalles del mismo, sino que nos dejará editarlo, por lo que el codifo nos quedará de la siguienmte manera.
+Este modal también nos ayudará mostrando los detalles del trabajo, es por eso que debemos crearlo. El archivo del detalle no solo mostrará los detalles del mismo, sino que nos dejará editarlo, por lo que el código nos quedará de la siguiente manera.
 
 ```tsx
 import { useState } from "react";
@@ -1692,7 +1692,7 @@ export default JobDetails;
 
 ## Add Job
 
-Por ultimo nos queda el componente que nos permitirá crear los trabajos. Para ello tambien usaremos el modal. El componente nos permitirá crear los datos para el trabajo y subirlo a la base de datos, por lo que el mismo quedará de la siguiente manera.
+Por ultimo nos queda el componente que nos permitirá crear los trabajos. Para ello también usaremos el modal. El componente nos permitirá crear los datos para el trabajo y subirlo a la base de datos, por lo que el mismo quedará de la siguiente manera.
 
 ```tsx
 import { useState } from "react";
