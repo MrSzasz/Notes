@@ -224,9 +224,19 @@ src
 
 Como indicamos anteriormente, el front de nuestro proyecto estará hecho en React con TypeScript, el mismo se encargará de todo lo que el usuario ve e interactúa, desde los formularios para la creación de trabajos hasta las animaciones de la misma. Para ello debemos crear todos los componentes y páginas que necesitaremos, además de las funciones que usaremos para conectarnos con el back-end de nuestro proyecto.
 
+## Variables de entorno (Front-end)
+
+Para empezar debemos configurar nuestra variable de entorno principal, la cual contendrá la url del back-end a la que enviaremos los datos.
+
+```env
+VITE_URL=http://localhost:3001/
+```
+
+La configuramos en una variable de entorno para poder cambiarla al momento de hacer el deploy, pudiendo agregar el link de la nueva página que se creó al subirlo al host.
+
 ## Home
 
-Para empezar debemos crear el inicio de nuestra página, en esta misma crearemos un login simple con opción de registro y de usar el mismo como invitado, para ello empezaremos modificando el archivo `Home.tsx` de la siguiente manera.
+Lo primero que debemos hacer en cuanto al códifo es crear el inicio de nuestra página, en esta misma crearemos un login simple con opción de registro y de usar el mismo como invitado, para ello empezaremos modificando el archivo `Home.tsx` de la siguiente manera.
 
 ```tsx
 import Form from "../../components/Form/Form";      // Importamos el form que crearemos luego
@@ -514,7 +524,7 @@ También podemos ver en el Form que hacemos uso de los helpers, los cuales son l
 import axios from "axios";                // Importamos Axios
 import { JobInterface, UserInterface } from "../interfaces/jobsInterfaces";   // Importamos las interfaces
 import { handleRequestErrors, handleUnexpectedRequestErrors } from "./errors";    // Y los handlers de errores
-const serverBaseUrl = import.meta.env.URL;        // Y la url que guardaremos en el .env 
+const serverBaseUrl = import.meta.env.VITE_URL;        // Y la url que guardaremos en el .env 
 
 
 /* ============================== JOBS ============================== */
@@ -1926,7 +1936,49 @@ Hecho esto podemos decir que tenemos todo el front-end completamente terminado, 
 
 ## Back
 
+En el back-end nos encargaremos de recibir los request del front-end, además de conectarnos con la base de datos. En este ptoyecto estaremos usando MongoDB y usaremos Mongoose para conectarnos a la misma.
+
+## Variables de entorno (Back-end)
+
+Para empezar debemos configurar nuestras variables de entorno en el archivo `.env`, en la misma tendremos todos nuestros datos privados, como por ejemplo, la key para conectaros a MongoDB (para este proyecto debemos crearnos una cuenta en MongoDB y crear un servidor, lo cual se puede ver en las notas de Node, o haciendo click [aquí]([label](../../BackEnd/NodeJS/NodeJS.md#mongoose))])
+
 ## Index
+
+Para comenzar con nuestro back-end necesitaremos configurar nuestro documento principal, el cual es el `index.js`, en este mismo tendremos organizados todos nuestros middlewares y configuraciones principales. Por ello nuestro código nos quedará de la siguirente manera.
+
+```js
+const express = require('express');     //
+const app = express();
+const cors = require('cors');
+const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser')
+require("dotenv").config()
+const port = process.env.PORT
+
+const userRoutes = require("./routes/userRoutes")
+const jobsRoutes = require("./routes/jobsRoutes");
+
+app.use(cors())
+app.use(express.json())
+app.use(express.urlencoded({
+    extended: false
+}))
+
+mongoose.set("strictQuery", false);
+mongoose.connect(process.env.MONGO_URI_AND_CONNECTION_KEY, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+
+
+app.use('/users', userRoutes)
+app.use('/jobs', jobsRoutes)
+
+
+app.listen(port, () => {
+    console.log(`server listening on ${port}`);
+});
+```
 
 ## User model
 

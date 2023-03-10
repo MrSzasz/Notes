@@ -355,7 +355,7 @@ Para comenzar a usar Mongoose debemos instalarlo en nuestro proyecto como lo ind
 npm i mongoose
 ```
 
-## Conectar Mongo
+## Conectar MongoDB
 
 Lo primero que debemos hacer será crearnos una cuenta en MongoDB y una base de datos, para ello podemos seguir el [tutorial de FreeCodeCamp](https://www.freecodecamp.org/news/get-started-with-mongodb-atlas/), hecho esto será necesario agregar nuestra URI de MongoDB a un archivo `.env` para que la misma quede oculta. Para ello comenzamos creando el archivo `.env` a nivel de la raíz de nuestro proyecto, luego de esto debemos crear un archivo llamado `.gitignore`, el cual tomará las reglas de que archivo ignorar a la hora de subir un repositorio a GitHub. Normalmente este mismo se compone de las siguientes lineas.
 
