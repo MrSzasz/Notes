@@ -236,7 +236,7 @@ La configuramos en una variable de entorno para poder cambiarla al momento de ha
 
 ## Home
 
-Lo primero que debemos hacer en cuanto al códifo es crear el inicio de nuestra página, en esta misma crearemos un login simple con opción de registro y de usar el mismo como invitado, para ello empezaremos modificando el archivo `Home.tsx` de la siguiente manera.
+Lo primero que debemos hacer en cuanto al código es crear el inicio de nuestra página, en esta misma crearemos un login simple con opción de registro y de usar el mismo como invitado, para ello empezaremos modificando el archivo `Home.tsx` de la siguiente manera.
 
 ```tsx
 import Form from "../../components/Form/Form";      // Importamos el form que crearemos luego
@@ -1936,57 +1936,209 @@ Hecho esto podemos decir que tenemos todo el front-end completamente terminado, 
 
 ## Back
 
-En el back-end nos encargaremos de recibir los request del front-end, además de conectarnos con la base de datos. En este ptoyecto estaremos usando MongoDB y usaremos Mongoose para conectarnos a la misma.
+En el back-end nos encargaremos de recibir los request del front-end, además de conectarnos con la base de datos. En este proyecto estaremos usando MongoDB y usaremos Mongoose para conectarnos a la misma.
 
 ## Variables de entorno (Back-end)
 
-Para empezar debemos configurar nuestras variables de entorno en el archivo `.env`, en la misma tendremos todos nuestros datos privados, como por ejemplo, la key para conectaros a MongoDB (para este proyecto debemos crearnos una cuenta en MongoDB y crear un servidor, lo cual se puede ver en las notas de Node, o haciendo click [aquí]([label](../../BackEnd/NodeJS/NodeJS.md#mongoose))])
+Para empezar debemos configurar nuestras variables de entorno en el archivo `.env`, en la misma tendremos todos nuestros datos privados, como por ejemplo, la key para conectaros a MongoDB (para este proyecto debemos crearnos una cuenta en MongoDB y crear un servidor, lo cual se puede ver en las notas de Node, o haciendo click [aquí](../../BackEnd/NodeJS/NodeJS.md#mongoose)), entre otras cosas. Nuestro `.env` deberá quedarnos de la siguiente manera.
+
+```env
+PORT=5000
+URI_MONGO=mongodb+srv://<cluster>:<pass>@<user>/?retryWrites=true&w=majority
+SECRET_KEY=<secretKey>
+```
 
 ## Index
 
-Para comenzar con nuestro back-end necesitaremos configurar nuestro documento principal, el cual es el `index.js`, en este mismo tendremos organizados todos nuestros middlewares y configuraciones principales. Por ello nuestro código nos quedará de la siguirente manera.
+El documento principal de nuestro back-end es el archivo llamado `index.js`, en este mismo tendremos organizados todos nuestros middlewares y configuraciones principales. Por ello nuestro código nos quedará de la siguiente manera.
 
 ```js
-const express = require('express');     //
-const app = express();
-const cors = require('cors');
-const mongoose = require('mongoose');
-const cookieParser = require('cookie-parser')
-require("dotenv").config()
-const port = process.env.PORT
+const express = require('express');                    // Requerimos Express
+const app = express();                                 // Y lo inicializamos
+const cors = require('cors');                          // Requerimos Cors
+const mongoose = require('mongoose');                  // Requerimos Mongoose
+require("dotenv").config()                             // Llamamos a dotenv con su configuración
+const port = process.env.PORT                          // Y traemos el Port del .env
 
-const userRoutes = require("./routes/userRoutes")
-const jobsRoutes = require("./routes/jobsRoutes");
+const userRoutes = require("./routes/userRoutes");     // Creamos las rutas de los usuarios
+const jobsRoutes = require("./routes/jobsRoutes");     // Creamos las rutas de los trabajos
 
-app.use(cors())
-app.use(express.json())
-app.use(express.urlencoded({
+app.use(cors())                         // Inicializamos Cors
+app.use(express.json())                 // Indicamos que se utilize JSON
+app.use(express.urlencoded({            // Y parseamos el body
     extended: false
 }))
 
-mongoose.set("strictQuery", false);
-mongoose.connect(process.env.MONGO_URI_AND_CONNECTION_KEY, {
+mongoose.set("strictQuery", false);                      // Indicamos la forma de la query de Mongoose
+mongoose.connect(process.env.URI_MONGO, {                // Y nos conectamos a MongoDB con sus respectivas opciones
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
 
-
 app.use('/users', userRoutes)
-app.use('/jobs', jobsRoutes)
+app.use('/jobs', jobsRoutes)          // Indicamos que se utilize las rutas para los usuarios y trabajos
 
-
-app.listen(port, () => {
-    console.log(`server listening on ${port}`);
+app.listen(port, () => {                            // Iniciamos el servidor en el puerto indicado
+    console.log(`server listening on ${port}`);     // Y le pasamos un console.log para que nos indique que el mismo está funcionando
 });
 ```
 
 ## User model
 
+Para la conexión de MongoDB será necesario tener un modelo de datos que se utilizará en el manejo de los mismos, es por eso que debemos crear el modelo en su respectiva carpeta `models` como lo teníamos indicado en el árbol de archivos anteriormente. El mismo tendrá ciertas reglas a cumplir, además de que en el mismo podremos encriptar la contraseña. Para ello el código nos quedará de la siguiente manera.
+
+```js
+const mongoose = require('mongoose');
+const bcrypt = require("bcryptjs")        // Requerimos Bcrypt
+
+const timeFormat = new Intl.DateTimeFormat("en-us", {     // Creamos la función para parsear la fecha
+    dateStyle: "short",
+});
+
+const userSchema = new mongoose.Schema({      // Creamos el schema con todos los datos que necesitaremos
+    email: {
+        type: String,           // Con su tipo de dato
+        required: true,         // Que sea requerido
+        unique: true            // Y que el mismo no se repita
+    },
+    password: {
+        type: String,
+        required: true,
+    },
+    createdAt: {
+        type: String,
+        default: timeFormat.format(new Date())      // Indicamos el dato por default, parseando la fecha en la que se crea
+    },
+    jobs: {
+        type: Array,
+        default: [],
+    }
+})
+
+userSchema.pre("save", function (next) {        // Indicamos que es lo que se realizará antes de guardar el dato
+    const user = this
+
+    if (this.isModified("password") || this.isNew) {
+        bcrypt.genSalt(7, function (saltError, salt) {           // Generamos el salto de contraseña 
+            if (saltError) {
+                return next(saltError)
+            } else {
+                bcrypt.hash(user.password, salt, function (hashError, hash) {
+                    if (hashError) {
+                        return next(hashError)
+                    }
+
+                    user.password = hash            // Y reemplazamos la contraseña que enviamos por la hasheada
+                    next()
+                })
+            }
+        })
+    } else {
+        return next()
+    }
+})
+
+module.exports = mongoose.model('User', userSchema)       // Por ultimo exportamos el modelo para utilizarlo en nuestro código.
+```
+
 ## User Routes
+
+Para poder dirigir los request a nuestros endpoints vamos a crear las rutas, vimos que importamos las mismas desde otro documento, ya que dividiremos todo para tener más control y organización. Para ello nuestro archivo `userRoutes.js` nos quedará de la siguiente manera.
+
+```js
+const express = require('express');
+const {
+    users_createNewUser,
+    users_getUserFromDataBase,
+    users_updateUserOnDatabase,
+    users_deleteOneUserOnDatabase
+} = require('../controllers/userControllers');      // Importamos los controladores
+const router = express.Router()                     // Y la función de Express para generar las rutas
+
+router.get("/", users_getUserFromDataBase)          // Traer los datos de usuario
+
+router.post("/", users_createNewUser)               // Crear los usuarios
+
+router.delete("/", users_deleteOneUserOnDatabase)   // Eliminar los datos de usuarios
+
+module.exports = router       // Exportamos las rutas que creamos anteriormente
+```
+
+## Job Routes
+
+Hecho esto también debemos crear las rutas para los trabajos en el archivo `jobRoutes.js`, el cual quedará de la siguiente manera.
+
+```js
+const {
+    jobs_createNewJob,
+    jobs_getJobsFromDataBase,
+    jobs_updateJobOnDatabase,
+    job_deleteJobOnDatabase
+} = require('../controllers/jobsControllers');      // Importamos los controladores
+
+const express = require('express');
+const {
+    validateToken
+} = require('../middlewares/validateToken');        // Importamos el middleware que valida los tokens
+const router = express.Router();
+
+router.post("/", validateToken, jobs_createNewJob)          // Creamos los trabajos
+
+router.get("/", validateToken, jobs_getJobsFromDataBase)    // Traemos los trabajos
+
+router.put("/", validateToken, jobs_updateJobOnDatabase)    // Editamos los trabajos 
+
+router.delete("/", validateToken, job_deleteJobOnDatabase)  // Eliminamos los trabajos
+
+module.exports = router
+```
 
 ## Verify Token
 
-## Job Routes
+Como vimos en el documento anterior, hay un middleware llamado `validateToken`, el mismo valida el token que se envía desde el front-end, el cual debe desencriptarse con JWT y comprobar que sea un token valido. Para ello el middleware que crearemos se encontrará en el archivo `validateToken.js` en su respectiva carpeta. El código para el mismo es el siguiente.
+
+```js
+const jwt = require('jsonwebtoken');              // Importamos jwt
+const secretKeyForJWT = process.env.SECRET_KEY    // Traemos la key de la variable de entorno
+
+function validateToken(req, res, next) {
+    const tokenFromUser = req.headers["authorization"]      // Tomamos el token desde el header
+
+    if (!tokenFromUser) {                       // Si el token no existe se quita la autorización
+        return res.status(401).json({
+            auth: false,
+            token: null,
+            popUpMessage: "Invalid token",
+        })
+    }
+
+    if (typeof tokenFromUser !== undefined || tokenFromUser !== "undefined") { 
+        const decodedToken = tokenFromUser.split(" ")[1]        // Extraemos el token
+
+        jwt.verify(decodedToken, secretKeyForJWT, (err, data) => {
+            if (err) return res.status(401).json({              // Si el token es invalido se quita la autorización
+                message: "Invalid token",
+                auth: false,
+                token: null,
+            })
+
+            req.userData = data       // Se envía la data desencriptada como request
+
+            next()          // Y pasa el middleware
+        })
+    } else {
+        return res.status(401).json({
+            auth: false,
+            token: null,
+            popUpMessage: "Invalid token",
+        })
+    }
+}
+
+module.exports = {      // Por ultimo exportamos el middleware
+    validateToken
+}
+```
 
 ## User Controllers
 
