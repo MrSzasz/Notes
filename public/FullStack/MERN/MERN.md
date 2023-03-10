@@ -14,11 +14,36 @@ Para iniciar este proyecto es necesario tener conocimientos en [ReactJS](../../F
 1. [Configuración del proyecto](#configuración-del-proyecto)
     - [Paquetes](#instalación-de-paquetes)
     - [Scripts](#configuración-de-packagejson)
+    - [Tailwind](#tailwind-css)
+    - [Organización de archivos](#routes)
 2. Front-end
-    - [Tailwind](#Tailwind-css)
-    - [Rutas](#routes)
+    - [Variables de entorno](#variables-de-entorno-front-end)
+    - [Home](#home)
+    - [Formulario](#form)
+    - [Tipos e interfaces](#interfaces)
+    - [Helpers](#helpers)
+    - [Manejo de errores](#error-handlers)
+    - [Errores del formulario](#form-errors-handler)
+    - [Página principal](#dashboard)
+    - [Card para los trabajos](#job-card)
+    - [Navbar](#navbar)
+    - [Perfil del usuario](#profile)
+    - [Modal](#modal)
+    - [Detalles del trabajo](#job-details)
+    - [Formulario para agregar un nuevo trabajo](#add-job)
 3. Back-end
-. [Final](#cierre)
+    - [Variables de entorno](#variables-de-entorno-back-end)
+    - [Archivo principal](#index)
+    - [Modelo de MongoDB](#user-model)
+    - Rutas
+      - [Usuarios](#user-routes)
+      - [Trabajos](#job-routes)
+    - [Middleware para verificar el token](#verify-token)
+    - Controladores
+      - [Usuarios](#user-controllers)
+      - [Trabajos](#job-controllers)
+4. [Errores](#errores)
+5. [Final](#cierre)
 
 ---
 
@@ -2142,95 +2167,251 @@ module.exports = {      // Por ultimo exportamos el middleware
 
 ## User Controllers
 
-## Job Controllers
-
-## JWT - JsonWebToken
-
-JsonWebToken nos ayudará a generar tokens para mantener la sesión del usuario en nuestro proyecto, así como su ID para poder pedir los datos en MongoDB. Para ello necesitamos que se cree un token cada vez que el usuario se registra o inicia sesión, por lo que será necesario utilizarlo en nuestro controller de las rutas de usuario.  
-Cuando generamos el token necesitaremos una key secreta para encriptar los mismos, la misma debemos crearla en nuestro archivo `.env` y luego pedirla cuando la necesitemos. La misma quedará de la siguiente manera.
-
-```env
-JWT_SECRET=<la key que nosotros querramos usar>
-```
-
-Con la key declarada podemos empezar a desarrollar el código para crear el token en nuestro controlador, el cual quedaría de la siguiente manera.
+Los controladores son los que se encargan de la respuesta que se enviará al front-end, en este caso se encargará de crear los datos y almacenarlos en la base de datos, ademas de sus respectivas comprobaciones y errores. Para ello empezaremos creando el controlador de los usuarios de la siguiente manera.
 
 ```js
 const bcrypt = require("bcrypt")
-const userModel = require("../models/user")
-const jwt = require("jsonwebtoken")         // Requerimos JWT 
-const secret = process.env.JWT_SECRET       // Y guardamos nuestra key en una variable
+const userModel = require("../models/user")      // Importamos el modelo
+const jwt = require("jsonwebtoken")
+const secretKeyForJWT = process.env.SECRET_KEY
 
-module.exports = {
-
-    // Create a new user on the database
-
-    users_createNewUser: (req, res) => {
+module.exports = {                                    // Exportamos los controladores
+    users_createNewUser: (req, res) => {              // Creamos el usuario
         try {
-            const user = new userModel(req.body)
-            user.save((err, userResult) => {
+            const user = new userModel(req.body)      // Tomamos los datos del body
+            user.save((err, userResult) => {          // Y lo guardamos
                 if (err) {
-                    return res.status(500).json({
-                        message: "The email is already in use"
-                    })
+                    return res
+                        .status(500)                  // Devolvemos el error si lo encuentra
+                        .json({
+                            popUpMessage: "The email is already in use",
+                            dataError: err
+                        })
                 }
-                const token = jwt.sign({              // Creamos el token con el método sign
-                    id: userResult._id                // Y le agregamos el user id al token
-                }, secret, {                          // Le pasamos la secret key que creamos
-                    expiresIn: 60 * 60 * 24 * 30      // Y le indicamos que expira en 30 días
+
+                const token = jwt.sign({              // Creamos el token
+                    id: userResult._id, 
+                    email: userResult.email,
+                    createdAt: userResult.createdAt,
+                    color: userResult.color
+                }, secretKeyForJWT, { 
+                    expiresIn: 60 * 60 * 24 * 7       // Creamos la fecha de expiración 
                 })
-                res.status(200).json({                // Le indicamos un estado correcto al front
-                    auth: true,                       // Indicamos que está autorizado
-                    token                             // Y le enviamos le token con la información del usuario
-                });
+
+                res.status(201) 
+                    .json({
+                        auth: true, 
+                        token 
+                    });               // Y devolvemos los datos
             })
         } catch (err) {
             console.log(err)
-            res.status(409).send(err)
+            res.status(500).json({                // O el error
+                popUpMessage: "Something went wrong, please try again later",
+                dataError: err
+            })
         }
     },
 
-
-    //  Find a user on the database
-
-    users_getUserFromDataBase: (req, res) => {
+    users_getUserFromDataBase: (req, res) => {          // Trae el usuario
         try {
             userModel.findOne({
-                email: req.query.email
+                email: req.query.email                  // Con base en el mail 
             }, (err, user) => {
-                if (err) return res.status(400).send({
-                    message: err.message
+                if (!user) return res.status(404).json({
+                    popUpMessage: "Invalid email or password",
+                    dataError: err
                 })
-                bcrypt.compare(req.query.password, user.password, function (error, isMatch) {
-                    if (error) {
-                        throw error
+
+                bcrypt.compare(req.query.password, user.password, function (err, isMatch) {   // Compara las contraseñas
+                    if (err) {
+                        res.status(500).json({
+                            popUpMessage: "Error with password authentication",
+                            dataError: err
+                        })
+                        throw err
                     } else if (!isMatch) {
-                        res.status(500).send("Password doesn't match!")
+                        return res.status(500).json({
+                            popUpMessage: "Invalid email or password",
+                            dataError: err
+                        })
                     } else {
-                        res.status(200).send(user)
+                        const token = jwt.sign({                // Si es valido genera un nuevo token
+                            id: user.id
+                        }, secretKeyForJWT, {
+                            expiresIn: 60 * 60 * 24 * 7
+                        })
+                        res.status(200).json({
+                            auth: true,
+                            token
+                        })
                     }
                 })
             })
         } catch (err) {
             console.log(err)
-            res.status(409).send(err)
+            res.status(500).json({
+                popUpMessage: "Something went wrong, please try again later",
+                dataError: err
+            })
         }
     },
 
-    // Update a user on the database
-
-    users_updateUserOnDatabase: (req, res) => {
-        console.log(req.body)
-        res.send("hi, put")
-    },
-
-    // Delete a user on the database
-
-    users_deleteOneUserOnDatabase: (req, res) => {
-        console.log(req.body)
-        res.send("hi, delete")
+    users_deleteOneUserOnDatabase: (req, res) => {            // Elimina un usuario en la base de datos
+        try {
+            userModel.findByIdAndDelete(req.body.id, (err) => {
+                if (err) return res.status(500).json({
+                    popUpMessage: "Error trying to delete, please try again later",
+                    dataError: err
+                })
+                res.status(200)
+            })
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                popUpMessage: "Something went wrong, please try again later",
+                dataError: err
+            })
+        }
     },
 }
 ```
 
+## Job Controllers
+
+Ya tenemos los controladores de los usuarios, por lo que debemos crear los controladores de los trabajos. La base de estos son las mismas, con los cambios en las acciones que se deben hacer para controlar los datos.
+
+```js
+const userModel = require("../models/user");
+
+module.exports = {
+    jobs_createNewJob: (req, res) => {           // Crea un nuevo trabajo
+        try {
+            userModel.findById(req.userData.id, (err, user) => {
+                if (!user) return res.status(404).json({          // Si no encuentra el usuario
+                    popUpMessage: "User not found",
+                    dataError: err
+                })
+
+                user.jobs.push(req.body)      // Agrega el trabajo enviado por el body al usuario
+
+                user.save(err => {                          // Y guarda el usuario con el nuevo dato
+                    if (err) return res.status(500).json({
+                        popUpMessage: "Error saving job, please try again later",
+                        dataError: err
+                    })
+                })
+
+                res.status(201).json({
+                    popUpMessage: "Job added successfully"
+                })
+            })
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                popUpMessage: "Something went wrong, please try again later",
+                dataError: err
+            })
+        }
+    },
+
+    jobs_getJobsFromDataBase: (req, res) => {           // Trae todos los trabajos de un usuario
+        try {
+            userModel.findById(
+                req.userData.id, (err, user) => {       // Toma los datos desde el token validado
+                    if (err) return res.status(404).json({
+                        popUpMessage: "Error retrieving jobs from database",
+                        dataError: err
+                    })
+
+                    res.status(200).send(user)          // Si lo encuentra lo devuelve
+                })
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                popUpMessage: "Something went wrong, please try again later",
+                dataError: err
+            })
+        }
+    },
+
+    jobs_updateJobOnDatabase: (req, res) => {           // Edita un trabajo en la base de datos 
+        try {
+            userModel.findById(
+                req.userData.id, (err, user) => { 
+                    if (err) return res.status(404).json({
+                        popUpMessage: "Error retrieving jobs from database",
+                        dataError: err
+                    })
+
+                    user.jobs[
+                        user.jobs.findIndex((job) => job.id === req.body.id) // Busca el trabajo a editar
+                    ] = req.body;                 // Y lo reemplaza con el enviado por el usuario
+
+                    user.save(err => {            // Guarda el nuevo trabajo en la base de datos
+                        if (err) return res.status(500).json({
+                            popUpMessage: "Error editing job, please try again later",
+                            dataError: err
+                        })
+                    })
+
+                    res.status(200).json({
+                        popUpMessage: "Job edited successfully"
+                    })
+                })
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                popUpMessage: "Something went wrong, please try again later",
+                dataError: err
+            })
+        }
+    },
+
+    job_deleteJobOnDatabase: (req, res) => {              // Elimina un trabajo
+        try {
+            userModel.findById(
+                req.userData.id, (err, user) => { 
+                    if (err) return res.status(404).json({
+                        popUpMessage: "Error retrieving jobs from database",
+                        dataError: err
+                    })
+
+                    user.jobs = user.jobs.filter((job) => job.id !== req.body.jobID)  // Filtra el trabajo en el array
+
+                    user.save(err => {                            // Y lo guarda en la base de datos
+                        if (err) return res.status(500).json({
+                            popUpMessage: "Error deleting job, please try again later",
+                            dataError: err
+                        })
+                    })
+
+                    res.status(200).json({
+                        popUpMessage: "Job deleted successfully"
+                    })
+                })
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                popUpMessage: "Something went wrong, please try again later",
+                dataError: err
+            })
+        }
+    },
+}
+```
+
+## Errores
+
+|                             ***Error***                             |                                             ***Solución***                                             |
+|:-------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------:|
+|             **React Hook Form muestra datos eliminados**            |                                      Recargar la página (ctrl + r)                                     |
+|              **Hash con pre de Mongoose genera error**              |                Los pre de Mongoose solo utilizan funciones normales, no funciones flecha               |
+|            *****"this"*** o ***"user"*** de pre Mongoose son ***"null"*****           |                       Las funciones flecha no pueden utilizar el elemento "this"                       |
+|                 *****Paquete*** me genera error not found**                | Al usar TypeScript es necesario buscar los tipos del paquete en cuestión e instalarlo (@types/paquete) |
+| **TypeScript me genera un error con posibilidad de que sea ***"null"***** |                       Insertar "!" al final indica que el valor nunca será "null"                      |
+
 ## Cierre
+
+Como pudimos ver, tenemos todo nuestro proyecto completo, desde el front-end con React para que el usuario pueda interactuar con todos los datos, con la edición de los mismo, la creación, etc., sumado a eso creamos el back-end para manejar la base de datos con sus respectivos datos, pudiendo administrar todos los datos de la misma de una forma rápida.  
+Este proyecto fue una prueba basada en las notas hechas en [React](../../Front-End/ReactJS/ReactJS.md), [TypeScript](../../Front-End/TypeScript/TypeScript.md) y [NodeJS](../../BackEnd/NodeJS/NodeJS.md).
