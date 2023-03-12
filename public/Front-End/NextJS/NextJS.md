@@ -3,6 +3,39 @@
 [NextJS](https://nextjs.org/) es un framework basado en [ReactJs](../ReactJS/ReactJS.md), desarrollado en [TypeScript](../TypeScript/TypeScript.md) que tiene todas las funcionalidades de ReactJs, pero que a su vez agrega mas facilidades, como la de conectarnos y desarrollar un Back-End completo basado en [NodeJS](../../BackEnd/NodeJS/NodeJS.md), mayor facilidad para generar rutas, mejora el rendimiento base de ReactJS, posee una facilidad para generar alta escalabilidad, entre otras.  
 Next esta desarrollado por [Vercel](https://vercel.com/), lo cual nos beneficia a la hora de subir nuestro proyecto en desarrollo.
 
+## Guía de Temas
+
+1. [Instalación](#instalación)
+2. [SSR vs CSR](#server-side-rendering-vs-client-side-rendering)
+3. [Preparación del template](#template)
+4. Código
+    - [Layout](#head-y-layout)
+    - [Styling](#estilos)
+    - [Creación de páginas](#páginas)
+    - [Links y enrutamiento](#links)
+    - [Imágenes](#imágenes)
+    - Fetching
+      - [Fetching estático](#getstaticprops)
+      - [Fetching dinámico](#getserversideprops)
+    - Rendering
+      -[Páginas dinámicas](#páginas-dinámicas)
+      -[Páginas estáticas](#generar-página-estática)
+    - [Deploy](#deploy-a-vercel)
+
+---
+
+## Instalación
+
+> Para iniciar con Next lo primero que debemos tener en cuenta es que necesitaremos tener instalado [NodeJS](../../BackEnd/NodeJS/NodeJS.md)
+
+Lo primero que debemos hacer es abrir una terminal en donde queremos iniciar nuestro nuevo proyecto con Next y crear nuestra carpeta con el siguiente comando y seguir las indicaciones que nos aparecen en consola.
+
+```cmd
+npx create-next-app@latest
+```
+
+Hecho esto podemos empezara a abrir nuestra app con Visual Studio Code para ver que nos generó el comando.
+
 ## Server Side Rendering vs Client Side Rendering
 
 Hay dos formas de renderizar una página web, desde el lado del cliente (`Client side rendering`), siendo esta la forma de que utilizan los frameworks como React y Vue para mostrar la información en la misma, y desde el lado del servidor (`Server side rendering`), el cual hace que el servidor se encargue del generar los HTML necesarios para generar todo el contenido de la página.  
@@ -25,18 +58,6 @@ Esto mejora en cuanto a la versatilidad de la página en sí, pero en cuanto al 
 ```
 
 La ventaja de `NextJs` sobre esto es que nos deja elegir que tipo de rendering usaremos, pero sin limitarnos a utilizar solo uno, sino que pudiendo combinar ambos en el caso que sea necesario el uso de uno o el otro.
-
-## Instalación
-
-> Para iniciar con Next lo primero que debemos tener en cuenta es que necesitaremos tener instalado [NodeJS](../../BackEnd/NodeJS/NodeJS.md)
-
-Lo primero que debemos hacer es abrir una terminal en donde queremos iniciar nuestro nuevo proyecto con Next y crear nuestra carpeta con el siguiente comando y seguir las indicaciones que nos aparecen en consola.
-
-```cmd
-npx create-next-app@latest
-```
-
-Hecho esto podemos empezara a abrir nuestra app con Visual Studio Code para ver que nos generó el comando.
 
 ## Template
 

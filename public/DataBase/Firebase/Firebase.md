@@ -2,6 +2,17 @@
 
 [Firebase](https://firebase.google.com/) es la plata forma de Google que ayuda con el desarrollo de aplicaciones gracias a los diferentes servicios que ofrece, como puede ser una base de datos, autenticación, comunicación en tiempo real, entre otros. En esta ocasión usaremos Firestore y la plataforma de autenticación de la misma.
 
+## Guía de Temas
+
+1. [Instalación](#instalaciones)
+2. CRUD de datos
+    - [Crear un dato](#crud---create)
+    - [Leer un dato](#crud---read)
+    - [Editar un dato](#crud---update)
+    - [Eliminar un dato](#crud---delete)
+
+---
+
 ## Instalaciones
 
 Para empezar con Firebase es necesario tener una cuenta en Google y luego iniciar un nuevo proyecto en Firebase desde su [consola](https://console.firebase.google.com/), configurando todos los campos necesarios.  

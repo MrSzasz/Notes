@@ -2,6 +2,18 @@
 
 [`jQuery`](https://jquery.com/) es una biblioteca de JavaScript creada en el año 2006, la cual es una "compilación" de funciones de JavaScript que ayuda con la integración entre diferentes navegadores. Actualmente hay paginas que siguen usando jQuery, y nunca viene mal aprenderlo, es por eso que empecé a tomar notas en esta guía.
 
+## Guía de Temas
+
+1. [Instalación](#instalación)
+2. [Código](#coding)
+    - [Selector](#selectores)
+    - [Control de eventos](#eventos)
+    - [Inputs](#input)
+    - [Animaciones](#animaciones-base)
+    - [AJAX](#ajax)
+
+---
+
 ## Instalación
 
 Para empezar a usar jQuery en nuestro proyecto debemos [instalarlo](https://jquery.com/download/), para lo cual existen diferentes formas de hacerlo. Podemos hacer uso de `npm` (npm i jquery) o en su defecto, usar un [`CDN`](https://developer.mozilla.org/es/docs/Glossary/CDN), que es la manera en la que vamos a trabajar con nuestro proyecto.  

@@ -19,6 +19,8 @@
     - [Tipos genéricos](#generic-types)
     - [Selección de datos](#selección-de-datos)
 
+---
+
 ## Instalación
 
 Typescript necesita ser instalado para su utilización, a su vez se necesita `npm` para gestionar el paquete.

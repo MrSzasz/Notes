@@ -3,6 +3,22 @@
 [Redux](https://redux.js.org/) es una herramienta de gestión de estados framework agnostic (es decir, que se puede usar con diferentes frameworks), la cual nos ayuda a manejar mejor los estados, evitando los problemas a futuro junto al debugging.  
 Para esta guía crearemos un proyecto básico en el que podremos agregar películas a una lista de películas favoritas y de películas vistas.
 
+## Guía de Temas
+
+1. [Instalación](#instalación)
+2. [Configuración de entorno](#instalación)
+    - [Store](#store)
+3. Código
+    - [Slice](#slice)
+    - CRUD de estados
+        - [Leer datos](#uso-del-estado)
+        - [Agregar datos](#agregar-datos)
+        - [Eliminar datos](#eliminar-datos)
+        - [Editar datos](#editar-datos)
+    - [Mantener estados](#mantener-el-estado)
+
+---
+
 ## Instalación
 
 Para este caso usaremos Redux con [React](../ReactJS/ReactJS.md), para ello comenzaremos creando un nuevo proyecto de React, ya sea con `create-react-app` o con `vite`, luego de ello abriremos nuestro proyecto en el editor de código.  
@@ -498,7 +514,3 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 ```
 
 Con esto configurado tenemos nuestro estado persistente.
-
-## Final
-
-Con todo nuestro CRUD hecho podemos dar por finalizada la sección de Redux, el proyecto de las películas seguirá [aquí](Exercises/MoviesApp.md).

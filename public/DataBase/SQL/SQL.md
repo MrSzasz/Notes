@@ -38,6 +38,22 @@ Y nuestros usuarios pueden tener el id relacionado dependiendo del descuento que
 Como vemos, los usuarios tienen su columna particular (`user_id`) en la que se toma el id del mismo para poder reconocer que usuario tiene el descuento, y tenemos la columna de los descuentos (`discount_id`) para marcar que descuentos se aplicarán. Con esta información podemos ver que Lisa (`user con id 2`) tiene un descuento de estudiante (`descuento con id 2`), al igual que lo tiene Harry (`user con id 4`).  
 Esta tabla esta compuesta por una PK (primer columna de id) y dos FK (los id que recuperan los datos desde otras tablas).
 
+## Guía de Temas
+
+1. [Instalación](#instalación)
+2. Código
+    - [Creación de base de datos](#crear-database)
+    - [Tablas](#crear-tabla)
+    - CRUD de datos
+        -[Crear datos](#crud---create)
+        -[Leer datos](#crud---read)
+        -[Editar datos](#crud---update)
+        -[Eliminar datos](#crud---delete)
+    - [Unir tablas relacionadas](#join)
+    - [Unir tablas no relacionadas](#cross-join)
+
+---
+
 ## Instalación
 
 Para empezar a utilizar SQL será necesario instalarlo en nuestro sistema operativo (en este caso Windows). Para ello empezamos yendo a la [`página de descargas`](https://dev.mysql.com/downloads/installer/) y elegimos nuestro sistema operativo, descargando la versión que pesa más.  

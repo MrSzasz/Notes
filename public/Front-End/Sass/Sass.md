@@ -2,6 +2,17 @@
 
 [Sass](https://sass-lang.com/) es un pre procesador de CSS el cual agrega diferentes 'super poderes' a nuestras hojas de estilo, pudiendo agregar funcionalidades que tienen otros lenguajes como pueden ser los condicionales y las variables.
 
+## Guía de Temas
+
+1. [Instalación](#instalación)
+2. [Código](#utilización)
+    - [Variables](#variables)
+    - [Nesting](#nesting)
+    - [Modularización](#módulos)
+    - [Mixins](#mixins)
+
+---
+
 ## Instalación
 
 Hay varias maneras de comenzar a utilizar Sass, pero la forma más fácil con Visual Studio Code es instalar la extensión de [Live Sass Compiler](https://marketplace.visualstudio.com/items?itemName=glenn2223.live-sass), la cual compila automáticamente todo el código escrito en Sass automáticamente a código CSS, unicamente haciendo click en el icono que se nos habilita.

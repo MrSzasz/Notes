@@ -20,7 +20,7 @@
     - [Body](#datos-desde-body)
 6. Base de datos con Mongoose
     - [Introducción a Mongoose](#mongoose)
-    - [Conectar base de datos](#conectar-mongo)
+    - [Conectar base de datos](#conectar-mongodb)
 7. CRUD de datos en MongoDB con Mongoose
     - [¿Que es CRUD?](#crud--clae)
     - [(C)RUD - Create](#crud---create)
@@ -30,7 +30,7 @@
 8. [MVC](#mvc)
     - [Routes](#routes)
     - [Controllers](#controllers)
-9. [Final](#cierre)
+9. [Final e implementación](#cierre)
 
 ---
 
@@ -945,6 +945,10 @@ module.exports = router;
 ## Cierre
 
 Con todo esto hecho vimos desde como se inicia un proyecto con Node y Express hasta como configurar una base de datos para usar su CRUD con su respectivo MVC, pero a la vez abrimos varias posibilidades para realizar diferentes proyectos, desde un gestor de usuarios simples hasta un e-commerce completo.
+
+## Proyecto
+
+Para poder implementar todos lo visto en estas notas se creará una app que nos permitirá guardar trabajos en una base de datos, con sus respectivos estados y usuarios. Esta será una app con el stack MERN + TypeScript, y se pueden ver las notas de la misma haciendo click [acá](../../FullStack/MERN/MERN.md).
 
 ## Referencias
 

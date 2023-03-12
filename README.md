@@ -20,6 +20,7 @@ La misma se actualizará a medida que se agregue mas contenido.
 [ReactJS](public/Front-End/ReactJS/ReactJS.md)
 
 [Redux](public/Front-End/Redux/Redux.md)
+    - [Redux Persist](public/Front-End/Redux/Redux.md#mantener-el-estado)
 
 [TypeScript](public/Front-End/TypeScript/TypeScript.md)
 
@@ -28,10 +29,11 @@ La misma se actualizará a medida que se agregue mas contenido.
 ## Back-End
 
 [NodeJS](public/BackEnd/NodeJS/NodeJS.md)
+    - [Express](public/BackEnd/NodeJS/NodeJS.md#express)
+    - [MongoDB + Mongoose](public/BackEnd/NodeJS/NodeJS.md#mongoose)
+    - [Implementación](public/BackEnd/NodeJS/NodeJS.md#proyecto)
 
 ## Database
-
-[MongoDB](public/BackEnd/Back-End.md)
 
 [SQL](public/DataBase/SQL/SQL.md)
 

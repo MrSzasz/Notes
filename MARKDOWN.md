@@ -1,10 +1,28 @@
 # MARKDOWN
 
-Markdown es un lenguaje de marcado utilizado para escribir textos con un formato visible y adaptado para varias webs, el mismo tiene su propia sintaxis y reglas como todo lenguaje.
+Markdown es un lenguaje de marcado utilizado para escribir textos con un formato visible y adaptado para varias webs, el mismo tiene su propia sintaxis y reglas como todo lenguaje. Los archivos de Markdown utilizan la extension `.md`.
 
-El mismo se comienza creando un archivo con la extension .md, y contiene ciertos elementos para otorgarle diseño y funcionalidades, siendo estos los siguientes:  
+## Guía de Temas
 
-## = Headings =
+- [Títulos](#headings)
+- [Line Breaks](#breaks)
+- [Styling](#estilos)
+- [Bloques](#bloques)
+- [Listas](#listas)
+- [Código](#bloques-de-código)
+- [Multimedia](#imágenes-y-links)
+- [Lineas divisoras](#division-de-textos)
+- [Tablas](#tablas)
+- [Referencias](#referencias)
+- [Definiciones](#definiciones)
+- [Destacados](#palabras-destacadas)
+- [Numeración](#posición-numeral)
+- [HTML](#html)
+- [Referencias](#links-importantes)
+
+---
+
+## Headings
 
 Los textos de heading se escriben con #, denotando la importancia del mismo en relación a la cantidad de # que posea adelante, siendo # el de mayor tamaño e importancia y ##### el de menor tamaño e importancia visual.
 
@@ -46,7 +64,7 @@ SALIDA:
 
 ---
 
-### Estilos
+## Estilos
 
 Hay diferentes estilos de texto que se pueden aplicar para darle un énfasis a las palabras importantes como pueden ser el texto **en negrita**, *en cursiva* y ~~tachado~~.
 
@@ -68,7 +86,7 @@ SALIDA:
 
 ---
 
-### Bloques
+## Bloques
 
 Se pueden agregar bloques de texto para citar una fuente o agregar un elemento con un formato diferente.
 
@@ -82,7 +100,7 @@ SALIDA:
 
 > Esto es un bloque de texto
 
-### Listas
+## Listas
 
 Es posible agregar dos tipos de listas a los markdowns, las listas ordenadas (enumeradas) y las desordenadas (sin números).
 Las listas ordenadas tienen que respetar el orden sintáctico en el que se escribió.
@@ -131,7 +149,7 @@ SALIDA:
 
 ---
 
-### Bloques de CÓDIGO
+## Bloques de CÓDIGO
 
 Son utilizados para denotar bloques especiales de CÓDIGO, los mismos se marcan al iniciar una linea con ``` TAB ``` o con 4 espacios para darle diseño, y entre ``` para mostrar unicamente el CÓDIGO en linea.
 
@@ -157,7 +175,7 @@ SALIDA:
 
 ---
 
-### Imágenes y links
+## Imágenes y links
 
 Es posible agregar imágenes o links externos al documento, citándolos o llamando a un archivo en la carpeta.
 
@@ -179,7 +197,7 @@ Documentación oficial de [Markdown](https://www.markdownguide.org/getting-start
 
 ---
 
-### Division de textos
+## Division de textos
 
 Se puede separar/dividir textos con una linea horizontal, marcándolos con `---`, `***` o `___` quedando un ejemplo como el siguiente.
 
@@ -189,7 +207,7 @@ Se puede separar/dividir textos con una linea horizontal, marcándolos con `---`
 
 ---
 
-### Tablas
+## Tablas
 
 Las tablas se pueden utilizar para marcar el contenido del texto en una forma ordenada visualmente, creando filas y columnas en las mismas
 
@@ -211,7 +229,7 @@ SALIDA:
 
 ---
 
-### Referencias
+## Referencias
 
 Se pueden agregar referencias con un numero sobre el texto para ir a cierto punto del texto.
 
@@ -230,7 +248,7 @@ SALIDA:
 
 ---
 
-### Definiciones
+## Definiciones
 
 Es posible agregar definiciones, marcando el nombre del mismo visualmente.
 
@@ -248,7 +266,7 @@ SALIDA:
 
  ---
 
-### Palabras destacadas
+## Palabras destacadas
 
 Se pueden destacar palabras para remarcar visualmente su importancia
 
@@ -264,7 +282,7 @@ SALIDA:
 
 ---
 
-### Posición numeral
+## Posición numeral
 
 Es posible agregar números por sobre o debajo de la altura normal del texto
 
@@ -280,7 +298,7 @@ SALIDA:
 
 ---
 
-### HTML
+## HTML
 
 Es posible agregar CÓDIGO HTML para agregar elementos propios de este lenguaje, también asi agregar estilos a los mismos
 
