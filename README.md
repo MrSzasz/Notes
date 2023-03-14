@@ -9,32 +9,32 @@ La misma se actualizará a medida que se agregue mas contenido.
 
 ## MarkDown
 
-[MarkDown](MARKDOWN.md)
+[&gt; MarkDown](MARKDOWN.md)
 
 ## Front-End
 
-[Sass](public/Front-End/Sass/Sass.md)
+[&gt; Sass](public/Front-End/Sass/Sass.md)
 
-[jQuery](public/Front-End/JQuery/JQuery.md)
+[&gt; jQuery](public/Front-End/JQuery/JQuery.md)
 
-[ReactJS](public/Front-End/ReactJS/ReactJS.md)
+[&gt; ReactJS](public/Front-End/ReactJS/ReactJS.md)
 
-[Redux](public/Front-End/Redux/Redux.md)
-    - [Redux Persist](public/Front-End/Redux/Redux.md#mantener-el-estado)
+[&gt; Redux](public/Front-End/Redux/Redux.md)  
+&emsp; - [Redux Persist](public/Front-End/Redux/Redux.md#mantener-el-estado)
 
-[TypeScript](public/Front-End/TypeScript/TypeScript.md)
+[&gt; TypeScript](public/Front-End/TypeScript/TypeScript.md)
 
-[NextJS](public/Front-End/NextJS/NextJS.md)
+[&gt; NextJS](public/Front-End/NextJS/NextJS.md)
 
 ## Back-End
 
-[NodeJS](public/BackEnd/NodeJS/NodeJS.md)
-    - [Express](public/BackEnd/NodeJS/NodeJS.md#express)
-    - [MongoDB + Mongoose](public/BackEnd/NodeJS/NodeJS.md#mongoose)
-    - [Implementación](public/BackEnd/NodeJS/NodeJS.md#proyecto)
+[&gt; NodeJS](public/BackEnd/NodeJS/NodeJS.md)  
+&emsp; - [Express](public/BackEnd/NodeJS/NodeJS.md#express)  
+&emsp; - [MongoDB + Mongoose](public/BackEnd/NodeJS/NodeJS.md#mongoose)  
+&emsp; - [Implementación](public/BackEnd/NodeJS/NodeJS.md#proyecto)  
 
 ## Database
 
-[SQL](public/DataBase/SQL/SQL.md)
+[&gt; SQL](public/DataBase/SQL/SQL.md)
 
-[Firebase](public/DataBase/Firebase/Firebase.md)
+[&gt; Firebase](public/DataBase/Firebase/Firebase.md)
