@@ -854,3 +854,32 @@ export default FoxCard;
 
 En este caso la imagen siempre sera la misma, ya que lo que hacemos es buscar una sola vez y guardar la imagen para reutilizarla las veces que sean necesarias, pero lo importante es ver el funcionamiento y la implementación de los hooks.
 Hay algunos hooks más, como pueden ser el [`useContext`](https://es.reactjs.org/docs/hooks-reference.html#usecontext), el cual nos sirve para guardar estados que se usen en toda la página, pero estos lo usaremos mas adelante en otros proyectos.
+
+## Navbar
+
+Para que el navbar no quede por sobre el contenido se deberá crear la variable que contenga su height, para ello empezaremos creando el mismo en el CSS principal del proyecto.
+
+```css
+:root {
+  --navbar-height: 70px;
+}
+```
+
+En el mismo deberemos indicar que haya un padding cuando se haga scroll hacia un componente en particular de la siguiente manera.
+
+```css
+html {
+    scroll-padding-top: var{--navbar-height};
+}
+```
+
+Y por ultimo debemos crear la función que tome la altura del navbar cuando se genere. Normalmente lo haremos en el componente principal (`App.jsx`), quedando el mismo de la siguiente manera.
+
+```jsx
+  useEffect(() => {
+    const height = document.getElementById("nav").offsetHeight;
+    document.documentElement.style.setProperty("--navbar-height", height + "px");
+  }, []);
+```
+
+Con esto siempre generará el padding necesario para que el navbar no tape los elementos en pantalla.
