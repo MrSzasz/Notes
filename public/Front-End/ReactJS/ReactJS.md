@@ -842,7 +842,7 @@ const FoxCard = () => {
                 <div key={i}>
                     <h1>{fox.foxName}</h1>
                     <h3>Edad: {fox.foxAge}</h3>
-                    <img src={foxImage} />          {/* Usamos la variable para generar la imagen */}
+                    <img src={foxImage} />           {/* Usamos la variable para generar la imagen */}
                 </div>
             ))}
         </>
