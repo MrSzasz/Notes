@@ -869,7 +869,7 @@ En el mismo deberemos indicar que haya un padding cuando se haga scroll hacia un
 
 ```css
 html {
-    scroll-padding-top: var{--navbar-height};
+    scroll-padding-top: var(--navbar-height);
 }
 ```
 
