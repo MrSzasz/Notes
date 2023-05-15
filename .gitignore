@@ -24,6 +24,7 @@ to-do-list.txt
 *.sln
 *.sw?
 .env
+preprod/
 
 # Backups
 
