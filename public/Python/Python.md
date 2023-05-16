@@ -199,3 +199,49 @@ print(3 == 3)
 
 print(not(3 == 3)) # Invierte el valor del Boolean, por lo que en este caso queda False
 ```
+
+### Formateo de datos
+
+Los datos que necesitemos imprimir en consola se pueden formatear cuando se van a utlizar, para ello tenemos varias formas de hacerlo, ya sea utilizanfdo `%` dependiendo del tipo de dato que se necesite, o directamente utilizando `f" "` y pasando las variables dentro de las mismas de la sguiente manera.
+
+```py
+# Formateo de variables
+
+name = "Walter Hartwell White"
+address_number = 308
+address_street = "Negra Arroyo Lane"
+
+print("My name is %s. I live at %d %s, Albuquerque, New Mexico, 87104" % (name, address_number, address_street))
+
+print(f"My name is {name}. I live at {address_number} {address_street}, Albuquerque, New Mexico, 87104")
+```
+
+Como podemos ver, en el primer print indicamos que el primer valor (`%s`) es un string, y el 2do (`%d`) es un numero, al final indicamos las variables que se utilizarán en cada espacio en particular.  
+En el 2do print vemos como imprimimos el string literal (`f" "`), pasando las variables dentro de los `{}`.
+
+### Slice de strings
+
+Un string tiene una longitud que depende de cuantos caracteres contenga, los mismos se pueden "cortar" para mostrar solamente algunos de estos. Para esto usamos el signo `:`, indicando primero de donde empezará y donde terminará (sin incluir este ultimo), y por ultimo podemos pasarle cuantos saltos hará, de la siguiente manera.
+
+```py
+# Slice de strings
+
+my_name = "Heisenberg"
+
+print(my_name[1:2]) # Toma solamente el 2do carácter
+
+print(my_name[1:4]) # Toma desde el 2do carácter hasta el 3ro
+
+print(my_name[2:4]) # Toma el 3er carácter
+
+print(my_name[5:]) # Toma desde el 6to carácter hasta el final
+
+print(my_name[-1]) # Toma solamente el ultimo carácter
+
+print(my_name[-4:]) # Toma desde el 4to carácter (empezando por el ultimo) hasta el final
+
+print(my_name[-4]) # Toma el 4to carácter empezando por el ultimo
+
+print(my_name[0:-1:2]) # Toma los caracteres con saltos de 2
+
+```
