@@ -202,7 +202,7 @@ print(not(3 == 3)) # Invierte el valor del Boolean, por lo que en este caso qued
 
 ### Formateo de datos
 
-Los datos que necesitemos imprimir en consola se pueden formatear cuando se van a utlizar, para ello tenemos varias formas de hacerlo, ya sea utilizanfdo `%` dependiendo del tipo de dato que se necesite, o directamente utilizando `f" "` y pasando las variables dentro de las mismas de la sguiente manera.
+Los datos que necesitemos imprimir en consola se pueden formatear cuando se van a utilizar, para ello tenemos varias formas de hacerlo, ya sea utilizando `%` dependiendo del tipo de dato que se necesite, o directamente utilizando `f" "` y pasando las variables dentro de las mismas de la siguiente manera.
 
 ```py
 # Formateo de variables
@@ -244,4 +244,125 @@ print(my_name[-4]) # Toma el 4to carácter empezando por el ultimo
 
 print(my_name[0:-1:2]) # Toma los caracteres con saltos de 2
 
+```
+
+> Los espacios (indices) en los lenguajes de programación comienzan desde el 0, en este caso "H" = indice 0, "e" = indice 1, etc.
+
+### Modificadores de strings
+
+Otra cosa que viene con el lenguaje son las funciones que modifican los strings, los cuales pueden ir desde pasarlos a lower case hasta comprobar si el mismo contiene cierto carácter. Probaremos algunos de los mismos de la siguiente manera.
+
+```py
+# Modificadores de strings
+
+my_name = "Heisenberg"
+
+print(my_name.capitalize()) # Convierte la primer letra en mayúscula
+
+print(my_name.lower()) # Convierte todo en minúscula
+
+print(my_name.upper()) # Convierte todo en mayúscula
+
+print(my_name.isnumeric()) # Comprueba si es un numero
+
+print(my_name.isupper()) # Comprueba si esta en mayúscula
+
+print(my_name.count("e")) # Cuenta cuantas e tiene el string
+
+print(my_name.count("z")) # Devuelve 0
+
+print(my_name.upper().isupper()) # Se pueden crear cadenas, las cuales se toman en orden (True)
+```
+
+## Listas
+
+Las listas son un tipo de dato que se comporta como una "caja" que contiene otros datos (similares a los arrays en JavaScript). Estos pueden contener diferentes tipos de datos, ya sean strings, números, booleans, etc. Para crear una lista tenemos diferentes maneras, se puede utilizar `list()` y pasarle los datos de la lista como parámetro, o directamente crear la lista con `[]`, de la siguiente manera.
+
+```py
+# Listas
+
+my_list = list(["Heisenberg", "Walter White", 14, True, 15.5, 14])
+
+my_new_list = ["Heisenberg", "Walter White", 14, True, 15.5, 14]
+
+print(my_list)
+
+print(my_new_list)
+```
+
+De ambas formas creamos las mismas listas, y el print es el mismo en ambas.  
+Podemos acceder a las listas utilizando `[]` e indicando el indice (lugar que tiene en la lista) del dato que queremos acceder dentro del mismo
+
+```py
+my_new_list = ["Heisenberg", "Walter White", 14, True, 15.5, 14]
+
+print(my_new_list[0]) # Accedemos al primer elemento de la lista
+
+print(my_new_list[3]) # Accedemos al 4to elemento de la lista
+
+print(my_new_list[-1]) # Accedemos al ultimo elemento de la lista
+
+print(my_new_list[-3]) # Cuenta 3 elementos desde el ultimo
+
+print(my_new_list[0:2]) # Empieza por el primero hasta el 2do elemento de la lista
+
+print(my_new_list[1:]) # Empieza por el 2do hasta el final de la lista
+
+print(len(my_new_list)) # Indica la longitud de la lista
+
+print(my_new_list.count(14)) # Cuenta cuantos elementos coinciden con el parámetro que pasamos (2)
+
+print(my_new_list.count("Jesse")) # Y en este caso indica 0 ya que no se encuentra en la lista
+
+print(my_list + my_new_list) # Combina ambas listas en una sola
+```
+
+También tenemos la posibilidad de modificar una lista, ya sea agregando o quitando datos de la misma, reordenar entre otras cosas, para ello haremos uso de los métodos de la misma de la siguiente manera.
+
+```py
+# Listas
+
+my_list = ["Heisenberg", "Walter White", 14, True, 15.5, 14]
+
+my_list.append("Jess") # Agrega un nuevo elemento al final de la lista
+
+print(my_list) ## ['Heisenberg', 'Walter White', 14, True, 15.5, 14, 'Jess']
+
+my_list[6] = "Jesse" # Cambiamos el elemento de la lista que indicamos
+
+print(my_list) ## ['Heisenberg', 'Walter White', 14, True, 15.5, 14, 'Jesse']
+
+my_list.insert(2, "New Mexico") # Agregamos el dato en el indice que indicamos
+
+print(my_list) ## ['Heisenberg', 'Walter White', 'New Mexico', 14, True, 15.5, 14, 'Jesse']
+
+my_list.remove(True) # Eliminamos el elemento que coincida con el dato
+
+print(my_list) ## ['Heisenberg', 'Walter White', 'New Mexico', 14, 15.5, 14, 'Jesse']
+
+del my_list[3] # Elimina el elemento con el indice que indicamos
+
+print(my_list) ## ['Heisenberg', 'Walter White', 'New Mexico', 15.5, 14, 'Jesse']
+
+my_list.pop(4) # Al igual que "del", elimina el elemento con el indice que indicamos, pero también lo devuelve
+
+print(my_list) ## ['Heisenberg', 'Walter White', 'New Mexico', 15.5, 'Jesse']
+
+print(my_list.pop()) ## Jesse
+
+print(my_list.index("New Mexico")) # Devuelve el indice del elemento con el valor que pasamos (2)
+
+my_list.reverse() # Invierte el orden de la lista
+
+print(my_list) ## [15.5, 'New Mexico', 'Walter White', 'Heisenberg']
+
+my_list.clear() # Limpia la lista por completo
+
+print(my_list) ## []
+
+my_list = [5, 2, 6, 71, 1, 24, 125]
+
+my_list.sort() # Ordena la lista de menor a mayor a menos que lo indiquemos como parámetro
+
+print(my_list) ## [1, 2, 5, 6, 24, 71, 125]
 ```
