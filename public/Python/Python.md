@@ -366,3 +366,35 @@ my_list.sort() # Ordena la lista de menor a mayor a menos que lo indiquemos como
 
 print(my_list) ## [1, 2, 5, 6, 24, 71, 125]
 ```
+
+### Tuples
+
+Las tuplas son similares a las listas en su forma, con la diferencia que se utilizan `()` en vez de `[]`, pero su mayor diferencia es que las tuplas son inmutables, es decir, no se puede cambiar el contenido de las mismas, solo se puede acceder. Para ver como funciona esto podemos crear una tupla e intentar modificarlo de la siguiente manera.
+
+```py
+# Tuplas
+
+my_tuple = tuple() # Declaramos la tupla
+
+my_second_tuple = () # Declaramos la tupla
+
+my_tuple = ("Heisenberg", "Walter White", 14, True, 15.5, 14) # Asignamos los valores a la tupla
+
+my_second_tuple = ("Heisenberg", "Walter White", 14, True, 15.5, 14)
+
+print(my_tuple) ## ('Heisenberg', 'Walter White', 14, True, 15.5, 14)
+
+print(my_second_tuple) ## ('Heisenberg', 'Walter White', 14, True, 15.5, 14)
+
+print(my_tuple.count(14)) ## 2
+
+print(my_tuple.count(2)) ## 0
+
+print(my_tuple.index(True)) ## 3
+
+my_tuple.append("Jess") # Error, no se puede agregar un valor a la tupla
+
+del my_tuple # Elimina la tupla Y ADEMAS la variable
+
+print(my_tuple) # Error, la variable "my_tuple" fue eliminada con el "del" anterior
+```
