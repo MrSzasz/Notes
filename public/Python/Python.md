@@ -398,3 +398,51 @@ del my_tuple # Elimina la tupla Y ADEMAS la variable
 
 print(my_tuple) # Error, la variable "my_tuple" fue eliminada con el "del" anterior
 ```
+
+### Sets
+
+Los sets, al igual que las tuplas, comparten similitudes con las listas, pero a diferencia de estas los sets se inician con `{}` y además estas no tienen un orden, por lo que no se puede acceder con el indice del dato en particular (`[0]`), pero a su vez esto ayuda a que los elementos del mismo no se repitan. Podemos ver el funcionamiento de las mismas de la siguiente manera.
+
+```py
+# Sets
+
+my_set = set() # Creamos el set
+
+my_second_set = {"Heisenberg", "Walter White", 14, True, 15.5} # Creamos el set
+
+my_set = {"Jesse", "Hank", 24, False, 11.5} # Le asignamos los valores al set
+
+print(my_set) ## {False, 'Jesse', 24, 11.5, 'Hank'}
+
+print(my_second_set) ## {True, 'Walter White', 15.5, 14, 'Heisenberg'}
+
+my_set.add("Skyler") # Añade un valor al set
+
+print(my_set.union(my_second_set)) # Junta los dos sets sin modificar el original
+
+print(my_set) ## {False, 'Jesse', 'Skyler', 24, 11.5, 'Hank'}
+
+my_set.add("Skyler") # No se puede añadir el mismo elemento porque ya existe en el set
+
+print(my_set) ## {False, 'Jesse', 'Skyler', 24, 11.5, 'Hank'}
+
+print("Hank" in my_set) # Imprime True, ya que existe el valor en el set
+
+my_set.remove("Hank") # Quita el valor del set
+
+print("Hank" in my_set) # Imprime False, ya que no existe el valor en el set
+
+print(my_set) ## {False, 'Jesse', 24, 11.5, 'Skyler'}
+
+my_set.update({"Junior", 155}) # Agrega el valor que le asignamos al set
+
+print(my_set) ## {False, 'Jesse', 'Junior', 24, 11.5, 155, 'Skyler'}
+
+print(my_second_set) ## {True, 'Heisenberg', 'Walter White', 14, 15.5}
+
+my_set.update(my_second_set) # Unimos ambos sets
+
+print(my_set) ## {False, True, 'Jesse', 'Heisenberg', 'Junior', 11.5, 14, 15.5, 24, 'Walter White', 155, 'Skyler'}
+
+print(my_set.difference(my_second_set)) # Imprime los valores que no se encuentran en el set
+```
