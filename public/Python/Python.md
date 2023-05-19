@@ -446,3 +446,69 @@ print(my_set) ## {False, True, 'Jesse', 'Heisenberg', 'Junior', 11.5, 14, 15.5, 
 
 print(my_set.difference(my_second_set)) # Imprime los valores que no se encuentran en el set
 ```
+
+## Diccionarios
+
+Otro tipo similar a los anteriores nombrados son los dictionaries (también similares a los objetos de JavaScript), estos a diferencia de las listas poseen un esquema `"key":"value"` (`"clave":"valor"`), a los cuales se puede acceder mediante las keys de las mismas. La mayoría de los métodos disponibles se repiten, quedando los mismos de la siguiente manera.
+
+```py
+# Diccionarios
+
+my_dict = dict() # Creamos el diccionario
+
+my_second_dict = {"name": "Jesse",
+                  "last_name": "Pinkman",
+                  "age": 24,
+                  "numbers": {4, 2, 4}
+                  } # Creamos el diccionario
+
+my_dict = {"name": "Walter",
+           "last_name": "White",
+           "age": 52,
+           "numbers": {1, 2, 4}
+           } # Le asignamos los valores al diccionario
+
+print(my_dict) ## {'name': 'Walter', 'last_name': 'White', 'age': 52, 'numbers': {1, 2, 4}}
+
+print(my_second_dict) ## {'name': 'Jesse', 'last_name': 'Pinkman', 'age': 24, 'numbers': {2, 4}}
+
+print(my_dict["age"]) # Accedemos al valor con la key correspondiente
+
+# print(my_dict["address"]) # Error, porque no existe la key
+
+my_dict["address"] = "308 Negra Arroyo Lane, Albuquerque, New Mexico. 87104" # Creamos la key con su valor correspondiente
+
+print(my_dict) ## {'name': 'Walter', 'last_name': 'White', 'age': 52, 'numbers': {1, 2, 4}, 'address': '308 Negra Arroyo Lane, Albuquerque, New Mexico. 87104'}
+
+print(my_dict["address"]) ## 308 Negra Arroyo Lane, Albuquerque, New Mexico. 87104
+
+del my_dict["address"] # Eliminamos la key y su valor
+
+print(my_dict) ## {'name': 'Walter', 'last_name': 'White', 'age': 52, 'numbers': {1, 2, 4}}
+
+print("Walter" in my_dict) # False, ya que lo que comprueba es que exista la key en el diccionario
+
+print("name" in my_dict) ## True
+
+print("address" in my_dict) ## False
+
+print("Walter" in my_dict["name"]) # True, ya que el valor existe para esa key
+
+print(my_dict.items()) # Imprime una lista con los items (key:value) en el diccionario
+
+print(my_dict.keys()) # Imprime una lista solo de las keys del diccionario
+
+print(my_dict.values()) # Imprime una lista solo de los valores del diccionario
+
+my_dict.clear() # Limpia el diccionario por completo
+
+print(my_dict) ## {}
+
+my_new_dict = my_second_dict.fromkeys(my_second_dict) # Crea un nuevo diccionario en base a las keys que le pasamos, con valor "None"
+
+print(my_new_dict) ## {'name': None, 'last_name': None, 'age': None, 'numbers': None}
+
+my_new_dict = my_second_dict.fromkeys(my_second_dict, "same value") # Al pasarle un 2do parámetro, lo agrega como valor a todas las keys
+
+print(my_new_dict) ## {'name': 'same value', 'last_name': 'same value', 'age': 'same value', 'numbers': 'same value'}
+```
