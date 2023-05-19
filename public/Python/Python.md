@@ -512,3 +512,71 @@ my_new_dict = my_second_dict.fromkeys(my_second_dict, "same value") # Al pasarle
 
 print(my_new_dict) ## {'name': 'same value', 'last_name': 'same value', 'age': 'same value', 'numbers': 'same value'}
 ```
+
+### Condicionales
+
+Los condicionales se utilizan para ejecutar cierto bloque de código solamente cuando una condición se cumpla, por ejemplo, si queremos enviarle un resultado al usuario solamente cuando tenga permisos para ello utilizamos los condicionales. Los mismos se basan en los booleans `True` y `False`.  
+La comprobación se realiza con el uso de `if` o `elif`, los cuales marcan un "camino" que tomará el código dependiendo de si el mismo es verdadero o falso. Podemos ver el funcionamiento de las mismas de la siguiente manera.
+
+```py
+# Condicionales
+
+my_true_condition = True
+
+my_false_condition = False
+
+if my_true_condition: # Si la condición es verdadera
+    print("La condición es verdadera") # Se realiza la acción
+
+if my_false_condition:
+    print("La condición es falsa") # Es False, así que no se realizar la condición
+
+my_number = 120
+
+if my_number < 0: # Si el numero es menor a 0
+    print("Mi numero es negativo") # Imprime esto
+elif my_number >= 1: # En cambio si el numero es mayor o igual a 1 
+    print("Mi numero es positivo") # Imprime esto
+else: # Si no entra en ninguna de las dos comprobaciones anteriores
+    print("Este no es un numero valido") # Imprime esto
+   
+my_sum = 6 + 9
+
+if my_sum == 9: # Si el resultado es 9
+    print("Nine")
+else: 
+    print(my_sum) ## 15
+    
+if my_sum > 0 and my_number > 0: # Comprueba que ambos sean verdaderos
+    print("Son positivos")
+else:
+    print("Son negativos")
+    
+if my_number > 0 or my_number > 0: # Comprueba que al menos uno sea verdadero
+    print("Uno es positivo")
+else:
+    print("Son negativos")
+    
+if not my_number == 120: # Invierte la comprobación
+    print("Solo se imprime si es diferente a 120")
+else: 
+    print("El numero es 120")
+    
+if not my_number != 120: # Invierte la comprobación
+    print("El numero es 120")
+else: 
+    print("Solo se imprime si es diferente a 120")
+
+my_empty_string = ""
+
+my_not_empty_string = "Texto"
+
+if my_empty_string: # La cadena vacía equivale a False
+    print("La cadena tiene un valor")
+    
+if my_not_empty_string: # La cadena equivale a True
+    print("La cadena tiene un valor")
+    
+if my_empty_string == "": # Comprueba que la cadena esté vacía
+    print("La cadena no tiene un valor")
+```
