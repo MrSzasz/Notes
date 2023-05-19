@@ -274,7 +274,7 @@ print(my_name.count("z")) # Devuelve 0
 print(my_name.upper().isupper()) # Se pueden crear cadenas, las cuales se toman en orden (True)
 ```
 
-## Listas
+### Listas
 
 Las listas son un tipo de dato que se comporta como una "caja" que contiene otros datos (similares a los arrays en JavaScript). Estos pueden contener diferentes tipos de datos, ya sean strings, números, booleans, etc. Para crear una lista tenemos diferentes maneras, se puede utilizar `list()` y pasarle los datos de la lista como parámetro, o directamente crear la lista con `[]`, de la siguiente manera.
 
@@ -447,7 +447,7 @@ print(my_set) ## {False, True, 'Jesse', 'Heisenberg', 'Junior', 11.5, 14, 15.5, 
 print(my_set.difference(my_second_set)) # Imprime los valores que no se encuentran en el set
 ```
 
-## Diccionarios
+### Diccionarios
 
 Otro tipo similar a los anteriores nombrados son los dictionaries (también similares a los objetos de JavaScript), estos a diferencia de las listas poseen un esquema `"key":"value"` (`"clave":"valor"`), a los cuales se puede acceder mediante las keys de las mismas. La mayoría de los métodos disponibles se repiten, quedando los mismos de la siguiente manera.
 
@@ -579,4 +579,77 @@ if my_not_empty_string: # La cadena equivale a True
     
 if my_empty_string == "": # Comprueba que la cadena esté vacía
     print("La cadena no tiene un valor")
+```
+
+### Loops
+
+Los loops (ciclos) son pedazos de código que se encargan de repetir cada vez que una condición se cumpla, por ejemplo, si queremos que cierto código se imprima solamente cuando el numero sea mejor a 10, podemos usar un `while` e indicar que se sume el valor hasta llegar a 10, o si queremos iterar por los valores de una lista podemos utilizar un `for`, quedándonos de la siguiente manera.
+
+```py
+# Loops
+
+my_first_num = 0
+
+while my_first_num < 10: # El loop siempre se ejecuta si la condición es True
+    print(f"Vuelta numero {my_first_num + 1}")
+    my_first_num += 1 # Y aumentamos el valor del numero para que no se cree un loop infinito
+
+
+my_second_num = 0
+
+while my_second_num < 10:
+    print(f"Vuelta numero {my_second_num + 1}")
+    my_second_num += 1
+else: # Se imprime justo al finalizar el ciclo
+    print("Fin del ciclo")
+
+
+my_third_num = 0
+
+while my_third_num < 10:
+    if my_third_num % 2 == 0: # Comprueba si la condición en el loop es True
+        print(f"{my_third_num} es numero par") # E imprime lo siguiente
+    else: # En cambio si es False
+        print(f"{my_third_num} es numero impar") # Imprime esto
+    my_third_num += 1
+
+
+my_fourth_num = 0
+
+while my_fourth_num < 10:
+    print(my_fourth_num)
+    if my_fourth_num == 5:
+        break # Si el numero en el loop es 5 termina el ciclo
+    my_fourth_num += 1
+else: # Y no imprime el final, ya que el break lo rompe por completo
+    print("Fin del ciclo")
+
+
+
+my_list = [1, 14, 516, 7, 132, 751, -13, 15, 1892]
+
+for num in my_list: # Itera por cada uno de los valores de la lista
+    print(num) # E imprime el valor correspondiente en cada ciclo
+
+
+for num in my_list:
+    print(num)
+else: # Al igual que en el While, se imprime al finalizar el ciclo
+    print("Fin del ciclo")
+
+
+for num in my_list:
+    print(num)
+    if num > 600:
+        break # El break funciona en ambas situaciones
+else:
+    print("Fin del ciclo")
+
+
+for num in my_list:
+    if num > 500:
+        continue # El continue salta la ejecución, pero no termina el ciclo
+    print(num)
+else:
+    print("Fin del ciclo")
 ```
