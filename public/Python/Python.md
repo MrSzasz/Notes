@@ -653,3 +653,94 @@ for num in my_list:
 else:
     print("Fin del ciclo")
 ```
+
+### Funciones
+
+Las funciones son uno de los temas mas importantes en todos los lenguajes de programación, estos son bloques de código que se pueden llamar para realizar cierta acción sin tener la necesidad de repetir todo el código una y otra vez. Python como otros lenguajes de programación ya vienen con ciertas funciones integradas (como por ejemplo `print()`), pero nosotros podemos crear nuestras propias funciones de la siguiente manera.
+
+```py
+# Funciones
+
+def sum_values(param_1, param_2): # Definimos la función con "def"
+    print(param_1 + param_2) # Indicamos que realiza la función
+    
+sum_values(1, 5) # Llamamos a la función con sus parámetros
+
+sum_values(11, 61) ## 72
+
+# sum_values() => Error, necesita dos parámetros pero no le pasamos ninguno
+
+sum_values(1.4, 5.16) ## 6.5600000000000005
+
+sum_values("Hola", ", como estas") ## Hola, como estas
+
+sum_values("Hola", "44") ## Hola44
+    
+    
+def say_my_name(name, last_name, alias = "Heisenberg"): # Podemos agregar valores por defecto por si no se pasan los parámetros
+    print(f"{name} {last_name}, {alias}")
+    
+say_my_name("Walter", "White") ## Walter White, Heisenberg
+
+say_my_name(last_name = "Pinkman", name = "Jesse", alias = "Cap'n Cook") ## Jesse Pinkman, Cap'n Cook
+
+    
+def sum_values_and_return(param_1, param_2):
+    return param_1 + param_2 # La función realiza el calculo y devuelve el valor
+
+sum_values_and_return(1, 6) # No sucede nada porque no se esta utilizando el valor
+
+return_with_variable = sum_values_and_return(22, 9) # Guarda el valor de la suma en una variable
+
+print(return_with_variable) ## 31
+
+print(sum_values_and_return(155, 15)) ## 170
+
+
+def print_all(*params): # Indicamos que puede recibir multiples parámetros
+    for param in params: # Con cada una de los parámetros
+        print(param) # Imprime el parámetro, uno por uno
+        
+print_all("Walter", "White") # Imprime ambos en diferentes lineas
+
+print_all("Walter", "White", "Jesse", "Pinkman")
+```
+
+### Clases
+
+Las clases son similares a las funciones, con la diferencia que estas nos sirven para crear diferentes objetos que contengan las mismas características, por ejemplo, si creamos una clase Animal podemos indicar que el mismo puede hacer sonidos, pero que no puede tener ciertas acciones como hacer matemáticas complejas, esto nos ayuda a mantener un control dentro de lo que podemos cuando creamos diferentes objetos. Para ver esto usamos la palabra reservada `class` de la siguiente manera.
+
+```py
+# Clases
+
+class Person: # Creamos la clase con CamelCase
+    def __init__(self, name, last_name, alias = "Heisenberg"): # Pasamos los parámetros que necesitaremos junto al __init__ y el self obligatorio
+        self.full_name = f"{name} {last_name}, \"{alias}\"" # Creamos un dato que será publico
+        self.__name = name # Y el dato que será privado con "__"
+        
+    def get_name(self): # Podemos indicar un "getter" para acceder al nombre sin modificarlo
+        print(f"{self.__name}")
+        
+    def say_my_name(self): # Una función que tome los parámetros que le pasamos
+        print(f"{self.full_name}")
+        
+    def say_hi(self): # Y una función normal
+        print("Hi")
+        
+person_1 = Person("Walter", "White") # Creamos la persona
+
+person_1.say_my_name() ## Walter White, "Heisenberg"
+
+# print(person_1.__name) => Error, no se puede acceder al dato porque es privado
+
+person_1.full_name = "Heisenberg" # Podemos cambiar el valor del dato publico, aunque no es lo recomendado
+
+person_1.say_my_name() ## Heisenberg
+
+person_1.say_hi() ## "Hi"
+
+
+person_2 = Person(alias = "Cap'n Cook", name = "Jesse", last_name = "Pinkman") # Podemos cambiar el orden de los parámetros
+
+person_2.say_my_name() ## Jesse Pinkman, "Cap'n Cook"
+```
