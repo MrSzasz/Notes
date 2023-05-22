@@ -850,3 +850,75 @@ from math import pow # O podemos importar solamente lo que necesitaremos
 
 print(pow(2, 15)) # E utilizarlo solo para ello, sin sobrecargar nuestro código
 ```
+
+### Dates
+
+Python nos ofrece un modulo para trabajar con fechas, ya sea usando dia y hora, o ambos por separado, ademas de poder sumar y restar franjas de tiempo entre estos. Para esto debemos utilizar el modulo llamado `datetime`, pudiendo usar del mismo `datetime` para trabajar con ambos de la siguiente manera.
+
+```py
+# Dates
+
+from datetime import datetime # Importamos datetime desde datetime
+
+now = datetime.now() # Creamos la variable con la fecha y hora actual
+
+print(f"{now.year}/{now.month}/{now.day} - {now.hour}:{now.minute}:{now.second} ({now.timestamp()})") # Podemos tomar solo lo que necesitamos de la variable
+
+custom_datetime = datetime(1922, 12, 15) # Ademas de poder crear nuestra propia fecha
+custom_datetime_with_time = datetime(1941, 2, 2, 13, 20, 13) # Y agregarle el tiempo del mismo
+
+print(custom_datetime) ## 1922-12-15 00:00:00
+print(custom_datetime_with_time) ## 1941-02-02 13:20:13
+
+datetime_diff = now - custom_datetime # Ademas podemos restar las fechas para ver el tiempo que paso entre una y otra
+print(datetime_diff) ## 36683 days, 13:37:28.570086
+```
+
+Ademas de esto también podemos trabajar solamente con el apartado de fecha usando el modulo `date` que contiene `datetime` de la siguiente manera.
+
+```py
+# Dates
+
+from datetime import date # Importamos date desde datetime
+
+date_now = date.today() # Tomamos la fecha actual
+custom_date = date(1999, 7, 22) # O podemos crear nuestra propia fecha
+
+print(f"{custom_date.year}/{custom_date.month}/{custom_date.day}") ## 1999/7/22
+print(date_now) ## 2023-05-22
+print(custom_date) ## 1999-07-22
+
+date_diff = now.date() - custom_date # De la misma forma podemos operar con los datos
+print(date_diff) ## 8705 days, 0:00:00
+```
+
+O si necesitamos solamente trabajar con el tiempo podemos utilizar el modulo `time` de `datetime` de la siguiente manera.
+
+```py
+# Dates
+
+from datetime import time # Importamos time desde datetime
+
+time_now = time() # Toma una hora vacía, ya que no es posible tomar la hora actual de la misma manera que los anteriores
+custom_time = time(12, 11, 41) # Pero podemos crear nuestra propia hora
+
+print(f"{custom_time.hour}h {custom_time.minute}m {custom_time.second}s") ## 12h 11m 41s
+print(time_now) ## 00:00:00
+print(custom_time) ## 12:11:41
+
+# time_diff = time_now - custom_time
+# print(time_diff) => Error, no es posible realizar esta acción
+```
+
+Y por ultimo tenemos el modulo `timedelta`, el cual nos ayuda con calcular los rangos entre dos tiempos, pudiendo ver el rango que hay entre dos cantidades de la siguiente manera.
+
+```py
+# Dates 
+
+from datetime import timedelta # Importamos timedelta desde datetime
+
+time_start = timedelta(150, 100, hours = 20, minutes = 128) # Indicamos el tiempo de inicio en cantidad
+time_end = timedelta(240, 120, hours = 200, minutes = 12) # Y el tiempo de finalización también en cantidad
+
+print(time_end - time_start) ## 97 days, 10:04:20
+```
