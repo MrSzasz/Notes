@@ -744,3 +744,109 @@ person_2 = Person(alias = "Cap'n Cook", name = "Jesse", last_name = "Pinkman") #
 
 person_2.say_my_name() ## Jesse Pinkman, "Cap'n Cook"
 ```
+
+### Manejo de errores (Exceptions)
+
+Cuando un código de Python falla, normalmente el error detiene toda la ejecución, lo que puede llevar a una mala experiencia para el usuario, o mismamente para fallas en el código por completo, es por eso que podemos manejar los errores gracias a los bloques `try/except`, los cuales toman esos errores y se encargan de la solución de los mismos, sin detener el flujo de código. Para ello debemos crear el bloque de la siguiente manera.
+
+```py
+# Excepciones
+
+message = "Hello, world!"
+
+try: # Creamos el bloque try para que intente un código
+    raise Exception() # Genera un error manualmente
+    print(message)
+except: # Si el código falla seguirá por este bloque
+    print("Hubo un error en el primer ejemplo")
+    
+    
+try:
+    print(message)
+except:
+    print("Hubo un error en el 2do ejemplo")
+else: # Este bloque solo se ejecutará si el código no falló
+    print("El ejemplo 2 se completó sin errores")
+
+
+try:
+    print(message)
+except:
+    print("Hubo un error en el 3er ejemplo")
+else:
+    print("El ejemplo 3 se completó sin errores")
+finally: # Se ejecuta siempre al finalizar, independientemente si hubo o no un error
+    print("Fin del ejemplo 3")
+   
+    
+try:
+    raise Exception()
+    print(message)
+except:
+    print("Hubo un error en el 4to ejemplo")
+else:
+    print("El ejemplo 4 se completó sin errores")
+finally:
+    print("Fin del ejemplo 4")
+   
+    
+try:
+    raise ValueError() # Genera un error del tipo ValueError
+    print(message)
+except TypeError: # Se ejecuta solamente si es el tipo de error correspondiente
+    print("Hubo un error de tipo TypeError")
+except ValueError:
+    print("Hubo un error de tipo ValueError")
+   
+    
+try:
+    raise Exception("Esto es un mensaje de error") # Le indicamos el mensaje de error
+    print(message)
+except Exception as err: # Si no sabemos el tipo de error imprimimos todos los errores
+    print(err)
+```
+
+### Módulos
+
+Python viene cargado con diferentes módulos, es decir, con diferentes "porciones" de código, funciones, métodos, todo lo que nos ayuda a realizar ciertas acciones, pero que no siempre son necesarias, por lo que se separa en otros ficheros para agilizar el código. Estos módulos de código pueden utilizarse con la palabra reservada `import`, o podemos crear nuestros propios módulos para agilizar el código. Para ver mejor esto lo haremos creando un archivo llamado `module_functions.py`, el cual utilizaremos para crear una función de la siguiente manera.
+
+```py
+# Funciones para exportar
+
+def say_my_name(name, last_name):
+    print(f"My name is {name} {last_name}")
+    
+def print_all_this(*values):
+    for value in values:
+        print(value)
+```
+
+Ahora podemos utilizar estas funciones en nuestro archivo `main.py` de la siguiente manera.
+
+```py
+# Módulos
+
+import module_functions # Importamos el modulo completo
+
+module_functions.print_all_this("This", "is", "a", "Normal", "Text") # Y llamamos la función necesaria tomando de base el modulo
+
+
+from module_functions import say_my_name # Importamos solamente la función que usaremos
+
+say_my_name("Walter", "White") # Y la llamamos normalmente
+
+
+from module_functions import sum_two_values as default_sum_function # Podemos asignarle un nombre/alias personalizado
+
+default_sum_function(1, 52) # Y lo llamamos de esa forma
+
+# sum_two_values() => Error, no existe la función con ese nombre
+
+import math # Importamos el modulo que viene con Python
+
+print(math.pi) # Y lo utilizamos en base al nombre del modulo
+
+from math import pow # O podemos importar solamente lo que necesitaremos
+
+print(pow(2, 15)) # E utilizarlo solo para ello, sin sobrecargar nuestro código
+```
