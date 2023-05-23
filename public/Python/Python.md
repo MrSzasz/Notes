@@ -922,3 +922,49 @@ time_end = timedelta(240, 120, hours = 200, minutes = 12) # Y el tiempo de final
 
 print(time_end - time_start) ## 97 days, 10:04:20
 ```
+
+### List comprehension
+
+Cuando queremos copiar una lista y crear una nueva modificando los valores que le pasaremos podemos hacer uso del `list comprehension`, el cual nos permite crear una nueva lista ya sea con los mismos valores o modificando los mismos con lo que necesitemos, como podemos ver en el siguiente ejemplo.
+
+```py
+# List comprehension
+
+my_main_list = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] # Creamos nuestra base
+
+print(f"My main list: {my_main_list}") ## My main list: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+my_new_list = [i for i in my_main_list] # Iteramos por la lista
+
+print(f"My new list: {my_new_list}") ## My new list: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+my_range_list = [i for i in range(10)] # Creamos lo mismo pero con un rango
+
+print(range(10)) ## range(0, 10)
+
+print(f"My range list: {my_range_list}") ## My range list: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+my_modified_list = [i + 5 for i in my_main_list] # Le sumamos 5 a cada uno de los elementos en la lista original
+
+print(f"My modified list: {my_modified_list}") ## My modified list: [5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+
+def mult_by_self(number): # Creamos una función que multiplique por el mismo numero
+    return number * number 
+
+my_mult_list = [mult_by_self(i) for i in my_main_list] # Y la utilizamos para modificar la lista
+
+print(f"My mult list: {my_mult_list}") ## My mult list: [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+```
+
+Este resultado también se puede obtener con un `for`, sin ser tan optimo, pero el mismo quedaría de la siguiente manera.
+
+```py
+my_main_list = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] # Creamos nuestra base
+
+my_for_list = [] # Creamos la lista vacía
+
+for i in my_main_list: # Y usamos un for para recorrer la lista original
+    my_for_list.append(mult_by_self(i))
+    
+print(f"My for list: {my_for_list}") ## My for list: [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+```
