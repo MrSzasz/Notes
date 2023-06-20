@@ -513,6 +513,8 @@ my_new_dict = my_second_dict.fromkeys(my_second_dict, "same value") # Al pasarle
 print(my_new_dict) ## {'name': 'same value', 'last_name': 'same value', 'age': 'same value', 'numbers': 'same value'}
 ```
 
+> Es posible unir dos diccionarios / actualizar usando `dict.update(data)`
+
 ### Condicionales
 
 Los condicionales se utilizan para ejecutar cierto bloque de código solamente cuando una condición se cumpla, por ejemplo, si queremos enviarle un resultado al usuario solamente cuando tenga permisos para ello utilizamos los condicionales. Los mismos se basan en los booleans `True` y `False`.  
@@ -967,4 +969,264 @@ for i in my_main_list: # Y usamos un for para recorrer la lista original
     my_for_list.append(mult_by_self(i))
     
 print(f"My for list: {my_for_list}") ## My for list: [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+```
+
+### Lambdas
+
+Hay veces que necesitaremos crear funciones simples o mismamente funciones dentro de otras funciones. Para esto podemos hacer uso de las `lambdas` (funciones anónimas), las cuales nos permiten crear funciones simples, guardando las mismas en una variable si es necesario. Para esto haremos uso de la palabra reservada `lambda` de la siguiente manera.
+
+```py
+# Lambdas
+
+sum_two_values = lambda val_1, val_2: val_1 + val_2 # Suma dos valores
+
+print(sum_two_values(5, 6)) ## 11
+
+sum_ten_and_multiply = lambda val_1, val_2: (val_1 * val_2) + 10 # Multiplica dos valores y le suma 10
+
+print(sum_ten_and_multiply(15, 2)) ## 40
+
+def new_sum(value):
+    return lambda val_1, val_2: val_1 + val_2 + value # Suma dos valores con la lambda y le agrega el valor que indicamos como parámetro
+
+print(new_sum(7)(12, 8)) # Primero le pasamos el parámetro de la función, y luego los parámetros de la lambda
+```
+
+### High order functions & closures
+
+Las funciones de orden superior son aquellas funciones que contienen funciones dentro de las mismas. Estas funciones pueden tener algunas funciones mas simples dentro, lo que ayuda con el orden de ejecución y practicidad del código. Además es posible pasar funciones como parámetros a estas funciones, o utilizar lambdas, coom podemos ver a continuación.
+
+```py
+# High order functions
+
+def sum_two_plus_ten(value): # Creamos la función
+    return value + 10 # Y su return
+
+def sum_all(value_1, value_2):
+    return sum_two_plus_ten(value_1 + value_2) # Llamamos a la función dentro de la otra función
+    
+print(sum_all(7, 10)) ## 27
+
+
+
+def sum_all_with_inside_functions(value_1, value_2):
+    def sum_all_and_add_ten(value): # Creamos la función dentro de la otra función
+        return value + 10 # Retornamos el valor de la misma
+    
+    return sum_all_and_add_ten(value_1 + value_2) # Y retornamos el valor final
+
+print(sum_all_with_inside_functions(7, 20)) ## 37
+
+
+
+def do_something_with_two_values(value_1, value_2, func): # Creamos la función a la que le pasaremos otra función como parámetro
+    return func(value_1, value_2) # Y devolveremos el valor final de esa función 
+
+print(do_something_with_two_values(15, 20, sum_all)) ## 45
+```
+
+Dentro de Python vienen algunas funciones de orden superior para usar, estas funcionan de la misma manera, se le pasa una función como parámetro de la siguiente manera.
+
+```py
+# High order functions
+
+list_of_numbers = [1, 16, 22, 18, 29, 2, 55]
+
+
+def multiply_by_two(value): # Creamos la función que usaremos para el map
+    return value * 2
+
+new_list_multiplied = map(multiply_by_two, list_of_numbers) # El mismo itera por cada item y lo pasa como parámetro de la función
+
+print(list(new_list_multiplied)) ## [2, 32, 44, 36, 58, 4, 110]
+
+new_list_multiplied_with_lambda = map(lambda number: number * 2, list_of_numbers) # Podemos hacerlo con una lambda en vez de crear la función fuera
+
+print(list(new_list_multiplied_with_lambda)) ## [2, 32, 44, 36, 58, 4, 110]
+
+
+
+def greater_than_twenty(number): # Creamos el filtro que devuelve un boolean
+    if number > 20:
+        return True
+    else:
+        return False
+    
+    # return number > 20  => Es lo mismo pero simplificado
+
+
+filtered_list = filter(greater_than_twenty, list_of_numbers) # Le pasamos la función como filtro
+
+print(list(filtered_list)) ## [22, 29, 55]
+
+filtered_list_with_lambda = filter(lambda number: number > 15, list_of_numbers) # Podemos llegar a lo mismo si utilizamos una lambda
+
+print(list(filtered_list_with_lambda)) ## [16, 22, 18, 29, 55]
+
+
+
+from functools import reduce # Importamos reduce
+
+
+def sum_two(val1, val2): # Creamos la función para sumar los valores
+    return val1 + val2
+
+print(reduce(sum_two, list_of_numbers)) # Suma todos los valores que tenga la lista
+
+print(reduce(lambda val1, val2: val1 + val2, list_of_numbers)) ## 143
+
+print(reduce(lambda val1, val2: val1 - val2, list_of_numbers)) ## -141
+```
+
+Por ultimo tenemos los `closures`, los cuales funcionan como funciones de orden superior ya que son funciones dentro de funciones, pero las mismas devuelven funciones en su return, de la siguiente manera.
+
+```py
+## Closures
+
+
+def sum_twenty(first_value): # Creamos una función para abarcar la otra
+    def new_sum(value):
+        return value + 20 + first_value
+    return new_sum # Y retornamos esta función por completo
+
+print(sum_twenty(1)) ## <function>
+
+result_from_sum_twenty = sum_twenty(1) # Guarda la función en una variable
+
+print(result_from_sum_twenty(15)) ## 36
+
+print((sum_twenty(1))(15)) # Podemos llamarlo sin guardarlo, pasando los parámetros por separado
+```
+
+### File handling
+
+Una de las funcionalidades mas útiles que nos ofrece Python es la posibilidad de trabajar con archivos, en este caso con archivos de texto (`.txt`) y de datos (`.json`). Para hacer esto haremos uso de dos módulos, `os` y `json`. Empezaremos creando la carpeta `/files` y dentro de la misma el archivo `text.txt`, el cual contendrá el siguiente texto.
+
+```txt
+Hola esta es una prueba
+del texto y el modulo
+para editar archivos txt
+```
+
+Con esto hecho podemos crear las funciones que utilizaremos para modificar el mismo de la siguiente manera.
+
+```py
+import os # Importamos el modulo para controlar el os
+
+
+def read_file(filename): # Creamos la función para leer el archivo
+    try:
+        with open(filename, 'r') as file: # Usamos "open" con la flag "r" para abrir el archivo en solo lectura
+            print(file.read()) # E imprimimos contenido
+            file.close() # Como buena practica, cerramos el archivo cuando terminamos de utilizarlo
+    except Exception as err:
+        print(f"Error! {err.args[1]}") # Si hay un error, lo imprimimos
+        
+# read_file('./files/text.txt')
+
+
+def read_file_by_line(filename): # Creamos la función para leer linea por linea
+    try:
+        with open(filename, 'r') as file:
+            for line in file.readlines(): # Y utilizamos la función para ir linea por linea
+                print(line) # Imprimiendo cada una por separado
+    except Exception as err:
+        print(f"Error! {err.args[1]}")
+
+
+# read_file_by_line('./files/text.txt')
+
+def write_file(filename, data):
+    try:
+        with open(filename, 'w') as file: # Lo abrimos en modo escritura
+            file.write(data) # Si no existe el archivo, lo crea, si existe lo sobre escribe
+            file.close()
+        print("file written successfully at /files/" + filename)
+    except Exception as err:
+        print(f"Error! {err.args[1]}")
+
+# write_file('./files/text.txt', "Este texto es nuevo") => Sobre escribe el archivo anterior
+# write_file('./files/new_text.txt', "Este archivo es nuevo") => Crea un nuevo archivo
+
+
+def append_to_file(filename, data):
+    try:
+        with open(filename, 'a') as file: # Lo abrimos en modo edición
+            file.write(data) # Si existe, agrega el texto, sino lo crea
+        print("data written successfully")
+    except Exception as err:
+        print(f"Error! {err.args[1]}")
+
+# append_to_file('./files/text.txt', "Este texto es agregado") => Agrega al final del texto
+# append_to_file('./files/new_text.txt', "Este texto es nuevo") => Crea un nuevo archivo
+
+def delete_file(filename):
+    try:
+        os.remove(filename) # Utilizamos el modulo os para eliminar el archivo
+        print("file deleted successfully!")
+    except Exception as err:
+        print(f"Error! {err.args[1]}")
+
+delete_file('./files/text.txt')
+```
+
+También es posible manipular archivos JSON con el modulo correspondiente de la siguiente manera.
+
+```py
+import json # Importamos el modulo
+
+
+my_dict = { # Creamos un diccionario
+    "name": "Joseph",
+    "last_name": "Joestar",
+    "age": 91,
+    "abilities": ["Hamon", "Stand"]
+}
+
+
+def write_json(filename, data):
+    try:
+        with open(filename, 'w') as file: # Abrimos el archivo en modo escritura
+            json.dump(data, file) # Usamos dump para agregar data al archivo, si no existe lo crea
+    except Exception as err:
+        print(f"Error! {err.args[1]}")
+
+# write_json('./files/data.json', {"data":"yes"}) # Si existe, sobre escribe los datos
+
+
+
+def write_json_with_indent(filename, data, indent):
+    try:
+        with open(filename, 'w') as file:
+            json.dump(data, file, indent=indent) # Podemos indentar el archivo con los espacios que querramos
+    except Exception as err:
+        print(f"Error! {err.args[1]}")
+        
+
+write_json_with_indent('./files/data.json', my_dict, 4)
+        
+        
+            
+def read_json(filename):
+    try:
+        with open(filename, 'r') as file: # Abrimos el archivo en modo solo lectura
+            return json.load(file) # Y devolvemos los datos
+    except Exception as err:
+        return f"Error! {err.args[1]}"
+                
+
+print(read_json('./files/data.json')) ## {'name': 'Joseph', 'last_name': 'Joestar', 'age': 91, 'abilities': ['Hamon', 'Stand']}
+
+        
+        
+def add_data_to_json(filename, data):
+    try:
+        json_from_file = read_json(filename) # Traemos los datos del JSON
+        json_from_file.update(data) # Le agregamos los datos nuevos
+        write_json(filename, json_from_file) # Y lo sobre escribimos
+    except Exception as err:
+        print(f"Error! {err.args[1]}")
+
+add_data_to_json('./files/data.json', {"status": "alive"})
+print(read_json('./files/data.json')) ## {'name': 'Joseph', 'last_name': 'Joestar', 'age': 91, 'abilities': ['Hamon', 'Stand'], 'status': 'alive'}
 ```
