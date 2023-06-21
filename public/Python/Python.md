@@ -1230,3 +1230,90 @@ def add_data_to_json(filename, data):
 add_data_to_json('./files/data.json', {"status": "alive"})
 print(read_json('./files/data.json')) ## {'name': 'Joseph', 'last_name': 'Joestar', 'age': 91, 'abilities': ['Hamon', 'Stand'], 'status': 'alive'}
 ```
+
+### RegEx
+
+Python nos ofrece la posibilidad de comprobar ciertos patrones en nuestros strings, para eso se hace uso de las expresiones regulares y el modulo `re` de la siguiente manera.
+
+```py
+# regEx
+
+import re # Importamos el modulo
+
+
+my_string = "Hello, world! This is a test from Python for RegEx, with some Python code. You can test this right here" # Creamos el string para comprobar
+
+match = re.match("Hello, world!", my_string, re.I) # Creamos el match
+
+print(match) ## <Match>
+
+print(match.span()) ## (0, 13)
+
+start, end = match.span() # Le asignamos nombres a los valores
+
+print(my_string[start:end]) # Imprimimos el match en el string
+
+
+def match_RE(str_to_match, matching_string): # Podemos hacer lo mismo ordenado en una función
+    match = re.match(matching_string, str_to_match, re.I) # Devuelve el match o None
+    # if match != None:
+    if match:
+        start, end = match.span()
+        print(f"Matching from {start} to {end}: '{str_to_match[start:end]}'") # Si existe imprimimos el match
+    else:
+        print("Not matching") # Sino imprimimos que no existe
+
+match_RE(my_string, "Hello") ## Matching from 0 to 5: 'Hello'
+
+match_RE(my_string, "Hello, worlds!") ## Not matching
+
+match_RE(my_string, "This is a test") # Solo imprime si se encuentra desde el principio
+
+
+
+def search_RE(str_to_match, matching_string):
+    search = re.search(matching_string, str_to_match, re.I) # Busca el match en todo el string
+    if search:
+        start, end = search.span()
+        print(f"Found on {start} to {end}: '{str_to_match[start:end]}'")
+    else:
+        print("No matching string")
+        
+search_RE(my_string, "This is a test") ## Found on 14 to 28: 'This is a test'
+
+search_RE(my_string, "Python") # Devuelve solamente el primer match
+
+search_RE(my_string, "JavaScript") ## No matching string
+
+
+
+def find_all_RE(str_to_match, matching_string):
+    matches = re.findall(matching_string, str_to_match, re.I) # Busca todas las veces que se encuentra en el string
+    if len(matches) != 0:
+        print(matches) # Y devuelve una lista
+    else:
+        print("No matching string found")
+    
+find_all_RE(my_string, "Python") ## ['Python', 'Python']
+
+find_all_RE(my_string, "this") # Es independiente del Case por la flag "re.I"
+
+find_all_RE(my_string, "Js") ## Not matching string found
+
+
+print(my_string.split(" ")) # Divide el string con el match que le pasamos y lo devuelve como lista
+
+print(my_string.split("!")) ## ['Hello, world', ' This is a test from Python for RegEx, with some Python code. You can test this right here']
+
+print(my_string.split("twt")) # Devuelve la lista con un solo objeto dentro
+
+
+
+print(re.sub(" ", ", ", my_string, flags=re.I)) # Reemplaza todos los matches que encuentra
+
+print(re.sub(" ", ", ", my_string, 2 ,re.I)) # Reemplaza solamente los primeros 2 matches
+
+print(re.sub("this", "repl", my_string, 2 ,re.I)) # Sin importar el Case
+
+print(re.sub("twt", "repl", my_string, 2 ,re.I)) # Devuelve el string original si no encuentra matches para reemplazar
+```
