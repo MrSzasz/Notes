@@ -6,6 +6,31 @@
 
 1. [Instalación](#instalaci%C3%B3n)
 2. [Código](#coding)
+    - [Print](#imprimir)
+    - [Tipos de datos](#tipos-de-datos)
+    - [Variables](#variables)
+    - [Inputs](#input)
+    - [Operadores matemáticos](#operadores)
+    - [Operadores de comparación](#comparadores)
+    - [Formateo de datos](#formateo-de-datos)
+    - [Manejo de strings](#slice-de-strings)
+    - [Listas](#listas)
+    - [Tuplas](#tuples)
+    - [Sets](#sets)
+    - [Diccionarios](#diccionarios)
+    - [Condicionales](#condicionales)
+    - [Loops](#loops)
+    - [Funciones](#funciones)
+    - [Clases](#clases)
+    - [Errores](#manejo-de-errores-exceptions)
+    - [Modularización](#módulos)
+    - [Manejo de fechas](#dates)
+    - [List comprehension](#list-comprehension)
+    - [Funciones anónimas / lambdas](#lambdas)
+    - [Funciones de orden superior](#high-order-functions--closures)
+    - [Manejo de archivos](#file-handling)
+    - [Expresiones regulares](#regex)
+3. [Referencias](#referencias)
 
 ---
 
@@ -113,6 +138,26 @@ second_number = 2
 print(first_number, second_number) # Imprime 4 2, ya que imprime ambos
 
 print(second_number + first_number) # Imprime 6, ya que los suma
+```
+
+Sumado a esto es posible asignar diferentes variables en una sola linea, o asignar el mismo valor a diferentes variables de la siguiente manera.
+
+```py
+x, y, z = 1, 2, 3
+
+print(x) ## 1
+
+print(y) ## 2
+
+print(z) ## 3
+
+a = b = c = "alphabet"
+
+print(a) ## alphabet
+
+print(b) ## alphabet
+
+print(c) ## alphabet
 ```
 
 ### Input
@@ -832,6 +877,7 @@ import module_functions # Importamos el modulo completo
 
 module_functions.print_all_this("This", "is", "a", "Normal", "Text") # Y llamamos la función necesaria tomando de base el modulo
 
+print(dir(module_functions)) # Imprime todas las variables que contiene el módulo
 
 from module_functions import say_my_name # Importamos solamente la función que usaremos
 
@@ -956,6 +1002,10 @@ def mult_by_self(number): # Creamos una función que multiplique por el mismo nu
 my_mult_list = [mult_by_self(i) for i in my_main_list] # Y la utilizamos para modificar la lista
 
 print(f"My mult list: {my_mult_list}") ## My mult list: [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+
+my_even_list = [i for i in my_main_list if i % 2 == 0] # Solo toma los números que cumplen con la condición
+
+print(my_even_list) ## [0, 2, 4, 6, 8]
 ```
 
 Este resultado también se puede obtener con un `for`, sin ser tan optimo, pero el mismo quedaría de la siguiente manera.
@@ -1317,3 +1367,11 @@ print(re.sub("this", "repl", my_string, 2 ,re.I)) # Sin importar el Case
 
 print(re.sub("twt", "repl", my_string, 2 ,re.I)) # Devuelve el string original si no encuentra matches para reemplazar
 ```
+
+## Referencias
+
+[Curso Python para principiantes by MoureDev](https://youtu.be/Kp4Mvapo5kc)
+
+[Curso Python intermedio by MoureDev](https://youtu.be/TbcEqkabAWU)
+
+[W3School - Python](https://www.w3schools.com/python)
