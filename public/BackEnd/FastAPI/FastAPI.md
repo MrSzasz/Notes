@@ -153,24 +153,18 @@ class User(BaseModel): # Y lo creamos como una clase, con todos los datos que co
     age: int
 
 users_db = [
-    {
-        "id": 1,
-        "name": "John",
-        "last_name": "Kuwait",
-        "age": 18,
-    },
-    {
-        "id": 2,
-        "name": "Stephen",
-        "last_name": "Kuwait",
-        "age": 59,
-    },
-    {
-        "id": 3,
-        "name": "Katherine",
-        "last_name": "Kuwait",
-        "age": 44,
-    },
+    User(id=1,
+         name="John",
+         last_name="Kuwait",
+         age=18,),
+    User(id=2,
+         name="Stephen",
+         last_name="Smith",
+         age=48,),
+    User(id=3,
+         name="Katherine",
+         last_name="Powell",
+         age=24,),
 ]
 
 
@@ -195,13 +189,21 @@ class User(BaseModel):
 
 users_db = [...]
 
+async def search_user_in_db(user_id: int): # Creamos la función que buscará el usuario
+    found_user = filter( # Filtramos la lista
+            lambda user: user.id == user_id, users_db) # Tomando de base el ID que le pasamos como parámetro
+    try:
+        return list(found_user)[0] # Si lo encuentra devolvemos el usuario
+    except:
+        return "Error! User not found" # Sino devolvemos un error
+
 @router.get('/{user_id}') # Indicamos que tomaremos el id como path
 async def get_one_user_by_path(user_id: int): # Y le pasamos el tipo de dato que recibirá
-    try:
-        get_user_from_db = filter(lambda user: user["id"] == user_id, users_db) # Buscamos el usuario en la lista
-        return list(get_user_from_db)[0] # Y si se encuentra se devuelve el mismo
-    except:
-        return "Error! User not found" # Sino devolvemos un mensaje de error
+    user_in_db = await search_user_in_db(user_id) # Usamos la función para buscar el usuario
+    if type(user_in_db) != str: # Si lo encuentra devuelve el usuario
+        return user_in_db 
+    else:
+        return "Error! User not found" # Sino mostramos el error
 ```
 
 > Para probar deberemos ir a `/users/2`, indicando que el id será "2"
@@ -222,45 +224,167 @@ class User(BaseModel):
 
 users_db = [...]
 
-@router.get('/')
-async def get_user_by_query(user_id: int): # Indicamos la query que se recibirá
+async def search_user_in_db(user_id: int):
+    found_user = filter(
+            lambda user: user.id == user_id, users_db)
     try:
-        get_user_from_db = filter(lambda user: user["id"] == user_id, users_db)
-        return list(get_user_from_db)[0]
+        return list(found_user)[0]
     except:
+        return "Error! User not found"
+
+@router.get('/')
+async def get_user_by_query(id: int): # Indicamos la query que se recibirá
+    user_in_db = await search_user_in_db(id)
+    if type(user_in_db) != str:
+        return user_in_db 
+    else:
         return "Error! User not found"
 ```
 
-> Para probar el funcionamiento deberemos ir a `/users?user_id=3` pasando el id que usaremos
+> Para probar el funcionamiento deberemos ir a `/users?id=3` pasando el id que usaremos
 
-Por ultimo podemos tomar los datos que le pasemos por el body con formato `json` usando el paquete `Request` de `FastAPI` de la siguiente manera.
+## Request - POST
+
+Podemos agregar un nuevo usuario usando el método POST, el cual comúnmente se utiliza para agregar un nuevo dato en una API, por lo que lo utilizaremos de la siguiente manera.
 
 ```py
-from fastapi import APIRouter, Request # Importamos el modulo necesario
-from pydantic import BaseModel
+# [...] => Resto del código
 
-router = APIRouter(prefix='/users')
-
-class User(BaseModel):
-    id: int
-    name: str
-    last_name: str
-    age: int
-
-
-users_db = [...]
-
-@router.get('/')
-async def get_all_users(req: Request): # Tomamos la request con su respectivo tipo
-    data = await req.json() # Lo guardamos en una variable esperando por el mismo
-    try:
-        get_user_from_db = filter(lambda user: user["id"] == data["id"], users_db)
-        return list(get_user_from_db)[0]
-    except:
-        return "Error! User not found"
+@router.post('/') 
+async def create_new_user(user: User): # Indicamos que se pasará un dato tipo User por el body
+    user_in_db = await search_user_in_db(user.id) # Buscamos el usuario en la base de datos
+    if type(user_in_db) == str: # Si no lo encuentra
+        users_db.append(user) # Agrega el usuario a la base de datos
+        return user # Y lo devuelve
+    else:
+        return "Error! User is already in database" # Sino indica que ya se encuentra el usuario
 ```
 
-> Para que esto funcione debemos pasar `{"id": 3}` como body de la request
+## Request - PUT
+
+Con el método PUT podemos editar un elemento de nuestro array, para ello debemos buscar el mismo en la base de datos y reemplazarlo con los datos que se nos envían por medio del body, quedando el mismo de la siguiente manera.
+
+```py
+# [...]
+
+async def search_user_index(user_id_for_find): # Creamos la función para buscar el índice
+    user_index = [index for index, user_in_db in enumerate(
+            users_db) if user_in_db.id == user_id_for_find]
+    return user_index[0] # Y retornamos el indice
+
+@router.put('/') # Indicamos el método
+async def edit_user(user: User): # Y los datos que recibiremos del body
+    user_in_db = await search_user_in_db(user.id) # Buscamos si el usuario se encuentra en la base de datos
+    if type(user_in_db) != str: # Si se encuentra
+        user_index = await search_user_index(user.id) # Guardamos el indice
+        users_db[user_index] = user # Reemplazamos el usuario con los datos que recibimos
+        return user # Y retornamos el usuario editado
+    else:
+        return "User not found" # Si no lo encuentra devolvemos el mensaje de error
+```
+
+## Request - DELETE
+
+Por ultimo lo que podemos hacer es utilizar el método DELETE para eliminar un usuario de la base de datos, tomando de base las funciones que creamos anteriormente de la siguiente manera.
+
+```py
+# [...]
+
+@router.delete('/{user_id}') # Indicamos el método y el path
+async def delete_user(user_id: int):
+    user_in_db = await search_user_in_db(user_id) 
+    if type(user_in_db) != str:
+        user_index = await search_user_index(user_id)
+        del users_db[user_index] # Eliminamos el usuario con el indice que encontró
+        return "User deleted successfully" # Y devolvemos un mensaje para indicar que se eliminó correctamente
+    else:
+        return "User not found"
+```
+
+## Status codes
+
+Sumado a esto, no solamente deberemos enviar una respuesta de error como string, también debemos indicarle al usuario que tipo de error tuvo por parte del código de estado, para esto usamos los módulos `status` (contiene los códigos de estado más comunes) y `Response` (respuesta que daremos al usuario) por parte de FastAPI de la siguiente manera
+
+```py
+from fastapi import APIRouter, status, Response # Importamos los módulos necesarios
+from pydantic import BaseModel
+
+# [...]
+
+#  ==================== Functions ====================
+
+async def search_user_in_db(user_id: int):
+    found_user = filter(
+        lambda user: user.id == user_id, users_db)
+    try:
+        return list(found_user)[0]
+    except:
+        return "Error! User not found"
+    
+async def search_user_index(user_id_for_find):
+    user_index = [index for index, user_in_db in enumerate(
+            users_db) if user_in_db.id == user_id_for_find]
+    return user_index[0]
+
+
+#  ==================== Responses ====================
+
+@router.get('/')
+async def get_all_users():
+    return users_db
+
+
+@router.get('/{user_id}', status_code=status.HTTP_302_FOUND) # Indicamos el status code que enviaremos si al respuesta fue correcta
+async def get_one_user(user_id: int, res : Response): # Utilizamos el módulo para indicar el tipo de respuesta
+    user_in_db = await search_user_in_db(user_id)
+    if type(user_in_db) != str:
+        return user_in_db
+    else:
+        res.status_code = status.HTTP_404_NOT_FOUND # Y devolvemos la respuesta de que el usuario no fue encontrado
+        return "Error! User not found"
+
+# =========================
+
+@router.post('/', status_code=status.HTTP_201_CREATED) # Indicamos la respuesta que indica que se creó el usuario
+async def create_new_user(user: User, res: Response):
+    user_in_db = await search_user_in_db(user.id)
+    if type(user_in_db) == str:
+        users_db.append(user)
+        return user
+    else:
+        res.status_code = status.HTTP_409_CONFLICT # O que no se pudo crear por un conflicto
+        return "Error! User is already in database"
+
+# =========================
+
+@router.put('/')
+async def edit_user(user: User, res: Response):
+    user_in_db = await search_user_in_db(user.id)
+    if type(user_in_db) != str:
+        user_index = await search_user_index(user.id)
+        users_db[user_index] = user
+        return user
+    else:
+        res.status_code = status.HTTP_404_NOT_FOUND
+        return "User not found"
+
+# =========================
+
+@router.delete('/{user_id}') # Al no indicar nada, se toma de base el código de estado 200
+async def delete_user(user_id: int, res: Response):
+    user_in_db = await search_user_in_db(user_id)
+    if type(user_in_db) != str:
+        user_index = await search_user_index(user_id)
+        del users_db[user_index]
+        return "User deleted successfully"
+    else:
+        res.status_code = status.HTTP_404_NOT_FOUND
+        return "User not found"
+
+# =========================
+```
+
+> El modulo `status` nos ayuda a la hora de indicarnos que significa cada código, pudiendo indicar solamente el nombre del estado (NOT FOUND, CREATED, etc) y lo autocompleta con el código correspondiente
 
 ## Referencias
 
