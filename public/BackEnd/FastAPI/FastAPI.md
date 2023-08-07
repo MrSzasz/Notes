@@ -309,7 +309,7 @@ Sumado a esto, no solamente deberemos enviar una respuesta de error como string,
 from fastapi import APIRouter, status, Response # Importamos los módulos necesarios
 from pydantic import BaseModel
 
-# [...]
+# [...] 
 
 #  ==================== Functions ====================
 
